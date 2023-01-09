@@ -1,0 +1,37 @@
+.dark-theme {
+  --foreground: #ffffff;
+  --background: #000000;
+
+  --accents-1: #111111;
+  --accents-2: #333333;
+  --accents-3: #444444;
+  --accents-4: #666666;
+  --accents-5: #888888;
+  --accents-6: #999999;
+  --accents-7: #eaeaea;
+  --accents-8: #fafafa;
+
+  --secondary-lighter: #333333;
+  --secondary-light: #444444;
+  --secondary: #888888;
+  --secondary-dark: #eaeaea;
+}
+
+.light-theme {
+  --foreground: #000000;
+  --background: #ffffff;
+
+  --accents-1: #fafafa;
+}
+
+.shared-theme {
+  --success-lighter: #d3e5ff;
+  --success-light: #3291ff;
+  --success: #0070f3;
+  --success-dark: #0761d1;
+
+  --error-lighter: #f7d4d6;
+  --error-light: #ff1a1a;
+  --error: #ee0000;
+  --error-dark: #c50000;
+}
