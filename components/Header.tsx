@@ -5,64 +5,59 @@ import { ButtonLink } from "./Button"
 import { Logo } from "./Logo"
 import Link from "next/link"
 import { TextLink } from "./TextLink"
+import { Text } from "./Text"
 
-interface DesktopLinkProps {
-  children: ReactNode
-  href: string
-}
-
-const DesktopLink: FC<DesktopLinkProps> = ({ children, href }) => (
-  <Link
-    href={href}
-    className="font-medium text-accents-6 hover:text-foreground"
-  >
-    {children}
-  </Link>
-)
-
-interface MobileLinkProps {
-  children: ReactNode
-  href: string
-}
-
-const MobileLink: FC<MobileLinkProps> = ({ children, href }) => (
-  <Link
-    href={href}
-    className="font-medium py-4 text-accents-6 hover:text-foreground"
-  >
-    {children}
-  </Link>
-)
+const links = [
+  {
+    name: "Courses",
+    href: "/courses",
+  },
+  {
+    name: "Become a teacher",
+    href: "/become-a-teacher",
+  },
+]
 
 export function Header() {
   return (
-    <Popover className="relative">
-      <div className="sticky mx-auto max-w-7xl bg-accents-1">
-        <div className="flex items-center justify-between border-b border-accents-2 px-6 h-16 md:justify-start md:space-x-10">
-          <div className="flex justify-start lg:w-0 lg:flex-1">
-            <Link href="/">
-              <Logo />
-            </Link>
-          </div>
-          <div className="-my-2 -mr-2 md:hidden">
-            <Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 hover:bg-accents-2 rounded-base">
-              <span className="sr-only">Open menu</span>
-              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-            </Popover.Button>
-          </div>
+    <Popover>
+      <div className="h-16" />
+      <div className="fixed top-0 z-40 w-full border-b bg-blur border-accents-2 backdrop-blur-md">
+        <div className="container w-full mx-auto">
+          <div className="flex items-center justify-between h-16 px-6 md:justify-start md:space-x-10">
+            <div className="flex justify-start lg:w-0 lg:flex-1">
+              <Link href="/">
+                <Logo />
+              </Link>
+            </div>
 
-          <nav className="hidden space-x-10 md:flex">
-            <DesktopLink href="/pricing">Pricing</DesktopLink>
-            <DesktopLink href="/courses">Docs</DesktopLink>
-          </nav>
+            <div className="-my-2 -mr-2 md:hidden">
+              <Popover.Button className="inline-flex items-center justify-center p-2 rounded-md hover:bg-accents-2 rounded-base">
+                <span className="sr-only">Open menu</span>
+                <Bars3Icon className="w-6 h-6" aria-hidden="true" />
+              </Popover.Button>
+            </div>
 
-          <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
-            <ButtonLink href="/signin" intent="secondary">
-              Sign in
-            </ButtonLink>
-            <ButtonLink href="/signup" className="ml-4">
-              Sign up
-            </ButtonLink>
+            <nav className="hidden space-x-10 md:flex">
+              {links.map(link => (
+                <Link
+                  href={link.href}
+                  className="font-medium text-accents-8 hover:text-foreground"
+                  key={link.name}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="items-center justify-end hidden md:flex md:flex-1 lg:w-0">
+              <ButtonLink href="/signin" intent="secondary">
+                Sign in
+              </ButtonLink>
+              <ButtonLink href="/signup" className="ml-4">
+                Sign up
+              </ButtonLink>
+            </div>
           </div>
         </div>
       </div>
@@ -78,36 +73,51 @@ export function Header() {
       >
         <Popover.Panel
           focus
-          className="absolute inset-x-0 top-0 origin-top-right transform p-2 transition md:hidden bg-accents-5/40 backdrop-blur-2xl rounded-base"
+          className="fixed inset-x-0 top-0 z-40 p-2 transition origin-top-right transform md:hidden bg-blur backdrop-blur-2xl rounded-base"
         >
-          <div className="rounded-base shadow-lg border-accents-2 border">
+          <div className="border shadow-lg rounded-base border-accents-2">
             <div className="px-5 pt-5">
               <div className="flex items-center justify-between">
                 <Logo />
+
                 <div className="-mr-2">
-                  <Popover.Button className="inline-flex items-center justify-center rounded-base bg-white p-2 hover:bg-accents-2">
+                  <Popover.Button className="inline-flex items-center justify-center p-2 bg-white rounded-base hover:bg-accents-2">
                     <span className="sr-only">Close menu</span>
-                    <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                    <XMarkIcon className="w-6 h-6" aria-hidden="true" />
                   </Popover.Button>
                 </div>
               </div>
+
               <div className="mt-6">
-                <nav className="flex flex-col text-center">
-                  <MobileLink href="/pricing">Pricing</MobileLink>
-                  <MobileLink href="/docs">Docs</MobileLink>
+                <nav className="flex flex-col">
+                  {links.map(link => (
+                    <Link
+                      href={link.href}
+                      className="py-4 text-accents-8 hover:text-foreground"
+                      key={link.name}
+                    >
+                      <Text
+                        size="sm"
+                        weight="medium"
+                        tracking="wide"
+                        align="center"
+                      >
+                        {link.name}
+                      </Text>
+                    </Link>
+                  ))}
                 </nav>
               </div>
             </div>
 
-            <div className="space-y-6 py-6 px-5">
-              <div>
-                <ButtonLink fullWidth href="/signup">
-                  Sign up
-                </ButtonLink>
-                <p className="mt-6 text-center text-base font-medium text-gray-500">
-                  Existing customer? <TextLink href="/signin">Sign in</TextLink>
-                </p>
-              </div>
+            <div className="px-5 py-6 space-y-6">
+              <ButtonLink fullWidth href="/signup">
+                Sign up
+              </ButtonLink>
+
+              <Text weight="medium" align="center" className="mt-6">
+                Existing customer? <TextLink href="/signin">Sign in</TextLink>
+              </Text>
             </div>
           </div>
         </Popover.Panel>

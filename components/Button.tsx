@@ -8,13 +8,13 @@ const button = cva(
     variants: {
       intent: {
         primary:
-          "bg-foreground text-background border-foreground hover:text-foreground active:text-foreground",
+          "bg-foreground text-background border-foreground hover:bg-transparent hover:text-foreground active:text-foreground",
         secondary:
-          "bg-background text-foreground border-accents-2 hover:border-foreground active:border-foreground",
+          "text-foreground border-accents-2 hover:bg-transparent hover:border-foreground active:border-foreground",
         success:
-          "bg-success text-foreground border-success hover:text-success active:text-success",
+          "bg-success text-foreground border-success hover:bg-transparent hover:text-success active:text-success",
         error:
-          "bg-error text-foreground border-error hover:text-error active:text-error",
+          "bg-error text-foreground border-error hover:bg-transparent hover:text-error active:text-error",
       },
       size: {
         small: "text-sm h-8 px-3",
@@ -22,7 +22,7 @@ const button = cva(
         large: "text-base h-12 py-2 px-4",
       },
       variant: {
-        default: "border hover:bg-transparent active:bg-accents-2",
+        default: "border active:bg-accents-2",
       },
       fullWidth: {
         true: "w-full",

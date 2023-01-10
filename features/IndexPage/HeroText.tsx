@@ -1,10 +1,11 @@
 import { Text } from "../../components/Text"
 import { ButtonLink } from "../../components/Button"
+import { Slider } from "./SliderCloud"
 
 export const HeroText = () => {
   return (
-    <div className="mt-32">
-      <div className="px-6">
+    <div className="z-10 md:px-16">
+      <div className="px-8">
         <Text
           size="3xl"
           weight="bold"
@@ -12,6 +13,7 @@ export const HeroText = () => {
           align="center"
           intent="primary"
           leading="tight"
+          className="mb-4"
         >
           A broad selection of courses
         </Text>
@@ -22,13 +24,17 @@ export const HeroText = () => {
           leading="tight"
           tracking="wide"
           weight="medium"
-          className="mt-2"
         >
           Choose from 213,000 online video courses with new additions published
           every month
         </Text>
       </div>
-      <ButtonLink href="" size="large" className="w-full mt-8" fullWidth>
+
+      <div className="md:hidden">
+        <Slider rows={3} tagsPerRow={10} />
+      </div>
+
+      <ButtonLink href="" size="large" className="w-full" fullWidth>
         Sign up for free
       </ButtonLink>
       <ButtonLink
@@ -36,7 +42,7 @@ export const HeroText = () => {
         intent="secondary"
         size="large"
         fullWidth
-        className="w-full mt-4"
+        className="w-full mt-2"
       >
         Browse courses
       </ButtonLink>

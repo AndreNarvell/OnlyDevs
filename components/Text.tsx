@@ -34,11 +34,16 @@ const text = cva("", {
     intent: {
       primary: "text-foreground",
       secondary: "text-secondary",
+      error: "text-error",
     },
     align: {
       left: "text-left",
       center: "text-center",
       right: "text-right",
+    },
+    display: {
+      inline: "inline",
+      block: "block",
     },
   },
 
@@ -48,6 +53,8 @@ const text = cva("", {
     tracking: "normal",
     weight: "normal",
     intent: "primary",
+    align: "left",
+    display: "block",
   },
 })
 
@@ -60,12 +67,14 @@ type TextProps = VariantProps<typeof text> &
   }
 
 export const Text: FC<TextProps> = ({
-  as = "p",
+  as = "span",
   size,
   leading,
   tracking,
   weight,
   intent,
+  align,
+  display,
   className,
   ...rest
 }) => {
@@ -79,6 +88,8 @@ export const Text: FC<TextProps> = ({
         tracking,
         weight,
         intent,
+        align,
+        display,
         className,
       })}
       {...rest}

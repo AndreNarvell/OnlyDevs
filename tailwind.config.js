@@ -29,6 +29,8 @@ module.exports = {
       secondary: "var(--secondary)",
       "secondary-dark": "var(--secondary-dark)",
 
+      blur: "var(--blur)",
+
       "success-lighter": "var(--success-lighter)",
       "success-light": "var(--success-light)",
       success: "var(--success)",
@@ -44,9 +46,21 @@ module.exports = {
       none: "0",
       base: "5px",
       marketing: "8px",
+      full: "9999px",
     },
 
     extend: {},
+
+    container: {
+      screens: {
+        DEFAULT: "100%",
+        sm: "640px",
+        med: "768px",
+        lg: "1024",
+        xl: "1024px",
+        "2xl": "1024px",
+      },
+    },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/line-clamp")],
 }
