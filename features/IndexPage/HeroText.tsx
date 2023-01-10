@@ -5,7 +5,7 @@ import { Slider } from "./SliderCloud"
 export const HeroText = () => {
   return (
     <div className="z-10 md:px-16">
-      <div className="px-8">
+      <div className="px-8 md:mb-6">
         <Text
           size="3xl"
           weight="bold"
@@ -30,7 +30,7 @@ export const HeroText = () => {
         </Text>
       </div>
 
-      <div className="md:hidden">
+      <div className="mb-1 md:mb-0 md:hidden">
         <Slider rows={3} tagsPerRow={10} />
       </div>
 
