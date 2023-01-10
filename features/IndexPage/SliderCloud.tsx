@@ -22,8 +22,6 @@ const COLORS = [
   [greenDark.green2, greenDark.green7, greenDark.green11],
 ] as const
 
-123 % COLORS.length
-
 const TAGS = [
   "HTML",
   "CSS",
@@ -113,7 +111,8 @@ const TAGS = [
   "Scrum",
   "Kanban",
 ]
-
+const random = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min)) + min
 const shuffle = (arr: any[]) => [...arr].sort(() => 0.5 - Math.random())
 
 interface Props {
@@ -173,9 +172,11 @@ const Tag = ({
 export const Slider = ({
   rows = 5,
   tagsPerRow = 10,
+  duration = [50000, 40000],
 }: {
-  rows: number
-  tagsPerRow: number
+  rows?: number
+  tagsPerRow?: number
+  duration?: [number, number]
 }) => {
   const [show, setShow] = useState(false)
 
@@ -187,7 +188,11 @@ export const Slider = ({
     <div className="flex flex-col items-center justify-center">
       <div className="w-full tag-list">
         {[...new Array(rows)].map((_, i) => (
-          <InfiniteLoopSlider key={i} duration={75000} reverse={Boolean(i % 2)}>
+          <InfiniteLoopSlider
+            key={i}
+            duration={random(...duration)}
+            reverse={Boolean(i % 2)}
+          >
             {shuffle(TAGS)
               .slice(0, tagsPerRow)
               .map(tag => {
