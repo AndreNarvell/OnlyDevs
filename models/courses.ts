@@ -9,7 +9,7 @@ export const getLatestCourses = async (quantity: number = 1) =>
     .order("created_at", { ascending: false })
     .limit(quantity)
 
-const entireCourseQuery = `*, modules (*, lessons (*))`
+const entireCourseQuery = `*, sections (*, lectures (*))`
 
 export const getCourseDetailsById = async (id: string) =>
   supabase.from("courses").select(entireCourseQuery).eq("id", id)

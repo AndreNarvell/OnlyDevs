@@ -9,9 +9,24 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      categories: {
+        Row: {
+          id: number
+          title: string
+        }
+        Insert: {
+          id?: number
+          title: string
+        }
+        Update: {
+          id?: number
+          title?: string
+        }
+      }
       courses: {
         Row: {
           background_image: string
+          category_id: number
           created_at: string
           creator: string
           description: string
@@ -25,6 +40,7 @@ export interface Database {
         }
         Insert: {
           background_image: string
+          category_id: number
           created_at?: string
           creator: string
           description: string
@@ -38,6 +54,7 @@ export interface Database {
         }
         Update: {
           background_image?: string
+          category_id?: number
           created_at?: string
           creator?: string
           description?: string
@@ -50,32 +67,32 @@ export interface Database {
           title?: string
         }
       }
-      lessons: {
+      lectures: {
         Row: {
           created_at: string | null
           id: string
-          module_id: string | null
+          section_id: string
           sort_order: number
           title: string
         }
         Insert: {
           created_at?: string | null
           id?: string
-          module_id?: string | null
+          section_id: string
           sort_order: number
           title: string
         }
         Update: {
           created_at?: string | null
           id?: string
-          module_id?: string | null
+          section_id?: string
           sort_order?: number
           title?: string
         }
       }
-      modules: {
+      sections: {
         Row: {
-          course_id: string | null
+          course_id: string
           created_at: string | null
           description: string
           id: string
@@ -84,7 +101,7 @@ export interface Database {
           title: string
         }
         Insert: {
-          course_id?: string | null
+          course_id: string
           created_at?: string | null
           description: string
           id?: string
@@ -93,7 +110,7 @@ export interface Database {
           title: string
         }
         Update: {
-          course_id?: string | null
+          course_id?: string
           created_at?: string | null
           description?: string
           id?: string

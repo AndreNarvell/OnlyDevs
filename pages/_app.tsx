@@ -1,6 +1,8 @@
 import "../styles/globals.scss"
 import type { AppProps } from "next/app"
 import { Plus_Jakarta_Sans } from "@next/font/google"
+import Head from "next/head"
+import { Meta } from "../components/Meta"
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -10,9 +12,26 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <div className={plusJakartaSans.className}>
-      <Component {...pageProps} />
-    </div>
+    <>
+      <Head>
+        <link
+          href="favicon-light-theme.png"
+          rel="icon"
+          media="(prefers-color-scheme: light)"
+        />
+        <link
+          href="favicon-dark-theme.png"
+          rel="icon"
+          media="(prefers-color-scheme: dark)"
+        />
+      </Head>
+
+      <Meta />
+
+      <div className={plusJakartaSans.className}>
+        <Component {...pageProps} />
+      </div>
+    </>
   )
 }
 

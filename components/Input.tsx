@@ -1,7 +1,8 @@
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid"
 import { cva, VariantProps } from "class-variance-authority"
 import clsx from "clsx"
-import { FC, HTMLAttributes, SVGProps } from "react"
+import { FC, HTMLAttributes } from "react"
+import { IconComponent } from "../types/IconComponent"
 import { Text } from "./Text"
 
 const input = cva(
@@ -45,12 +46,7 @@ interface Props
   disabled?: boolean
   error?: string
   type?: "text" | "email" | "password" | "number"
-  icon?: (
-    props: SVGProps<SVGSVGElement> & {
-      title?: string | undefined
-      titleId?: string | undefined
-    }
-  ) => JSX.Element
+  icon?: IconComponent
   value?: string
 }
 
@@ -107,7 +103,7 @@ export const Input: FC<Props> = ({
       {isError && (
         <div className="flex items-center mt-1 text-error gap-x-1">
           <ExclamationCircleIcon className="w-5 h-5" />
-          <Text size="sm" intent="error">
+          <Text size="sm" intent="error" as="p">
             {error}
           </Text>
         </div>

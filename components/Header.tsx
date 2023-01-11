@@ -1,7 +1,7 @@
-import { FC, Fragment, ReactNode } from "react"
+import { Fragment } from "react"
 import { Popover, Transition } from "@headlessui/react"
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
-import { ButtonLink } from "./Button"
+import { Button, ButtonLink } from "./Button"
 import { Logo } from "./Logo"
 import Link from "next/link"
 import { TextLink } from "./TextLink"
@@ -25,24 +25,24 @@ export function Header() {
       <div className="fixed top-0 z-40 w-full border-b bg-blur border-accents-2 backdrop-blur-md">
         <div className="container w-full mx-auto">
           <div className="flex items-center justify-between h-16 px-6 md:justify-start md:space-x-10">
-            <div className="flex justify-start lg:w-0 lg:flex-1">
-              <Link href="/">
-                <Logo />
-              </Link>
-            </div>
+            <Link href="/" className="flex justify-start lg:w-0 lg:flex-1">
+              <Logo />
+            </Link>
 
-            <div className="-my-2 -mr-2 md:hidden">
-              <Popover.Button className="inline-flex items-center justify-center p-2 rounded-md hover:bg-accents-2 rounded-base">
-                <span className="sr-only">Open menu</span>
-                <Bars3Icon className="w-6 h-6" aria-hidden="true" />
-              </Popover.Button>
-            </div>
+            <Popover.Button as="div">
+              <Button
+                variant="ghost"
+                icon={Bars3Icon}
+                aria-label="Open menu"
+                className="-my-2 -mr-2 md:hidden"
+              />
+            </Popover.Button>
 
             <nav className="hidden space-x-10 md:flex">
               {links.map(link => (
                 <Link
                   href={link.href}
-                  className="font-medium text-accents-8 hover:text-foreground"
+                  className="font-medium transition text-accents-8 hover:text-secondary"
                   key={link.name}
                 >
                   {link.name}
@@ -78,33 +78,32 @@ export function Header() {
           <div className="border shadow-lg rounded-base border-accents-2">
             <div className="px-5 pt-5">
               <div className="flex items-center justify-between">
-                <Logo />
+                <Link href="/">
+                  <Logo />
+                </Link>
 
-                <div className="-mr-2">
-                  <Popover.Button className="inline-flex items-center justify-center p-2 bg-white rounded-base hover:bg-accents-2">
-                    <span className="sr-only">Close menu</span>
-                    <XMarkIcon className="w-6 h-6" aria-hidden="true" />
-                  </Popover.Button>
-                </div>
+                <Popover.Button as="div">
+                  <Button
+                    variant="ghost"
+                    icon={XMarkIcon}
+                    aria-label="Close menu"
+                    className="-mr-2"
+                  />
+                </Popover.Button>
               </div>
 
               <div className="mt-6">
-                <nav className="flex flex-col">
+                <nav className="flex flex-col gap-y-1">
                   {links.map(link => (
-                    <Link
+                    <ButtonLink
+                      variant="ghost"
+                      size="base"
+                      fullWidth
                       href={link.href}
-                      className="py-4 text-accents-8 hover:text-foreground"
                       key={link.name}
                     >
-                      <Text
-                        size="sm"
-                        weight="medium"
-                        tracking="wide"
-                        align="center"
-                      >
-                        {link.name}
-                      </Text>
-                    </Link>
+                      {link.name}
+                    </ButtonLink>
                   ))}
                 </nav>
               </div>
@@ -115,7 +114,7 @@ export function Header() {
                 Sign up
               </ButtonLink>
 
-              <Text weight="medium" align="center" className="mt-6">
+              <Text as="span" weight="medium" align="center" className="mt-6">
                 Existing customer? <TextLink href="/signin">Sign in</TextLink>
               </Text>
             </div>

@@ -1,47 +1,26 @@
-import { GetServerSideProps } from "next"
-import { FC } from "react"
-import { Layout } from "../components/Layout"
-import { Input } from "../components/Input"
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid"
+import { KeywordSlider } from "../features/IndexPage/KeywordSlider"
+import { HeroText } from "../features/IndexPage/HeroText"
 
-interface Props {
-  courses: any
-}
-const Test: FC<Props> = ({ courses }) => {
+const Test = () => {
   return (
-    <Layout>
-      <div className="m-8 space-y-4">
-        <Input
-          label="Search"
-          placeholder="Search..."
-          name="search"
-          showLabel
-          fullWidth
-        />
+    <>
+      <KeywordSlider rows={20} duration={[50000, 500000]} />
 
-        <Input
-          label="Search"
-          placeholder="Search..."
-          name="search"
-          error="Obligatorisk"
-        />
-        <Input label="Search" placeholder="Search..." name="search" />
+      <div className="relative">
+        <KeywordSlider rows={20} duration={[50000, 500000]} />
 
-        <Input
-          label="Search"
-          placeholder="Search..."
-          name="search"
-          icon={MagnifyingGlassIcon}
-        />
+        <div
+          className="absolute py-16 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 bg-background rounded-marketing"
+          style={{
+            boxShadow: "0 0 64px 32px #000a",
+            animation: "twinkle 2s infinite 2s",
+          }}
+        >
+          <HeroText />
+        </div>
       </div>
-    </Layout>
+    </>
   )
 }
 
 export default Test
-
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  return {
-    props: { courses: 1 },
-  }
-}

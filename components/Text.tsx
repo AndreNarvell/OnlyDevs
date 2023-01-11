@@ -62,7 +62,7 @@ type TextProps = VariantProps<typeof text> &
   HTMLAttributes<
     HTMLHeadingElement | HTMLSpanElement | HTMLParagraphElement
   > & {
-    as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "span" | "p"
+    as: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "span" | "p"
     children?: ReactNode
   }
 

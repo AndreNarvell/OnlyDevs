@@ -2,14 +2,17 @@ import React, { FC } from "react"
 import Image from "next/image"
 import { Text } from "../components/Text"
 import { Database } from "../types/supabase"
+import Link from "next/link"
+import { UrlObject } from "url"
 
 type Course = Database["public"]["Tables"]["courses"]["Row"]
 
 interface Props {
-  backgroundImage: Course["background_image"]
+  backgroundImage?: Course["background_image"]
   icon: Course["icon"]
   title: Course["title"]
   shortDesc: Course["short_desc"]
+  href: string | UrlObject
 }
 
 export const CourseCard: FC<Props> = ({
@@ -17,39 +20,49 @@ export const CourseCard: FC<Props> = ({
   icon,
   title,
   shortDesc,
+  href,
 }) => {
   return (
-    <div className="flex flex-col my-8 bg-background rounded-marketing overflow-clip">
-      <div className="w-full overflow-clip">
-        <Image
-          width={280}
-          height={220}
-          src={backgroundImage}
-          alt=""
-          className="object-cover object-center w-full "
-        />
-      </div>
+    <article className="flex flex-col flex-shrink-0 transition border bg-background rounded-marketing overflow-clip border-accents-2 hover:border-accents-5">
+      <Link href={href}>
+        {backgroundImage && (
+          <div className="w-full aspect-[5/3] min-h-[12rem]">
+            <Image
+              width={500}
+              height={300}
+              src={backgroundImage}
+              alt={`Background for ${title}`}
+              className="object-cover object-center w-full h-full"
+            />
+          </div>
+        )}
 
-      <div className="w-full p-4 bg-background">
-        <div className="flex flex-row items-center gap-x-4">
-          <Image
-            width={50}
-            height={50}
-            src={icon}
-            alt=""
-            className="flex-grow-0 flex-shrink-0 rounded-full"
-          />
-          <Text intent="primary" size="lg">
-            {title}
+        <div className="w-full p-4 pt-3 pb-8 bg-background">
+          <div className="flex flex-row items-center gap-x-3 h-14">
+            <Image
+              width={40}
+              height={40}
+              src={icon}
+              alt={`Icon for ${title}`}
+              className="flex-grow-0 flex-shrink-0 rounded-full"
+            />
+            <Text intent="primary" weight="bold" as="h3">
+              {title}
+            </Text>
+          </div>
+          <Text
+            intent="secondary"
+            size="sm"
+            className="mt-2 line-clamp-2"
+            as="p"
+          >
+            {shortDesc} Lorem ipsum dolor sit, amet consectetur adipisicing
+            elit. Non, repellat at ut recusandae aspernatur explicabo nihil,
+            quisquam enim odio molestias neque impedit soluta, saepe perferendis
+            eum facilis veniam tempore voluptates.
           </Text>
         </div>
-        <Text intent="secondary" size="base" className="mt-4 line-clamp-2">
-          {shortDesc} Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          Non, repellat at ut recusandae aspernatur explicabo nihil, quisquam
-          enim odio molestias neque impedit soluta, saepe perferendis eum
-          facilis veniam tempore voluptates.
-        </Text>
-      </div>
-    </div>
+      </Link>
+    </article>
   )
 }
