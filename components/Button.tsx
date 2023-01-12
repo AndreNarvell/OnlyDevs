@@ -4,14 +4,14 @@ import Link from "next/link"
 import { IconComponent } from "../types/IconComponent"
 
 const button = cva(
-  "font-semibold rounded-base flex gap-x-2 items-center transition select-none whitespace-nowrap",
+  "font-semibold rounded-base flex gap-x-2 items-center transition select-none whitespace-nowrap focus:outline-none focus-visible:ring-2 focus:ring-offset-1 focus:ring-offset-background",
   {
     variants: {
       intent: {
-        primary: "",
-        secondary: "",
-        success: "",
-        error: "",
+        primary: "focus:ring-foreground",
+        secondary: "focus:ring-secondary",
+        success: "focus:ring-success",
+        error: "focus:ring-error",
       },
       size: {
         small: "text-sm h-8 px-3",
@@ -50,7 +50,7 @@ const button = cva(
         variant: "default",
         intent: "secondary",
         className:
-          "text-foreground border-accents-2 hover:border-foreground hover:bg-foreground active:border-foreground",
+          "bg-background/50 text-foreground border-accents-2 hover:border-foreground hover:bg-foreground active:border-foreground",
       },
       {
         variant: "default",
@@ -102,6 +102,21 @@ const button = cva(
         svgOnly: true,
         size: "large",
         className: "h-12 w-12",
+      },
+      {
+        svgOnly: false,
+        size: "small",
+        className: "pr-4",
+      },
+      {
+        svgOnly: false,
+        size: "base",
+        className: "pr-4",
+      },
+      {
+        svgOnly: false,
+        size: "large",
+        className: "pr-5",
       },
     ],
 
@@ -167,7 +182,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           variant,
           fullWidth,
           align,
-          svgOnly: !!icon,
+          svgOnly: !children && !!icon,
           className,
         })}
       >
@@ -213,7 +228,7 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
           variant,
           fullWidth,
           align,
-          svgOnly: !!icon,
+          svgOnly: !children && !!icon,
           className,
         })}
       >

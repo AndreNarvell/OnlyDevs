@@ -15,7 +15,7 @@ const input = cva(
         large: "text-base h-12 py-2 px-4",
       },
       disabled: {
-        true: " cursor-not-allowed",
+        true: "bg-accents-1 border-accents-2 placeholder:text-accents-4 text-accents-5 cursor-not-allowed",
       },
       error: {
         true: "border-error focus:border-error placeholder:text-error text-error caret-error",
@@ -38,16 +38,17 @@ const input = cva(
 interface Props
   extends HTMLAttributes<HTMLInputElement>,
     Omit<VariantProps<typeof input>, "error"> {
-  placeholder: string
   label: string
-  showLabel?: boolean
   name: string
+  placeholder?: string
+  showLabel?: boolean
   id?: string
   disabled?: boolean
   error?: string
   type?: "text" | "email" | "password" | "number"
   icon?: IconComponent
   value?: string
+  readOnly?: boolean
 }
 
 export const Input: FC<Props> = ({
@@ -55,6 +56,7 @@ export const Input: FC<Props> = ({
   id,
   showLabel,
   label,
+  placeholder,
   size,
   disabled,
   error,
@@ -65,10 +67,8 @@ export const Input: FC<Props> = ({
 }) => {
   const Icon = icon
 
-  const isError = !!error
-
   return (
-    <div className="relative">
+    <div className={`relative h-max ${fullWidth ? "w-full" : "w-auto"}`}>
       <label
         className={clsx(showLabel ? "mb-1 block" : "sr-only")}
         htmlFor={id}
@@ -84,11 +84,15 @@ export const Input: FC<Props> = ({
 
       <input
         {...rest}
+        type={type}
+        placeholder={placeholder ?? label}
+        disabled={disabled}
+        title={disabled ? "This field is disabled" : undefined}
         id={id}
         className={input({
           size,
           disabled,
-          error: isError,
+          error: !!error,
           fullWidth,
           className: clsx(
             {
@@ -100,14 +104,16 @@ export const Input: FC<Props> = ({
         })}
       />
 
-      {isError && (
-        <div className="flex items-center mt-1 text-error gap-x-1">
-          <ExclamationCircleIcon className="w-5 h-5" />
-          <Text size="sm" intent="error" as="p">
-            {error}
-          </Text>
-        </div>
-      )}
+      {error && <FieldError error={error} />}
     </div>
   )
 }
+
+export const FieldError = ({ error, mr }: { error: string; mr?: boolean }) => (
+  <div className="flex items-center mt-1 text-error gap-x-1">
+    <ExclamationCircleIcon className={clsx("w-5 h-5", mr && "mr-0.5")} />
+    <Text size="sm" intent="error" as="p">
+      {error}
+    </Text>
+  </div>
+)

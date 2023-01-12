@@ -29,8 +29,6 @@ module.exports = {
       secondary: "rgb(var(--secondary) / <alpha-value>)",
       "secondary-dark": "rgb(var(--secondary-dark) / <alpha-value>)",
 
-      blur: "rgb(var(--blur) / <alpha-value>)",
-
       "success-lighter": "rgb(var(--success-lighter) / <alpha-value>)",
       "success-light": "rgb(var(--success-light) / <alpha-value>)",
       success: "rgb(var(--success) / <alpha-value>)",
@@ -47,6 +45,10 @@ module.exports = {
       base: "5px",
       marketing: "8px",
       full: "9999px",
+    },
+
+    scrollMargin: {
+      input: "8rem",
     },
 
     extend: {},

@@ -22,21 +22,20 @@ export function Header() {
   return (
     <Popover>
       <div className="h-16" />
-      <div className="fixed top-0 z-40 w-full border-b bg-blur border-accents-2 backdrop-blur-md">
+      <div className="fixed top-0 z-40 w-full border-b bg-background/50 border-accents-2 backdrop-blur-md">
         <div className="container w-full mx-auto">
           <div className="flex items-center justify-between h-16 px-6 md:justify-start md:space-x-10">
             <Link href="/" className="flex justify-start lg:w-0 lg:flex-1">
               <Logo />
             </Link>
 
-            <Popover.Button as="div">
-              <Button
-                variant="ghost"
-                icon={Bars3Icon}
-                aria-label="Open menu"
-                className="-my-2 -mr-2 md:hidden"
-              />
-            </Popover.Button>
+            <Popover.Button
+              as={Button}
+              variant="ghost"
+              icon={Bars3Icon}
+              aria-label="Open menu"
+              className="-my-2 -mr-2 md:hidden"
+            />
 
             <nav className="hidden space-x-10 md:flex">
               {links.map(link => (
@@ -73,7 +72,7 @@ export function Header() {
       >
         <Popover.Panel
           focus
-          className="fixed inset-x-0 top-0 z-40 p-2 transition origin-top-right transform md:hidden bg-blur backdrop-blur-2xl rounded-base"
+          className="fixed inset-x-0 top-0 z-40 p-2 transition origin-top-right transform md:hidden bg-accents-1/50 backdrop-blur-2xl rounded-base"
         >
           <div className="border shadow-lg rounded-base border-accents-2">
             <div className="px-5 pt-5">
@@ -82,14 +81,13 @@ export function Header() {
                   <Logo />
                 </Link>
 
-                <Popover.Button as="div">
-                  <Button
-                    variant="ghost"
-                    icon={XMarkIcon}
-                    aria-label="Close menu"
-                    className="-mr-2"
-                  />
-                </Popover.Button>
+                <Popover.Button
+                  as={Button}
+                  variant="ghost"
+                  icon={XMarkIcon}
+                  aria-label="Close menu"
+                  className="-mr-2"
+                />
               </div>
 
               <div className="mt-6">

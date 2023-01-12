@@ -1,4 +1,3 @@
-import clsx from "clsx"
 import { FC, ReactNode } from "react"
 import { Footer } from "./Footer"
 import { Header } from "./Header"

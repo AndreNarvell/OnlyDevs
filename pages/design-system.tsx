@@ -3,12 +3,18 @@ import { Layout } from "../components/Layout"
 import { Button } from "../components/Button"
 import { Text } from "../components/Text"
 import {
+  ArrowDownTrayIcon,
   ArrowPathRoundedSquareIcon,
   BuildingLibraryIcon,
+  MagnifyingGlassIcon,
+  MagnifyingGlassMinusIcon,
   SpeakerWaveIcon,
   WrenchScrewdriverIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline"
+import { ArrowDownTrayIcon as ArrowDownTrayIcon20 } from "@heroicons/react/20/solid"
+import { Input } from "../components/Input"
+import { Checkbox } from "../components/Checkbox"
 
 const DesignSystemPage = () => {
   return (
@@ -19,10 +25,10 @@ const DesignSystemPage = () => {
         weight="bold"
         className="mt-16 mb-6 underline decoration-accents-2 underline-offset-8"
       >
-        Buttons
+        Button
       </Text>
 
-      <Section title="Default">
+      <Section title="Intent">
         <div className="flex gap-x-4">
           <Button>Sign up</Button>
           <Button intent="secondary">Sign up</Button>
@@ -31,7 +37,7 @@ const DesignSystemPage = () => {
         </div>
       </Section>
 
-      <Section title="Sizes">
+      <Section title="Size">
         <div className="flex gap-x-4">
           <Button size="large">Large</Button>
           <Button>Base</Button>
@@ -62,6 +68,9 @@ const DesignSystemPage = () => {
           <Button intent="secondary" icon={BuildingLibraryIcon} />
           <Button intent="success" icon={WrenchScrewdriverIcon} />
           <Button intent="error" icon={SpeakerWaveIcon} />
+          <Button intent="secondary" icon={ArrowDownTrayIcon}>
+            Download
+          </Button>
         </div>
       </Section>
 
@@ -70,6 +79,130 @@ const DesignSystemPage = () => {
           <Button size="small" icon={SpeakerWaveIcon} />
           <Button icon={SpeakerWaveIcon} />
           <Button size="large" icon={SpeakerWaveIcon} />
+          <Button size="large" intent="secondary" icon={ArrowDownTrayIcon}>
+            Download
+          </Button>
+          <Button intent="secondary" icon={ArrowDownTrayIcon}>
+            Download
+          </Button>
+          <Button size="small" intent="secondary" icon={ArrowDownTrayIcon20}>
+            Download
+          </Button>
+        </div>
+      </Section>
+
+      <Text
+        as="h2"
+        size="2xl"
+        weight="bold"
+        className="mt-16 mb-6 underline decoration-accents-2 underline-offset-8"
+      >
+        Input
+      </Text>
+
+      <Section title="Examples">
+        <div className="flex gap-x-4">
+          <Input
+            label="Email"
+            name="email"
+            placeholder="Email"
+            value="john.doe@example.com"
+            readOnly
+          />
+          <Input label="Email" name="email" placeholder="Email" />
+
+          <Input
+            label="Email"
+            name="email"
+            placeholder="Email"
+            error="Invalid email"
+            value="john.doe@example"
+            readOnly
+          />
+          <Input
+            label="Email"
+            name="email"
+            placeholder="Email"
+            error="This field is required"
+          />
+        </div>
+      </Section>
+
+      <Section title="Size">
+        <div className="flex gap-x-4">
+          <Input label="Email" name="email" placeholder="Email" size="small" />
+          <Input label="Email" name="email" placeholder="Email" />
+          <Input label="Email" name="email" placeholder="Email" size="large" />
+        </div>
+      </Section>
+
+      <Section title="Disabled">
+        <div className="flex gap-x-4">
+          <Input
+            label="Disabled with placeholder"
+            name="input-disabled-placeholder"
+            disabled
+          />
+          <Input
+            label="Disabled with value"
+            name="input-disabled-value"
+            value="Disabled with value"
+            readOnly
+            disabled
+          />
+        </div>
+      </Section>
+
+      <Section title="Show label">
+        <div className="flex flex-col gap-4">
+          <Input
+            label="Email"
+            name="email"
+            id="input-label-email"
+            type="email"
+            value="john.doe@example.com"
+            readOnly
+            showLabel
+          />
+          <Input
+            label="Password"
+            name="password"
+            id="input-label-password"
+            type="password"
+            value="12345678"
+            readOnly
+            showLabel
+          />
+        </div>
+      </Section>
+
+      <Text
+        as="h2"
+        size="2xl"
+        weight="bold"
+        className="mt-16 mb-6 underline decoration-accents-2 underline-offset-8"
+      >
+        Checkbox
+      </Text>
+
+      <Section title="Normal">
+        <div className="flex flex-col gap-4">
+          <Checkbox id="checkbox-1" label="Accept terms and conditions?" />
+          <Checkbox
+            id="checkbox-2"
+            label="Accept terms and conditions?"
+            defaultChecked
+          />
+        </div>
+      </Section>
+
+      <Section title="Error">
+        <div className="flex flex-col gap-4">
+          <Checkbox
+            id="checkbox-3"
+            label="Accept terms and conditions?"
+            error="This field is required"
+          />
         </div>
       </Section>
     </Layout>
