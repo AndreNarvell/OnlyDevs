@@ -1,7 +1,7 @@
 import { cva, VariantProps } from "class-variance-authority"
 import { FC, HTMLAttributes, ReactNode } from "react"
 
-const text = cva("", {
+export const text = cva("", {
   variants: {
     size: {
       xs: "text-xs",
@@ -34,6 +34,7 @@ const text = cva("", {
     intent: {
       primary: "text-foreground",
       secondary: "text-secondary",
+      success: "text-success",
       error: "text-error",
     },
     align: {
@@ -45,7 +46,29 @@ const text = cva("", {
       inline: "inline",
       block: "block",
     },
+    isLink: {
+      true: "cursor-pointer transition hover:transition-none",
+      false: "",
+    },
   },
+
+  compoundVariants: [
+    {
+      intent: "primary",
+      isLink: true,
+      className: "hover:text-secondary",
+    },
+    {
+      intent: "secondary",
+      isLink: true,
+      className: "hover:text-foreground",
+    },
+    {
+      intent: "success",
+      isLink: true,
+      className: "hover:text-secondary-lighter hover:underline",
+    },
+  ],
 
   defaultVariants: {
     size: "base",
@@ -55,14 +78,15 @@ const text = cva("", {
     intent: "primary",
     align: "left",
     display: "block",
+    isLink: false,
   },
 })
 
-type TextProps = VariantProps<typeof text> &
+type TextProps = Omit<VariantProps<typeof text>, "isLink"> &
   HTMLAttributes<
     HTMLHeadingElement | HTMLSpanElement | HTMLParagraphElement
   > & {
-    as: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "span" | "p"
+    as: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "span" | "p" | "label"
     children?: ReactNode
   }
 

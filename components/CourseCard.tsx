@@ -23,7 +23,7 @@ export const CourseCard: FC<Props> = ({
   href,
 }) => {
   return (
-    <article className="flex flex-col flex-shrink-0 h-full transition border bg-background rounded-marketing overflow-clip border-accents-2 hover:border-accents-5">
+    <article className="flex flex-col flex-shrink-0 h-full transition border bg-background rounded-marketing overflow-clip border-accents-2 hover:border-accents-5 w-full max-w-[18rem]">
       <Link href={href}>
         {backgroundImage && (
           <div className="w-full aspect-[5/3] min-h-[12rem]">
@@ -57,6 +57,13 @@ export const CourseCard: FC<Props> = ({
             as="p"
           >
             {shortDesc}
+
+            <span className="text-success/50">
+              {" "}
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non,
+              perspiciatis nihil! Modi nisi quis maxime voluptatum libero hic
+              aspernatur labore.
+            </span>
           </Text>
         </div>
       </Link>

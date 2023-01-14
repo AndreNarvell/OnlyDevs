@@ -1,17 +1,19 @@
-import clsx from "clsx"
+import { VariantProps } from "class-variance-authority"
 import Link from "next/link"
-import { ComponentProps } from "react"
+import { ComponentProps, FC } from "react"
+import { text } from "./Text"
 
-export const TextLink = ({
+interface Props extends VariantProps<typeof text>, ComponentProps<typeof Link> {
+  href: string
+}
+
+export const TextLink: FC<Props> = ({
   className,
   children,
   ...props
 }: ComponentProps<typeof Link>) => {
   return (
-    <Link
-      {...props}
-      className={clsx("text-success hover:underline", className)}
-    >
+    <Link {...props} className={text({ ...props, isLink: true, className })}>
       {children}
     </Link>
   )

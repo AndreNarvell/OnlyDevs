@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react"
-import { Layout } from "../components/Layout"
+import { Layout } from "../components/layouts/Layout"
 import { Button } from "../components/Button"
 import { Text } from "../components/Text"
 import {
@@ -106,7 +106,7 @@ const DesignSystemPage = () => {
             label="Email"
             name="email"
             placeholder="Email"
-            value="john.doe@example.com"
+            defaultValue="john.doe@example.com"
             readOnly
           />
           <Input label="Email" name="email" placeholder="Email" />
@@ -116,7 +116,7 @@ const DesignSystemPage = () => {
             name="email"
             placeholder="Email"
             error="Invalid email"
-            value="john.doe@example"
+            defaultValue="john.doe@example"
             readOnly
           />
           <Input
@@ -146,9 +146,9 @@ const DesignSystemPage = () => {
           <Input
             label="Disabled with value"
             name="input-disabled-value"
-            value="Disabled with value"
-            readOnly
+            defaultValue="Disabled with value"
             disabled
+            readOnly
           />
         </div>
       </Section>
@@ -160,18 +160,18 @@ const DesignSystemPage = () => {
             name="email"
             id="input-label-email"
             type="email"
-            value="john.doe@example.com"
-            readOnly
+            defaultValue="john.doe@example.com"
             showLabel
+            readOnly
           />
           <Input
             label="Password"
             name="password"
             id="input-label-password"
             type="password"
-            value="12345678"
-            readOnly
+            defaultValue="12345678"
             showLabel
+            readOnly
           />
         </div>
       </Section>

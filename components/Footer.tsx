@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Logo } from "./Logo"
 import { Text } from "./Text"
+import { TextLink } from "./TextLink"
 
 const links = [
   {
@@ -24,17 +25,31 @@ export const Footer = () => {
         <ul className="flex gap-x-6">
           {links.map(link => (
             <li key={link.name}>
-              <Link href={link.href}>
-                <Text
-                  weight="medium"
-                  tracking="wide"
-                  className="transition duration-300 hover:text-accents-6 hover:transition-none"
-                >
-                  {link.name}
-                </Text>
-              </Link>
+              <TextLink
+                href={link.href}
+                as="span"
+                weight="medium"
+                tracking="wide"
+                className="transition duration-300 hover:text-accents-6 hover:transition-none"
+              >
+                {link.name}
+              </TextLink>
             </li>
           ))}
+
+          {process.env.NODE_ENV === "development" && (
+            <li>
+              <TextLink
+                href="/design-system"
+                as="span"
+                weight="medium"
+                tracking="wide"
+                className="transition duration-300 hover:text-accents-6 hover:transition-none"
+              >
+                Design system
+              </TextLink>
+            </li>
+          )}
         </ul>
       </nav>
 
@@ -43,7 +58,7 @@ export const Footer = () => {
         <Logo />
       </Link>
 
-      <Text size="sm" intent="secondary">
+      <Text as="span" size="sm" intent="secondary">
         Copyright &copy; 2023 OnlyDevs
       </Text>
     </footer>

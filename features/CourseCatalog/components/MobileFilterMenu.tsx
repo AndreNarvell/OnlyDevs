@@ -3,18 +3,14 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline"
-import { useRouter } from "next/router"
-import { ChangeEvent, FC, useCallback, useEffect, useState } from "react"
+import clsx from "clsx"
+import { ChangeEvent, FC, useState } from "react"
 import { Button } from "../../../components/Button"
 import { Checkbox } from "../../../components/Checkbox"
 import { SidebarMenu } from "../../../components/SidebarMenu"
 import { Text } from "../../../components/Text"
 import { Category } from "../../../types/Category"
-import {
-  parseCategories,
-  serialiseCategories,
-  setCategory,
-} from "../utils/filter"
+import { useCategories } from "../hooks/useCategories"
 
 interface Props {
   categories: Category[]
@@ -22,56 +18,14 @@ interface Props {
 
 export const MobileFilterMenu: FC<Props> = ({ categories }) => {
   const [open, setOpen] = useState(false)
-  const [activeCategories, setActiveCategories] = useState<number[]>([])
-  const router = useRouter()
 
-  useEffect(() => {
-    if (typeof router.query.categories === "string") {
-      setActiveCategories(parseCategories(router.query.categories))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const handleCategoryChange = useCallback(
-    async (e: ChangeEvent<HTMLInputElement>, id: number) => {
-      const newArray = setCategory(id, e.target.checked, activeCategories)
-
-      const { categories: _categories, ...query } = router.query
-      setActiveCategories(newArray)
-      router.push(
-        {
-          pathname: "/courses",
-          query:
-            activeCategories.length === 0
-              ? { ...query }
-              : { ...query, categories: serialiseCategories(newArray) },
-        },
-        undefined,
-        { shallow: true }
-      )
-    },
-    [router, activeCategories]
-  )
-
-  const clearFilters = () => {
-    setActiveCategories([])
-    router.push(
-      {
-        pathname: "/courses",
-        query: {
-          ...router.query,
-          categories: "[]",
-        },
-      },
-      undefined,
-      { shallow: true }
-    )
-  }
+  const { activeCategories, handleCategoryChange, clearCategories } =
+    useCategories()
 
   return (
     <>
       <Button
-        className="fixed z-10 bottom-16 right-4"
+        className="fixed z-10 bottom-16 right-4 lg:hidden"
         icon={AdjustmentsHorizontalIcon}
         onClick={() => setOpen(true)}
       >
@@ -93,7 +47,7 @@ export const MobileFilterMenu: FC<Props> = ({ categories }) => {
         bottom={
           <>
             <Button
-              onClick={clearFilters}
+              onClick={clearCategories}
               intent="secondary"
               fullWidth
               icon={TrashIcon}
@@ -101,11 +55,7 @@ export const MobileFilterMenu: FC<Props> = ({ categories }) => {
               Clear filters
             </Button>
 
-            <Button
-              onClick={() => setOpen(open => false)}
-              fullWidth
-              icon={XMarkIcon}
-            >
+            <Button onClick={() => setOpen(false)} fullWidth icon={XMarkIcon}>
               Close
             </Button>
           </>
@@ -115,7 +65,7 @@ export const MobileFilterMenu: FC<Props> = ({ categories }) => {
             label={category.title}
             name={String(category.id)}
             id={String(category.id)}
-            formPrefix="category."
+            formPrefix="mobile.category."
             checked={activeCategories.includes(category.id)}
             onChange={e => handleCategoryChange(e, category.id)}
             key={category.id}
@@ -133,6 +83,7 @@ interface FilterItemProps {
   formPrefix?: string
   checked: boolean
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+  noBorder?: boolean
 }
 
 export const FilterItem: FC<FilterItemProps> = ({
@@ -141,12 +92,16 @@ export const FilterItem: FC<FilterItemProps> = ({
   formPrefix,
   checked,
   onChange,
+  noBorder,
 }) => {
   return (
     <li className="list-none">
       <label
         htmlFor={formPrefix + id}
-        className="block px-4 py-3 transition border-b cursor-pointer hover:bg-accents-4/10 hover:transition-none border-foreground/20"
+        className={clsx(
+          "block px-4 py-3 transition cursor-pointer hover:bg-accents-4/10 hover:transition-none border-foreground/20",
+          !noBorder && "border-b"
+        )}
       >
         <Checkbox
           label={label}

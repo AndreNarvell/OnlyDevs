@@ -165,6 +165,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       align,
       icon,
       children,
+      svgOnly,
       className,
       ...rest
     },
@@ -182,7 +183,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           variant,
           fullWidth,
           align,
-          svgOnly: !children && !!icon,
+          svgOnly: svgOnly || (!children && !!icon),
           className,
         })}
       >

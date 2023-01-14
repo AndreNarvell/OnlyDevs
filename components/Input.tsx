@@ -68,7 +68,7 @@ export const Input: FC<Props> = ({
   const Icon = icon
 
   return (
-    <div className={`relative h-max ${fullWidth ? "w-full" : "w-auto"}`}>
+    <div className={`relative h-max ${fullWidth ? "w-full" : ""}`}>
       <label
         className={clsx(showLabel ? "mb-1 block" : "sr-only")}
         htmlFor={id}

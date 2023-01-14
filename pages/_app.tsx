@@ -15,12 +15,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <link
-          href="favicon-light-theme.png"
+          href="/favicon-light-theme.png"
           rel="icon"
           media="(prefers-color-scheme: light)"
         />
         <link
-          href="favicon-dark-theme.png"
+          href="/favicon-dark-theme.png"
           rel="icon"
           media="(prefers-color-scheme: dark)"
         />

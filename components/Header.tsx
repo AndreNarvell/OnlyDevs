@@ -39,13 +39,9 @@ export function Header() {
 
             <nav className="hidden space-x-10 md:flex">
               {links.map(link => (
-                <Link
-                  href={link.href}
-                  className="font-medium transition text-accents-8 hover:text-secondary"
-                  key={link.name}
-                >
+                <TextLink href={link.href} key={link.name} weight="medium">
                   {link.name}
-                </Link>
+                </TextLink>
               ))}
             </nav>
 
@@ -113,7 +109,10 @@ export function Header() {
               </ButtonLink>
 
               <Text as="span" weight="medium" align="center" className="mt-6">
-                Existing customer? <TextLink href="/signin">Sign in</TextLink>
+                Existing customer?{" "}
+                <TextLink intent="success" display="inline" href="/signin">
+                  Sign in
+                </TextLink>
               </Text>
             </div>
           </div>

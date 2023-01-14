@@ -2,11 +2,10 @@ import React, { FC } from "react"
 import { Text } from "../../components/Text"
 import { CourseCard } from "../../components/CourseCard"
 import { Input } from "../../components/Input"
-
-import { Database } from "../../types/supabase"
-import Link from "next/link"
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid"
 import { ButtonLink } from "../../components/Button"
+import { TextLink } from "../../components/TextLink"
+import { Course } from "../../types/Course"
 
 const categories = [
   {
@@ -36,13 +35,13 @@ const categories = [
 ]
 
 interface Props {
-  courses: Database["public"]["Tables"]["courses"]["Row"][]
+  courses: Course[]
 }
 
 export const LatestCourses: FC<Props> = ({ courses }) => {
   return (
     <div className="grid lg:grid-cols-3 sm:mb-32 gap-x-6">
-      <div className="p-8 border-t lg:col-span-2 bg-accents-1 border-accents-2 sm:border sm:rounded-marketing">
+      <div className="w-full p-8 mx-auto border-t lg:col-span-2 bg-accents-1 border-accents-2 sm:border sm:rounded-marketing sm:max-w-max">
         <Text
           as="h2"
           intent="primary"
@@ -72,7 +71,7 @@ export const LatestCourses: FC<Props> = ({ courses }) => {
           fullWidth
         />
 
-        <div className="grid gap-6 my-8 sm:grid-cols-2">
+        <div className="grid gap-6 my-8 place-items-center sm:grid-cols-2">
           {courses.map(course => (
             <CourseCard
               key={course.id}
@@ -88,18 +87,14 @@ export const LatestCourses: FC<Props> = ({ courses }) => {
           ))}
         </div>
 
-        <Link href="/courses">
-          <Text
-            as="span"
-            intent="secondary"
-            size="base"
-            className="transition hover:text-foreground"
-            align="center"
-            tracking="wide"
-          >
-            Browse all courses →
-          </Text>
-        </Link>
+        <TextLink
+          href="/courses"
+          intent="secondary"
+          align="center"
+          tracking="wide"
+        >
+          Browse all courses →
+        </TextLink>
       </div>
 
       {/* Category box */}
