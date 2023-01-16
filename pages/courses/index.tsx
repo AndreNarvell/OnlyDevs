@@ -33,13 +33,12 @@ const CoursesPage: FC<Props> = ({
   categorisedCourses,
 }) => {
   const router = useRouter()
-
   const { search, handleSearchChange } = useSearch()
 
   const showCategories = router.query.categories !== undefined
   const showSearch = search.trim().length > 0
 
-  const coursesInChosenCategory = allCourses.filter(course => {
+  const coursesInChosenCategories = allCourses.filter(course => {
     if (typeof router.query.categories !== "string") return false
 
     const parsedCategories = parseCategories(router.query.categories)
@@ -49,8 +48,33 @@ const CoursesPage: FC<Props> = ({
 
   const searchResults = searchCourses(
     search.trimStart(),
-    showCategories ? coursesInChosenCategory : allCourses
+    showCategories ? coursesInChosenCategories : allCourses
   )
+
+  const numberOfSearchResults = showSearch
+    ? searchResults.length
+    : coursesInChosenCategories.length
+
+  const searchResultsTemplate =
+    numberOfSearchResults === 1 ? "result" : "results"
+
+  const areCategoriesSelected =
+    showCategories && coursesInChosenCategories.length > 0
+  const areCategoriesSelectedTemplate = `in chosen ${
+    coursesInChosenCategories.length === 1 ? "category" : "categories"
+  }`
+
+  const allTemplatesCombined = `
+    ${numberOfSearchResults} ${searchResultsTemplate}
+    ${areCategoriesSelected ? areCategoriesSelectedTemplate : ""}
+    ${showSearch ? `matching "${search}"` : ""}
+  `
+
+  // 0 results matching ""
+  // 0 results in chosen category
+  // 0 results in chosen categories
+  // 0 results in chosen category matching ""
+  // 0 results in chosen categories matching ""
 
   return (
     <GridLayout
@@ -86,19 +110,16 @@ const CoursesPage: FC<Props> = ({
               align="left"
               className="mt-2 mb-5 ml-6"
             >
-              <span className="font-bold">{searchResults.length} </span>
-              {searchResults.length === 1 ? "result" : "results"} for courses
-              matching
-              <span className="font-bold"> &quot;{search}&quot;</span>
+              {allTemplatesCombined}
             </Text>
           }
           courses={
-            searchResults.length > 0
+            search.length > 0
               ? searchResults.map(result => ({
                   ...result,
                   tags: result.tags.split(" "),
                 }))
-              : coursesInChosenCategory
+              : coursesInChosenCategories
           }
         />
       ) : (
@@ -106,7 +127,12 @@ const CoursesPage: FC<Props> = ({
           {/* This shows when a user is not searching */}
 
           {/* Featured courses */}
-          <CourseContainer title="Featured" courses={allCourses} showImage />
+          <CourseContainer
+            title="Featured"
+            courses={allCourses}
+            showImage
+            limit={3}
+          />
 
           {/* Courses sorted by category */}
           {categorisedCourses.map(category => (

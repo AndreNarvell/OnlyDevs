@@ -32,7 +32,10 @@ export interface Database {
           description: string
           icon: string
           id: string
+          includes: string[] | null
+          number_of_students: number | null
           price: number
+          requirements: string[] | null
           short_desc: string
           slug: string
           tags: string[]
@@ -46,7 +49,10 @@ export interface Database {
           description: string
           icon: string
           id?: string
+          includes?: string[] | null
+          number_of_students?: number | null
           price: number
+          requirements?: string[] | null
           short_desc: string
           slug: string
           tags: string[]
@@ -60,7 +66,10 @@ export interface Database {
           description?: string
           icon?: string
           id?: string
+          includes?: string[] | null
+          number_of_students?: number | null
           price?: number
+          requirements?: string[] | null
           short_desc?: string
           slug?: string
           tags?: string[]
@@ -92,22 +101,28 @@ export interface Database {
       }
       profiles: {
         Row: {
+          cart: string[] | null
           created_at: string | null
           email: string | null
           id: string
           name: string
+          picture: string | null
         }
         Insert: {
+          cart?: string[] | null
           created_at?: string | null
           email?: string | null
           id?: string
           name: string
+          picture?: string | null
         }
         Update: {
+          cart?: string[] | null
           created_at?: string | null
           email?: string | null
           id?: string
           name?: string
+          picture?: string | null
         }
       }
       sections: {
@@ -137,6 +152,26 @@ export interface Database {
           slug?: string
           sort_order?: number
           title?: string
+        }
+      }
+      teachers: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: string
+          short_desc: string
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id: string
+          short_desc: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: string
+          short_desc?: string
         }
       }
     }

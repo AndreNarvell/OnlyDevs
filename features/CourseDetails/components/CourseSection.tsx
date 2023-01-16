@@ -8,12 +8,12 @@ interface Props {
 
 export const CourseSection = ({ children, title }: Props) => {
   return (
-    <div>
-      <Text as="h2" className="mb-4">
+    <section className="pb-8">
+      <Text weight="semibold" size="2xl" as="h2" className="mb-4">
         {title}
       </Text>
 
       {children}
-    </div>
+    </section>
   )
 }

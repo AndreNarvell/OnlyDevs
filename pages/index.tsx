@@ -4,15 +4,18 @@ import { LatestCourses } from "../features/IndexPage/LatestCourses"
 import { ForwardIcon, AcademicCapIcon } from "@heroicons/react/24/outline"
 import { Layout } from "../components/layouts/Layout"
 import { GetServerSideProps, NextPage } from "next"
-import { Database } from "../types/supabase"
 import { getLatestCourses } from "../models/courses"
 import { KeywordSlider } from "../features/IndexPage/KeywordSlider"
+import { getAllCategories } from "../models/categories"
+import { Course } from "../types/Course"
+import { Category } from "../types/Category"
 
 interface Props {
-  courses: Database["public"]["Tables"]["courses"]["Row"][]
+  courses: Course[]
+  categories: Category[]
 }
 
-const Home: NextPage<Props> = ({ courses }) => {
+const Home: NextPage<Props> = ({ courses, categories }) => {
   return (
     <Layout>
       <div className="px-6">
@@ -39,7 +42,7 @@ const Home: NextPage<Props> = ({ courses }) => {
         </section>
       </div>
 
-      <LatestCourses courses={courses} />
+      <LatestCourses courses={courses} categories={categories} />
     </Layout>
   )
 }
@@ -47,14 +50,21 @@ const Home: NextPage<Props> = ({ courses }) => {
 export default Home
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  const { data, error } = await getLatestCourses(2)
-  if (error) {
+  const { data: coursesData, error: coursesError } = await getLatestCourses(2)
+  if (coursesError) {
     throw new Error("Could not fetch courses")
+  }
+
+  const { data: categoriesData, error: categoriesError } =
+    await getAllCategories()
+  if (categoriesError) {
+    throw categoriesError
   }
 
   return {
     props: {
-      courses: data,
+      courses: coursesData,
+      categories: categoriesData,
     },
   }
 }

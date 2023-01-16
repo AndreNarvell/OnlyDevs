@@ -91,17 +91,17 @@ const button = cva(
       {
         svgOnly: true,
         size: "small",
-        className: "h-8 w-8",
+        className: "h-8 w-8 flex-shrink-0",
       },
       {
         svgOnly: true,
         size: "base",
-        className: "h-10 w-10",
+        className: "h-10 w-10 flex-shrink-0",
       },
       {
         svgOnly: true,
         size: "large",
-        className: "h-12 w-12",
+        className: "h-12 w-12 flex-shrink-0",
       },
       {
         svgOnly: false,

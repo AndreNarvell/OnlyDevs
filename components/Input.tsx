@@ -1,7 +1,7 @@
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid"
 import { cva, VariantProps } from "class-variance-authority"
 import clsx from "clsx"
-import { FC, HTMLAttributes } from "react"
+import { FC, forwardRef, HTMLAttributes } from "react"
 import { IconComponent } from "../types/IconComponent"
 import { Text } from "./Text"
 
@@ -51,63 +51,78 @@ interface Props
   readOnly?: boolean
 }
 
-export const Input: FC<Props> = ({
-  type = "text",
-  id,
-  showLabel,
-  label,
-  placeholder,
-  size,
-  disabled,
-  error,
-  fullWidth,
-  className,
-  icon,
-  ...rest
-}) => {
-  const Icon = icon
+export const Input = forwardRef<HTMLInputElement, Props>(
+  (
+    {
+      type = "text",
+      id,
+      showLabel,
+      label,
+      placeholder,
+      size,
+      disabled,
+      error,
+      fullWidth,
+      className,
+      icon,
+      ...rest
+    },
+    ref
+  ) => {
+    const Icon = icon
 
-  return (
-    <div className={`relative h-max ${fullWidth ? "w-full" : ""}`}>
-      <label
-        className={clsx(showLabel ? "mb-1 block" : "sr-only")}
-        htmlFor={id}
-      >
-        <Text as="span" weight="medium" size="xs" intent="secondary">
-          {label}
-        </Text>
-      </label>
+    return (
+      <div className={`relative h-max ${fullWidth ? "w-full" : ""}`}>
+        <label
+          className={clsx(showLabel ? "mb-1 block" : "sr-only")}
+          htmlFor={id}
+        >
+          <Text as="span" weight="medium" size="xs" intent="secondary">
+            {label}
+          </Text>
+        </label>
 
-      {Icon && (
-        <Icon className="absolute w-5 h-5 -translate-y-1/2 pointer-events-none top-1/2 left-3 opacity-40 text-foreground" />
-      )}
+        <div className="relative">
+          <input
+            {...rest}
+            type={type}
+            placeholder={placeholder ?? label}
+            disabled={disabled}
+            title={disabled ? "This field is disabled" : undefined}
+            id={id}
+            ref={ref}
+            className={input({
+              size,
+              disabled,
+              error: !!error,
+              fullWidth,
+              className: clsx(
+                {
+                  "pl-10": Icon,
+                  "pl-3": !Icon,
+                },
+                className
+              ),
+            })}
+          />
 
-      <input
-        {...rest}
-        type={type}
-        placeholder={placeholder ?? label}
-        disabled={disabled}
-        title={disabled ? "This field is disabled" : undefined}
-        id={id}
-        className={input({
-          size,
-          disabled,
-          error: !!error,
-          fullWidth,
-          className: clsx(
-            {
-              "pl-10": Icon,
-              "pl-3": !Icon,
-            },
-            className
-          ),
-        })}
-      />
+          {Icon && (
+            <Icon
+              className={clsx(
+                "absolute w-5 h-5 pointer-events-none top-1/2 -translate-y-1/2 left-3 opacity-40",
+                error ? "text-error" : "text-foreground transition"
+              )}
+            />
+          )}
+        </div>
 
-      {error && <FieldError error={error} />}
-    </div>
-  )
-}
+        {error && <FieldError error={error} />}
+      </div>
+    )
+  }
+)
+
+Input.displayName = "Input"
 
 export const FieldError = ({ error, mr }: { error: string; mr?: boolean }) => (
   <div className="flex items-center mt-1 text-error gap-x-1">

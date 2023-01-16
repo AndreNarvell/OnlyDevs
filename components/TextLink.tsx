@@ -3,9 +3,9 @@ import Link from "next/link"
 import { ComponentProps, FC } from "react"
 import { text } from "./Text"
 
-interface Props extends VariantProps<typeof text>, ComponentProps<typeof Link> {
-  href: string
-}
+interface Props
+  extends VariantProps<typeof text>,
+    ComponentProps<typeof Link> {}
 
 export const TextLink: FC<Props> = ({
   className,

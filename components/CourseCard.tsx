@@ -46,7 +46,12 @@ export const CourseCard: FC<Props> = ({
               alt={`Icon for ${title}`}
               className="flex-grow-0 flex-shrink-0 rounded-full"
             />
-            <Text intent="primary" weight="bold" as="h3">
+            <Text
+              intent="primary"
+              weight="bold"
+              as="h3"
+              className="line-clamp-2"
+            >
               {title}
             </Text>
           </div>

@@ -7,9 +7,15 @@ interface Props {
   title: ReactNode
   courses: Course[]
   showImage?: boolean
+  limit?: number
 }
 
-export const CourseContainer: FC<Props> = ({ title, courses, showImage }) => {
+export const CourseContainer: FC<Props> = ({
+  title,
+  courses,
+  showImage,
+  limit,
+}) => {
   return (
     <>
       {typeof title === "string" ? (
@@ -29,8 +35,8 @@ export const CourseContainer: FC<Props> = ({ title, courses, showImage }) => {
       )}
 
       <section className="mb-8">
-        <div className="flex px-6 pb-6 overflow-x-scroll md:overflow-x-auto gap-x-6">
-          {courses.map(course => (
+        <div className="flex gap-6 px-6 pb-6 overflow-x-scroll xl:flex-wrap xl:overflow-x-auto">
+          {courses.slice(0, limit).map(course => (
             <CourseCard
               backgroundImage={showImage ? course.background_image : undefined}
               icon={course.icon}

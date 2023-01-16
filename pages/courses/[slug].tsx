@@ -6,23 +6,21 @@ import { Button } from "../../components/Button"
 import Image from "next/image"
 import { getCourseDetailsBySlug } from "../../models/courses"
 import { Course } from "../../types/Course"
-import { getProfileById } from "../../models/profile"
-import { Profile } from "../../types/Profile"
 import { CourseSection } from "../../features/CourseDetails/components/CourseSection"
 import { formatPrice } from "../../utils/formatPrice"
+import { Teacher } from "../../types/Teacher"
+import { getTeacherById } from "../../models/teacher"
+import { Instructor } from "../../features/CourseDetails/components/Instructor"
 
 interface Props {
   course: Course
-  creator: Profile
+  teacher: Teacher
 }
 
-const CourseDetailsPage: NextPage<Props> = ({ course, creator }) => {
-  console.log(course)
-  console.log(creator)
-
+const CourseDetailsPage: NextPage<Props> = ({ course, teacher }) => {
   return (
     <Layout background="accents-1">
-      <div className="px-6 pt-8 border-b border-accents-2">
+      <div className="px-6 pt-8 pb-8 border-b border-accents-2">
         <TextLink href="/courses" intent="secondary" className="mb-8 max-w-max">
           ← Back to Course catalog
         </TextLink>
@@ -42,46 +40,73 @@ const CourseDetailsPage: NextPage<Props> = ({ course, creator }) => {
             </Text>
 
             <Text as="p" intent="secondary">
-              By {creator.name}
+              By {teacher.profiles?.name}
             </Text>
 
-            <Text as="p" className="hidden md:block">
-              {course.short_desc} Lorem ipsum dolor sit amet, consectetur
-              adipisicing elit. Eum alias unde consequuntur eveniet eius
-              tempora, voluptatem dolorem nostrum accusantium ex nobis corporis
-              quam quasi officia sequi accusamus, saepe molestias blanditiis.
+            <Text as="p" className="hidden mb-6 md:block">
+              {course.short_desc}
             </Text>
           </div>
         </div>
 
-        <Text as="p" className="block md:hidden">
-          {course.short_desc} Lorem ipsum dolor sit amet, consectetur
-          adipisicing elit. Eum alias unde consequuntur eveniet eius tempora,
-          voluptatem dolorem nostrum accusantium ex nobis corporis quam quasi
-          officia sequi accusamus, saepe molestias blanditiis.
+        <Text as="p" className="block mb-6 md:hidden">
+          {course.short_desc}
         </Text>
-        <Button intent="primary" size="large" fullWidth={true}>
+
+        <div className="flex mb-2 gap-x-2">
+          <Button size="large" fullWidth={true}>
+            Add to cart
+          </Button>
+
+          <Button
+            intent="secondary"
+            size="large"
+            aria-label="Like this course"
+            svgOnly
+          >
+            ❤️
+          </Button>
+        </div>
+
+        <Button
+          intent="secondary"
+          size="large"
+          fullWidth={true}
+          className="text-secondary hover:text-foreground"
+        >
           Buy now for {formatPrice(course.price)}
         </Button>
-        <Button intent="secondary" size="large" fullWidth={true}>
-          Add to cart
-        </Button>
-        <Button aria-label="Like this course" svgOnly>
-          ❤️
-        </Button>
       </div>
-      <article>
+
+      <article className="px-6 pt-8">
         <CourseSection title="Details">
-          <Text as="p">{course.description}</Text>
+          <Text as="p" className="text-accents-6" tracking="wide">
+            {course.description}
+          </Text>
         </CourseSection>
+
         <CourseSection title="This course includes">
-          <Text as="p">Här ska va en lista hihi</Text>
+          {/* <Text as="p">{course.includes}</Text> */}
+
+          <ul className="list-disc list-inside text-accents-6">
+            {course.includes?.map(include => (
+              <li key={include}>{include}</li>
+            ))}
+          </ul>
         </CourseSection>
+
         <CourseSection title="Requirements">
-          <Text as="p">Här ska va en lista hihi</Text>
+          {/* <Text as="p">{course.requirements}</Text> */}
+
+          <ul className="list-disc list-inside text-accents-6">
+            {course.requirements?.map(requirement => (
+              <li key={requirement}>{requirement}</li>
+            ))}
+          </ul>
         </CourseSection>
+
         <CourseSection title="Instructor">
-          <Text as="p"></Text>
+          <Instructor teacher={teacher} />
         </CourseSection>
       </article>
     </Layout>
@@ -105,15 +130,17 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   const { data: course, error } = await getCourseDetailsBySlug(slug)
   if (error) throw error
 
-  const { data: profile, error: profileError } = await getProfileById(
-    course.creator
-  )
-  if (profileError) throw profileError
+  const teacher = await getTeacherById(course.creator)
+  if (!teacher) throw new Error("Teacher not found")
+
+  if (Array.isArray(teacher.profiles) || teacher.profiles === null) {
+    throw new Error("Expected teacher to have one profile")
+  }
 
   return {
     props: {
       course,
-      creator: profile,
+      teacher: teacher as Teacher,
     },
   }
 }
