@@ -25,89 +25,98 @@ const CourseDetailsPage: NextPage<Props> = ({ course, teacher }) => {
           ← Back to Course catalog
         </TextLink>
 
-        <div className="flex items-center mb-4 gap-x-5">
-          <Image
-            width={70}
-            height={70}
-            src={course.icon}
-            alt={`Icon for ${course.title}`}
-            className="flex-grow-0 flex-shrink-0 w-16 h-16 rounded-full aspect-square"
-          />
+        <div className="justify-between w-full lg:flex">
+          <div className="flex items-center mb-6 gap-x-5">
+            <Image
+              width={128}
+              height={128}
+              src={course.icon}
+              alt={`Icon for ${course.title}`}
+              className="flex-grow-0 flex-shrink-0 w-16 h-16 rounded-full md:w-32 md:h-32 aspect-square"
+            />
 
-          <div>
-            <Text as="h1" size="2xl">
-              {course.title}
-            </Text>
+            <div>
+              <Text as="h1" size="2xl" weight="extrabold" className="max-w-md">
+                {course.title}
+              </Text>
 
-            <Text as="p" intent="secondary">
-              By {teacher.profiles?.name}
-            </Text>
+              <Text as="p" intent="secondary">
+                By {teacher.profiles?.name}
+              </Text>
 
-            <Text as="p" className="hidden mb-6 md:block">
-              {course.short_desc}
-            </Text>
+              <Text as="p" className="hidden max-w-md md:block">
+                {course.short_desc}
+              </Text>
+            </div>
+          </div>
+
+          <Text as="p" className="block max-w-md mb-6 md:hidden">
+            {course.short_desc}
+          </Text>
+
+          <div className="lg:w-80">
+            <div className="flex mb-2 gap-x-2">
+              <Button size="large" fullWidth={true}>
+                Add to cart
+              </Button>
+
+              <Button
+                intent="secondary"
+                size="large"
+                aria-label="Like this course"
+                svgOnly
+              >
+                ❤️
+              </Button>
+            </div>
+
+            <Button
+              intent="secondary"
+              size="large"
+              fullWidth={true}
+              className="text-secondary hover:text-foreground"
+            >
+              Buy now for {formatPrice(course.price)}
+            </Button>
           </div>
         </div>
-
-        <Text as="p" className="block mb-6 md:hidden">
-          {course.short_desc}
-        </Text>
-
-        <div className="flex mb-2 gap-x-2">
-          <Button size="large" fullWidth={true}>
-            Add to cart
-          </Button>
-
-          <Button
-            intent="secondary"
-            size="large"
-            aria-label="Like this course"
-            svgOnly
-          >
-            ❤️
-          </Button>
-        </div>
-
-        <Button
-          intent="secondary"
-          size="large"
-          fullWidth={true}
-          className="text-secondary hover:text-foreground"
-        >
-          Buy now for {formatPrice(course.price)}
-        </Button>
       </div>
 
-      <article className="px-6 pt-8">
-        <CourseSection title="Details">
-          <Text as="p" className="text-accents-6" tracking="wide">
-            {course.description}
-          </Text>
-        </CourseSection>
+      <article className="grid-cols-5 px-6 pt-8 lg:grid gap-x-16">
+        <div className="col-span-3">
+          <CourseSection title="Details">
+            <Text
+              as="p"
+              className="text-accents-6"
+              leading="relaxed"
+              tracking="wide"
+            >
+              {course.description}
+            </Text>
+          </CourseSection>
 
-        <CourseSection title="This course includes">
-          {/* <Text as="p">{course.includes}</Text> */}
+          <CourseSection title="This course includes">
+            <ul className="list-disc list-inside text-accents-6">
+              {course.includes?.map(include => (
+                <li key={include}>{include}</li>
+              ))}
+            </ul>
+          </CourseSection>
 
-          <ul className="list-disc list-inside text-accents-6">
-            {course.includes?.map(include => (
-              <li key={include}>{include}</li>
-            ))}
-          </ul>
-        </CourseSection>
+          <CourseSection title="Requirements">
+            <ul className="list-disc list-inside text-accents-6">
+              {course.requirements?.map(requirement => (
+                <li key={requirement}>{requirement}</li>
+              ))}
+            </ul>
+          </CourseSection>
+        </div>
 
-        <CourseSection title="Requirements">
-          {/* <Text as="p">{course.requirements}</Text> */}
-
-          <ul className="list-disc list-inside text-accents-6">
-            {course.requirements?.map(requirement => (
-              <li key={requirement}>{requirement}</li>
-            ))}
-          </ul>
-        </CourseSection>
-
-        <CourseSection title="Instructor">
-          <Instructor teacher={teacher} />
-        </CourseSection>
+        <div className="col-span-2">
+          <CourseSection title="Instructor">
+            <Instructor teacher={teacher} />
+          </CourseSection>
+        </div>
       </article>
     </Layout>
   )

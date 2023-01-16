@@ -49,6 +49,7 @@ interface Props
   icon?: IconComponent
   value?: string
   readOnly?: boolean
+  labelClassName?: string
 }
 
 export const Input = forwardRef<HTMLInputElement, Props>(
@@ -65,6 +66,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
       fullWidth,
       className,
       icon,
+      labelClassName,
       ...rest
     },
     ref
@@ -77,7 +79,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
           className={clsx(showLabel ? "mb-1 block" : "sr-only")}
           htmlFor={id}
         >
-          <Text as="span" weight="medium" size="xs" intent="secondary">
+          <Text as="span" weight="medium" size="xs" intent="primary">
             {label}
           </Text>
         </label>

@@ -1,8 +1,12 @@
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs"
+import { SessionContextProvider, Session } from "@supabase/auth-helpers-react"
+import { useState } from "react"
 import "../styles/globals.scss"
 import type { AppProps } from "next/app"
 import { Plus_Jakarta_Sans } from "@next/font/google"
 import Head from "next/head"
 import { Meta } from "../components/Meta"
+import { Database } from "../types/supabase"
 
 export const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -10,7 +14,16 @@ export const plusJakartaSans = Plus_Jakarta_Sans({
   style: "normal",
 })
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({
+  Component,
+  pageProps,
+}: AppProps<{
+  initialSession: Session
+}>) {
+  const [supabaseClient] = useState(() =>
+    createBrowserSupabaseClient<Database>()
+  )
+
   return (
     <>
       <Head>
@@ -29,7 +42,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Meta />
 
       <div className={plusJakartaSans.className}>
-        <Component {...pageProps} />
+        <SessionContextProvider
+          supabaseClient={supabaseClient}
+          initialSession={pageProps.initialSession}
+        >
+          <Component {...pageProps} />
+        </SessionContextProvider>
       </div>
     </>
   )
