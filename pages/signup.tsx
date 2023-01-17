@@ -3,21 +3,42 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "../components/Button"
+import { Checkbox } from "../components/Checkbox"
 import { Input } from "../components/Input"
 import { Layout } from "../components/layouts/Layout"
 import { Logo } from "../components/Logo"
+import { Text } from "../components/Text"
 import { Database } from "../types/supabase"
 
-const signUpForm = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  password: z.string().min(8),
-  repeatPassword: z.string().min(8),
-})
+const signUpForm = z
+  .object({
+    name: z.string().min(2),
+    email: z.string().email(),
+    password: z.string().min(8),
+    confirmPassword: z.string(),
+    acceptTerms: z.boolean().refine(value => value, {
+      message: "You must accept the terms and conditions",
+    }),
+  })
+  .refine(
+    values => {
+      if (!values.password || !values.confirmPassword) {
+        return false
+      }
+      if (values.password !== values.confirmPassword) {
+        return false
+      }
+      return true
+    },
+    {
+      message: "Passwords don't match",
+      path: ["confirmPassword"],
+    }
+  )
 
 type SignUpForm = z.infer<typeof signUpForm>
 
-const SigninPage = () => {
+const SignupPage = () => {
   const {
     register,
     handleSubmit,
@@ -28,13 +49,24 @@ const SigninPage = () => {
       name: "",
       email: "",
       password: "",
-      repeatPassword: "",
+      confirmPassword: "",
+      acceptTerms: false,
     },
   })
 
-  const onSubmit = (data: SignUpForm) => {
-    console.log(data)
-    console.log(errors)
+  const { auth } = useSupabaseClient<Database>()
+
+  const onSubmit = async (values: SignUpForm) => {
+    await auth.signUp({
+      email: values.email,
+      password: values.password,
+
+      options: {
+        data: {
+          name: values.name,
+        },
+      },
+    })
   }
 
   return (
@@ -46,12 +78,17 @@ const SigninPage = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col w-1/2 gap-4 p-12 border bg-accents-1 border-accents-2 rounded-marketing"
         >
+          <Text as="h1" size="2xl" weight="bold" align="center">
+            Sign up
+          </Text>
+
           <Input
             size="large"
             label="Full name"
             fullWidth
             showLabel
             error={errors.name?.message}
+            id="name"
             {...register("name")}
           />
           <Input
@@ -60,6 +97,7 @@ const SigninPage = () => {
             fullWidth
             showLabel
             error={errors.email?.message}
+            id="email"
             {...register("email")}
           />
 
@@ -69,18 +107,38 @@ const SigninPage = () => {
             fullWidth
             showLabel
             error={errors.password?.message}
+            id="password"
             {...register("password")}
           />
           <Input
             size="large"
-            label="Repeat password"
+            label="Confirm password"
             fullWidth
             showLabel
-            error={errors.repeatPassword?.message}
-            {...register("repeatPassword")}
+            error={errors.confirmPassword?.message}
+            id="confirmPassword"
+            {...register("confirmPassword")}
+          />
+
+          <Checkbox
+            label="I agree to the terms of service"
+            id="acceptTerms"
+            error={errors.acceptTerms?.message}
+            {...register("acceptTerms")}
+            className="my-2"
           />
 
           <Button size="large">Sign up</Button>
+
+          <div className="flex items-center">
+            <div className="w-full h-px bg-accents-2" />
+
+            <Text as="p" className="flex-shrink-0 px-4">
+              Or
+            </Text>
+
+            <div className="w-full h-px bg-accents-2" />
+          </div>
 
           <GoogleButton />
         </form>
@@ -89,7 +147,7 @@ const SigninPage = () => {
   )
 }
 
-export default SigninPage
+export default SignupPage
 
 const GoogleButton = () => {
   const { auth } = useSupabaseClient<Database>()
@@ -99,7 +157,7 @@ const GoogleButton = () => {
   }
 
   return (
-    <Button onClick={handleClick} size="large" intent="secondary">
+    <Button onClick={handleClick} size="large" intent="secondary" type="button">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
@@ -123,6 +181,7 @@ const GoogleButton = () => {
         />
         <path d="M1 1h22v22H1z" fill="none" />
       </svg>
+      Sign up with Google
     </Button>
   )
 }

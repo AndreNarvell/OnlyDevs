@@ -6,7 +6,7 @@ import { Text } from "./Text"
 
 const checkbox = cva(
   [
-    "peer shadow-sm relative w-4 h-4 cursor-pointer scroll-mt-input appearance-none items-center justify-center rounded-[3px] ml-0.5 transition-[border]",
+    "peer shadow-sm relative w-4 h-4 cursor-pointer scroll-mt-input appearance-none items-center justify-center rounded-[3px] ml-0.5 transition-[border] flex-shrink-0 flex-grow-0",
     "bg-transparent active:bg-foreground/20 checked:bg-foreground checked:active:bg-foreground",
     "border hover:border-foreground checked:border-foreground disabled:border-error",
   ],
@@ -45,9 +45,9 @@ interface Props
 }
 
 export const Checkbox: FC<Props> = forwardRef<HTMLInputElement, Props>(
-  ({ label, id, disabled, error, ...rest }, ref) => {
+  ({ label, id, disabled, error, className, ...rest }, ref) => {
     return (
-      <div>
+      <div className={className}>
         <div className="flex items-center">
           <input
             type="checkbox"

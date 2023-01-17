@@ -146,6 +146,7 @@ const buttonIcon = cva("", {
 
 interface IconButton {
   icon?: IconComponent
+  type?: "button" | "submit" | "reset"
 }
 
 /**
@@ -175,7 +176,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <button
-        {...rest}
         ref={ref}
         className={button({
           intent,
@@ -186,6 +186,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           svgOnly: svgOnly || (!children && !!icon),
           className,
         })}
+        {...rest}
       >
         {Icon && <Icon className={buttonIcon({ size })} />}
         {children}
