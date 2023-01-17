@@ -36,7 +36,7 @@ export const HeroText = () => {
         <KeywordSlider rows={3} tagsPerRow={10} />
       </div>
 
-      <ButtonLink href="/signup" size="large" className="w-full" fullWidth>
+      <ButtonLink href="/auth/signup" size="large" className="w-full" fullWidth>
         Sign up for free
       </ButtonLink>
       <ButtonLink

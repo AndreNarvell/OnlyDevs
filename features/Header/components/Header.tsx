@@ -1,11 +1,14 @@
 import { Fragment } from "react"
 import { Popover, Transition } from "@headlessui/react"
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
-import { Button, ButtonLink } from "./Button"
-import { Logo } from "./Logo"
+import { Button, ButtonLink } from "../../../components/Button"
+import { Logo } from "../../../components/Logo"
 import Link from "next/link"
-import { TextLink } from "./TextLink"
-import { Text } from "./Text"
+import { TextLink } from "../../../components/TextLink"
+import { Text } from "../../../components/Text"
+import { useSession } from "@supabase/auth-helpers-react"
+import { UserMenu } from "./UserMenu"
+import { ShoppingCart } from "./ShoppingCart"
 
 const links = [
   {
@@ -19,6 +22,9 @@ const links = [
 ]
 
 export function Header() {
+  const session = useSession()
+  const user = session?.user
+
   return (
     <Popover>
       <div className="h-16" />
@@ -45,13 +51,23 @@ export function Header() {
               ))}
             </nav>
 
-            <div className="items-center justify-end hidden md:flex md:flex-1 lg:w-0">
-              <ButtonLink href="/signin" intent="secondary">
-                Sign in
-              </ButtonLink>
-              <ButtonLink href="/signup" className="ml-4">
-                Sign up
-              </ButtonLink>
+            <div className="items-center justify-end hidden gap-x-2 md:flex md:flex-1 lg:w-0">
+              {user ? (
+                <>
+                  <ShoppingCart />
+                  <UserMenu />
+                </>
+              ) : (
+                <>
+                  <ButtonLink href="/auth/signin" intent="secondary">
+                    Sign in
+                  </ButtonLink>
+
+                  <ButtonLink href="/auth/signup" className="ml-4">
+                    Sign up
+                  </ButtonLink>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -104,13 +120,13 @@ export function Header() {
             </div>
 
             <div className="px-5 py-6 space-y-6">
-              <ButtonLink fullWidth href="/signup">
+              <ButtonLink fullWidth href="/auth/signup">
                 Sign up
               </ButtonLink>
 
               <Text as="span" weight="medium" align="center" className="mt-6">
                 Existing customer?{" "}
-                <TextLink intent="success" display="inline" href="/signin">
+                <TextLink intent="success" display="inline" href="/auth/signin">
                   Sign in
                 </TextLink>
               </Text>

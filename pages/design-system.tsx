@@ -202,6 +202,7 @@ const DesignSystemPage = () => {
             id="checkbox-3"
             label="Accept terms and conditions?"
             error="This field is required"
+            required
           />
         </div>
       </Section>
