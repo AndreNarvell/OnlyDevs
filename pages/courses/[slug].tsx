@@ -2,7 +2,7 @@ import { GetServerSideProps, NextPage } from "next"
 import { Layout } from "../../components/layouts/Layout"
 import { TextLink } from "../../components/TextLink"
 import { Text } from "../../components/Text"
-import { Button } from "../../components/Button"
+import { Button, ButtonLink } from "../../components/Button"
 import Image from "next/image"
 import { getCourseDetailsBySlug } from "../../models/courses"
 import { Course } from "../../types/Course"
@@ -11,6 +11,8 @@ import { formatPrice } from "../../utils/formatPrice"
 import { Teacher } from "../../types/Teacher"
 import { getTeacherById } from "../../models/teacher"
 import { Instructor } from "../../features/CourseDetails/components/Instructor"
+import { useShoppingCart } from "../../stores/shoppingCart"
+import { useGlobalState } from "../../stores/globalState"
 
 interface Props {
   course: Course
@@ -18,6 +20,11 @@ interface Props {
 }
 
 const CourseDetailsPage: NextPage<Props> = ({ course, teacher }) => {
+  const addToCart = useShoppingCart(state => state.addToCart)
+  const shoppingCartButtonRef = useGlobalState(
+    state => state.shoppingCartButtonRef
+  )
+
   return (
     <Layout background="accents-1">
       <div className="px-6 pt-8 pb-8 border-b border-accents-2">
@@ -56,7 +63,14 @@ const CourseDetailsPage: NextPage<Props> = ({ course, teacher }) => {
 
           <div className="lg:w-80">
             <div className="flex mb-2 gap-x-2">
-              <Button size="large" fullWidth={true}>
+              <Button
+                onClick={() => {
+                  addToCart(course.id)
+                  shoppingCartButtonRef?.current?.click()
+                }}
+                size="large"
+                fullWidth={true}
+              >
                 Add to cart
               </Button>
 
@@ -70,14 +84,15 @@ const CourseDetailsPage: NextPage<Props> = ({ course, teacher }) => {
               </Button>
             </div>
 
-            <Button
+            <ButtonLink
+              href="/checkout"
               intent="secondary"
               size="large"
               fullWidth={true}
               className="text-secondary hover:text-foreground"
             >
               Buy now for {formatPrice(course.price)}
-            </Button>
+            </ButtonLink>
           </div>
         </div>
       </div>

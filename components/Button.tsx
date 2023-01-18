@@ -201,7 +201,9 @@ Button.displayName = "Button"
  */
 type ButtonLinkProps = VariantProps<typeof button> &
   ComponentProps<typeof Link> &
-  IconButton
+  IconButton & {
+    openInNewTab?: boolean
+  }
 
 export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
   (
@@ -214,6 +216,7 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
       icon,
       children,
       className,
+      openInNewTab,
       ...rest
     },
     ref
@@ -222,8 +225,9 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
 
     return (
       <Link
-        {...rest}
         ref={ref}
+        target={openInNewTab ? "_blank" : undefined}
+        rel={openInNewTab ? "noopener noreferrer" : undefined}
         className={button({
           intent,
           size,
@@ -233,6 +237,7 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
           svgOnly: !children && !!icon,
           className,
         })}
+        {...rest}
       >
         {Icon && <Icon className={buttonIcon({ size })} />}
         {children}

@@ -11,6 +11,9 @@ import { Text } from "../../components/Text"
 import { GithubButton } from "../../features/AuthPages/components/GithubButton"
 import { GoogleButton } from "../../features/AuthPages/components/GoogleButton"
 import { Database } from "../../types/supabase"
+import Balancer from "react-wrap-balancer"
+import { GmailButton } from "../../features/AuthPages/components/GmailButton"
+import { OutlookButton } from "../../features/AuthPages/components/OutlookButton"
 
 const signUpForm = z
   .object({
@@ -44,7 +47,7 @@ const SignupPage = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitSuccessful },
   } = useForm<SignUpForm>({
     resolver: zodResolver(signUpForm),
     defaultValues: {
@@ -61,23 +64,24 @@ const SignupPage = () => {
   const { auth } = useSupabaseClient<Database>()
 
   const onSubmit = async (values: SignUpForm) => {
-    try {
-      await auth.signUp({
-        email: values.email,
-        password: values.password,
+    const { data, error } = await auth.signUp({
+      email: values.email,
 
-        options: {
-          data: {
-            name: values.name,
-          },
+      password: values.password,
+
+      options: {
+        data: {
+          name: values.name,
         },
-      })
+      },
+    })
 
-      router.push("/dashboard")
-    } catch (error) {
-      console.log(error)
+    if (error) {
+      throw console.log(error)
     }
   }
+
+  // const [showMessage, setShowMessage] = useState(false)
 
   return (
     <AuthLayout>
@@ -85,73 +89,107 @@ const SignupPage = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="relative z-20 flex flex-col gap-4 p-12 border bg-accents-1 border-accents-2 rounded-marketing"
       >
-        <Text as="h1" size="2xl" weight="bold" align="center" className="mb-4">
-          Sign up
-        </Text>
+        {!isSubmitSuccessful ? (
+          <>
+            <Text
+              as="h1"
+              size="2xl"
+              weight="bold"
+              align="center"
+              className="mb-4"
+            >
+              Sign up
+            </Text>
 
-        <GoogleButton label="Sign up with Google" />
-        <GithubButton label="Sign up with Github" />
+            <GoogleButton label="Sign up with Google" />
+            <GithubButton label="Sign up with Github" />
 
-        <div className="flex items-center">
-          <div className="w-full h-px bg-accents-2" />
+            <div className="flex items-center">
+              <div className="w-full h-px bg-accents-2" />
 
-          <Text as="p" className="flex-shrink-0 px-4">
-            Or
-          </Text>
+              <Text as="p" className="flex-shrink-0 px-4">
+                Or
+              </Text>
 
-          <div className="w-full h-px bg-accents-2" />
-        </div>
+              <div className="w-full h-px bg-accents-2" />
+            </div>
 
-        <Input
-          size="large"
-          label="Full name"
-          fullWidth
-          showLabel
-          error={errors.name?.message}
-          id="name"
-          {...register("name")}
-        />
-        <Input
-          size="large"
-          label="Email"
-          fullWidth
-          showLabel
-          error={errors.email?.message}
-          id="email"
-          {...register("email")}
-        />
+            <Input
+              size="large"
+              label="Full name"
+              fullWidth
+              showLabel
+              error={errors.name?.message}
+              id="name"
+              {...register("name")}
+            />
 
-        <Input
-          size="large"
-          label="Password"
-          fullWidth
-          showLabel
-          type="password"
-          error={errors.password?.message}
-          id="password"
-          {...register("password")}
-        />
-        <Input
-          size="large"
-          label="Confirm password"
-          fullWidth
-          showLabel
-          type="password"
-          error={errors.confirmPassword?.message}
-          id="confirmPassword"
-          {...register("confirmPassword")}
-        />
+            <Input
+              size="large"
+              label="Email"
+              fullWidth
+              showLabel
+              error={errors.email?.message}
+              id="email"
+              {...register("email")}
+            />
 
-        <Checkbox
-          required
-          label="I agree to the terms of service"
-          id="acceptTerms"
-          error={errors.acceptTerms?.message}
-          {...register("acceptTerms")}
-          className="my-2"
-        />
+            <Input
+              size="large"
+              label="Password"
+              fullWidth
+              showLabel
+              type="password"
+              error={errors.password?.message}
+              id="password"
+              {...register("password")}
+            />
+            <Input
+              size="large"
+              label="Confirm password"
+              fullWidth
+              showLabel
+              type="password"
+              error={errors.confirmPassword?.message}
+              id="confirmPassword"
+              {...register("confirmPassword")}
+            />
 
-        <Button size="large">Sign up</Button>
+            <Checkbox
+              required
+              label="I agree to the terms of service"
+              id="acceptTerms"
+              error={errors.acceptTerms?.message}
+              {...register("acceptTerms")}
+              className="my-2"
+            />
+
+            <Button size="large">Sign up</Button>
+          </>
+        ) : (
+          <>
+            <Balancer className="mx-auto">
+              <Text
+                as="h1"
+                align="center"
+                intent="primary"
+                size="xl"
+                className="mb-4"
+              >
+                A verification link has been sent to your email!
+              </Text>
+            </Balancer>
+
+            <Text as="p" align="center" intent="secondary" className="mb-4">
+              Don&lsquo;t forget to check your spam folder
+            </Text>
+
+            <div className="flex flex-col gap-2">
+              <GmailButton />
+              <OutlookButton />
+            </div>
+          </>
+        )}
       </form>
     </AuthLayout>
   )

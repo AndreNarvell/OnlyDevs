@@ -63,9 +63,7 @@ export function Header() {
                     Sign in
                   </ButtonLink>
 
-                  <ButtonLink href="/auth/signup" className="ml-4">
-                    Sign up
-                  </ButtonLink>
+                  <ButtonLink href="/auth/signup">Sign up</ButtonLink>
                 </>
               )}
             </div>

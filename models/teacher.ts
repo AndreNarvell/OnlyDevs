@@ -5,7 +5,7 @@ import { serverSideSupabase, supabase } from "../lib/supabase"
  */
 export const getTeacherById = async (id: string) => {
   const [teacher, numberOfCourses, numberOfStudents] = await Promise.all([
-    serverSideSupabase
+    serverSideSupabase()
       .from("teachers")
       .select(`*, profiles (name, picture)`)
       .eq("id", id)

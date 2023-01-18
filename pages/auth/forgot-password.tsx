@@ -9,6 +9,9 @@ import { AuthLayout } from "../../components/layouts/AuthLayout"
 import { Text } from "../../components/Text"
 import { siteUrl } from "../../constants/siteUrl"
 import { Database } from "../../types/supabase"
+import Balancer from "react-wrap-balancer"
+import { GmailButton } from "../../features/AuthPages/components/GmailButton"
+import { OutlookButton } from "../../features/AuthPages/components/OutlookButton"
 
 const signUpForm = z.object({
   email: z.string().email(),
@@ -48,7 +51,7 @@ const SigninPage = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="relative z-20 flex flex-col gap-4 p-12 border bg-accents-1 border-accents-2 rounded-marketing"
       >
-        {!showText && (
+        {!showText ? (
           <>
             <Text as="h1" size="2xl" weight="bold" align="center">
               Forgot password
@@ -66,22 +69,29 @@ const SigninPage = () => {
 
             <Button size="large">Send recovery link</Button>
           </>
-        )}
-
-        {showText && (
+        ) : (
           <>
-            <Text
-              as="h1"
-              align="center"
-              intent="primary"
-              size="xl"
-              className="mb-4"
-            >
-              A reset link has been sent to your email!
-            </Text>
+            <Balancer className="mx-auto">
+              <Text
+                as="h1"
+                align="center"
+                intent="primary"
+                size="xl"
+                className="mb-4"
+              >
+                If the provided email address exists in our database, a reset
+                link has been sent to your email.
+              </Text>
+            </Balancer>
+
             <Text as="p" align="center" intent="secondary" className="mb-4">
               Don&lsquo;t forget to check your spam folder
             </Text>
+
+            <div className="flex flex-col gap-2">
+              <GmailButton />
+              <OutlookButton />
+            </div>
           </>
         )}
       </form>

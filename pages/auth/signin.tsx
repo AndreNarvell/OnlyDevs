@@ -24,7 +24,6 @@ const SigninPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm<SignUpForm>({
     resolver: zodResolver(signUpForm),
     defaultValues: {
@@ -38,15 +37,18 @@ const SigninPage = () => {
   const { auth } = useSupabaseClient<Database>()
 
   const onSubmit = async (values: SignUpForm) => {
-    try {
-      await auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      })
-      router.push("/dashboard")
-    } catch (error) {
-      console.log(error)
+    const { data, error } = await auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    })
+
+    if (error) {
+      throw console.log(error)
     }
+
+    console.log("Signed in")
+
+    router.push("/dashboard")
   }
 
   return (

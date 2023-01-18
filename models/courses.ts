@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabase"
+import { Course } from "../types/Course"
 import { Database } from "../types/supabase"
 
 /**
@@ -108,3 +109,21 @@ export type CategoryWithCourses =
   Database["public"]["Tables"]["categories"]["Row"] & {
     courses: Database["public"]["Tables"]["courses"]["Row"][]
   }
+
+/**
+ * Fetch all courses in the shopping cart
+ */
+export const getCoursesInCart = async (
+  cartItems: string[]
+): Promise<Course[]> => {
+  const { data } = await supabase
+    .from("courses")
+    .select("*")
+    .in("id", cartItems)
+
+  if (data) {
+    return data
+  }
+
+  return []
+}
