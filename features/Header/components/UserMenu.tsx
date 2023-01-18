@@ -27,7 +27,7 @@ export const UserMenu = () => {
       }
     >
       <Text as="p" align="center" className="mt-6 mb-4">
-        Welcome, {user.user_metadata.name}!
+        {user.user_metadata.name}
       </Text>
 
       <BasicMenuDivider />

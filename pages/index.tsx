@@ -9,6 +9,8 @@ import { KeywordSlider } from "../features/IndexPage/KeywordSlider"
 import { getAllCategories } from "../models/categories"
 import { Course } from "../types/Course"
 import { Category } from "../types/Category"
+import { Text } from "../components/Text"
+import { useSession } from "@supabase/auth-helpers-react"
 
 interface Props {
   courses: Course[]
@@ -16,9 +18,23 @@ interface Props {
 }
 
 const Home: NextPage<Props> = ({ courses, categories }) => {
+  const session = useSession()
+  const user = session?.user
   return (
     <Layout>
       <div className="px-6">
+        {user && (
+          <Text
+            as="p"
+            align="center"
+            size="3xl"
+            weight="semibold"
+            tracking="wide"
+            className="mt-6"
+          >
+            Hi, {user.user_metadata.name}!
+          </Text>
+        )}
         <section className="grid grid-cols-1 mt-24 md:grid-cols-2 md:mb-32">
           <HeroText />
 

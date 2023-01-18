@@ -1,8 +1,12 @@
 import { Text } from "../../components/Text"
 import { ButtonLink } from "../../components/Button"
 import { KeywordSlider } from "./KeywordSlider"
+import { useSession } from "@supabase/auth-helpers-react"
 
 export const HeroText = () => {
+  const session = useSession()
+  const user = session?.user
+
   return (
     <div className="z-10 md:px-4 lg:px-16">
       <div className="px-4 md:mb-6">
@@ -35,10 +39,16 @@ export const HeroText = () => {
       <div className="mb-4 md:mb-0 md:hidden">
         <KeywordSlider rows={3} tagsPerRow={10} />
       </div>
-
-      <ButtonLink href="/auth/signup" size="large" className="w-full" fullWidth>
-        Sign up for free
-      </ButtonLink>
+      {!user && (
+        <ButtonLink
+          href="/auth/signup"
+          size="large"
+          className="w-full"
+          fullWidth
+        >
+          Sign up for free
+        </ButtonLink>
+      )}
       <ButtonLink
         href="/courses"
         intent="secondary"
