@@ -14,6 +14,8 @@ import { Database } from "../../types/supabase"
 import Balancer from "react-wrap-balancer"
 import { GmailButton } from "../../features/AuthPages/components/GmailButton"
 import { OutlookButton } from "../../features/AuthPages/components/OutlookButton"
+import { useEffect, useState } from "react"
+import { parseQuery } from "../../utils/parseQuery"
 
 const signUpForm = z
   .object({
@@ -44,10 +46,14 @@ const signUpForm = z
 type SignUpForm = z.infer<typeof signUpForm>
 
 const SignupPage = () => {
+  const { asPath } = useRouter()
+  const { auth } = useSupabaseClient<Database>()
+  const [error, setError] = useState("")
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors, isSubmitted },
   } = useForm<SignUpForm>({
     resolver: zodResolver(signUpForm),
     defaultValues: {
@@ -59,16 +65,10 @@ const SignupPage = () => {
     },
   })
 
-  const router = useRouter()
-
-  const { auth } = useSupabaseClient<Database>()
-
   const onSubmit = async (values: SignUpForm) => {
-    const { data, error } = await auth.signUp({
+    const { error } = await auth.signUp({
       email: values.email,
-
       password: values.password,
-
       options: {
         data: {
           name: values.name,
@@ -77,17 +77,27 @@ const SignupPage = () => {
     })
 
     if (error) {
-      throw console.log(error)
+      return setError(error.message)
     }
   }
 
-  // const [showMessage, setShowMessage] = useState(false)
+  useEffect(() => {
+    const query = parseQuery("/auth/signup#", asPath)
+    const errorMessage = query.get("error_description")
+
+    if (errorMessage) {
+      setError(errorMessage)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const isSubmitSuccessful = isSubmitted && !error
 
   return (
     <AuthLayout>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="relative z-20 flex flex-col gap-4 p-12 border bg-accents-1 border-accents-2 rounded-marketing"
+        className="relative z-20 flex flex-col gap-4 p-6 border md:p-12 bg-accents-1 border-accents-2 rounded-marketing"
       >
         {!isSubmitSuccessful ? (
           <>
@@ -165,6 +175,12 @@ const SignupPage = () => {
             />
 
             <Button size="large">Sign up</Button>
+
+            {error && (
+              <Text as="p" weight="medium" intent="error" align="center">
+                Error: {error}
+              </Text>
+            )}
           </>
         ) : (
           <>

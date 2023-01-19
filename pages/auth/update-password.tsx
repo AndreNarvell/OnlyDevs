@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
-import { useState } from "react"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "../../components/Button"
@@ -8,6 +9,7 @@ import { Input } from "../../components/Input"
 import { AuthLayout } from "../../components/layouts/AuthLayout"
 import { Text } from "../../components/Text"
 import { Database } from "../../types/supabase"
+import { parseQuery } from "../../utils/parseQuery"
 
 const signUpForm = z
   .object({
@@ -33,6 +35,10 @@ const signUpForm = z
 type SignUpForm = z.infer<typeof signUpForm>
 
 const SigninPage = () => {
+  const [error, setError] = useState("")
+  const router = useRouter()
+  const { auth } = useSupabaseClient<Database>()
+
   const {
     register,
     handleSubmit,
@@ -45,27 +51,33 @@ const SigninPage = () => {
     },
   })
 
-  const [error, setError] = useState("")
-
-  const { auth } = useSupabaseClient<Database>()
-
   const onSubmit = async (values: SignUpForm) => {
-    const { data, error } = await auth.updateUser({
+    const { error } = await auth.updateUser({
       password: values.password,
     })
 
     if (error) {
-      setError(error.message)
+      return setError(error.message)
     }
 
-    console.log(data, error)
+    router.push("/dashboard")
   }
+
+  useEffect(() => {
+    const query = parseQuery("/auth/update-password#", router.asPath)
+    const errorMessage = query.get("error_description")
+
+    if (errorMessage) {
+      setError(errorMessage)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <AuthLayout>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="relative z-20 flex flex-col gap-4 p-12 border bg-accents-1 border-accents-2 rounded-marketing"
+        className="relative z-20 flex flex-col gap-4 p-6 border md:p-12 bg-accents-1 border-accents-2 rounded-marketing"
       >
         <Text as="h1" size="2xl" weight="bold" align="center">
           Update password
@@ -99,6 +111,7 @@ const SigninPage = () => {
         />
 
         <Button size="large">Update</Button>
+
         {error && (
           <Text as="p" weight="medium" intent="error" align="center">
             Error: {error}

@@ -11,7 +11,7 @@ export const Layout: FC<Props> = ({ children, background = "background" }) => {
   return (
     <>
       <Header />
-      <div className={`bg-${background}`}>
+      <div className={`bg-${background} min-h-[80vh]`}>
         <main className={"container"}>{children}</main>
       </div>
       <Footer />

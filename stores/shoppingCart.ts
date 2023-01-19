@@ -1,6 +1,5 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { supabase } from "../lib/supabase"
 import { getCoursesInCart } from "../models/courses"
 import { Course } from "../types/Course"
 
@@ -34,7 +33,10 @@ export const useShoppingCart = create(
 
         if (courses) {
           set(prev => {
-            return { ...prev, enrichedCartItems: courses }
+            return {
+              ...prev,
+              enrichedCartItems: courses,
+            }
           })
         }
       },
@@ -44,7 +46,10 @@ export const useShoppingCart = create(
 
         if (courses) {
           set(prev => {
-            return { ...prev, enrichedCartItems: courses }
+            return {
+              ...prev,
+              enrichedCartItems: courses,
+            }
           })
         }
       },
@@ -53,6 +58,9 @@ export const useShoppingCart = create(
         set(prev => ({
           ...prev,
           cartItems: prev.cartItems.filter(item => item !== id),
+          enrichedCartItems: prev.enrichedCartItems.filter(
+            item => item.id !== id
+          ),
         }))
 
         const courses = await getCoursesInCart(get().cartItems)

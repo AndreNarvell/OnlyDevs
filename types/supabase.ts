@@ -78,25 +78,51 @@ export interface Database {
       }
       lectures: {
         Row: {
+          content_type: string | null
           created_at: string | null
           id: string
+          lecture_data: string | null
           section_id: string
           sort_order: number
           title: string
         }
         Insert: {
+          content_type?: string | null
           created_at?: string | null
           id?: string
+          lecture_data?: string | null
           section_id: string
           sort_order: number
           title: string
         }
         Update: {
+          content_type?: string | null
           created_at?: string | null
           id?: string
+          lecture_data?: string | null
           section_id?: string
           sort_order?: number
           title?: string
+        }
+      }
+      lectures_data: {
+        Row: {
+          article_data: Json | null
+          created_at: string | null
+          id: string
+          video_url: string | null
+        }
+        Insert: {
+          article_data?: Json | null
+          created_at?: string | null
+          id: string
+          video_url?: string | null
+        }
+        Update: {
+          article_data?: Json | null
+          created_at?: string | null
+          id?: string
+          video_url?: string | null
         }
       }
       profiles: {
@@ -105,24 +131,30 @@ export interface Database {
           created_at: string | null
           email: string | null
           id: string
-          name: string
+          name: string | null
+          owned_courses: string[] | null
           picture: string | null
+          stripe_customer: string | null
         }
         Insert: {
           cart?: string[] | null
           created_at?: string | null
           email?: string | null
-          id?: string
-          name: string
+          id: string
+          name?: string | null
+          owned_courses?: string[] | null
           picture?: string | null
+          stripe_customer?: string | null
         }
         Update: {
           cart?: string[] | null
           created_at?: string | null
           email?: string | null
           id?: string
-          name?: string
+          name?: string | null
+          owned_courses?: string[] | null
           picture?: string | null
+          stripe_customer?: string | null
         }
       }
       sections: {

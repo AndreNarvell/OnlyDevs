@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "../../components/Button"
@@ -11,6 +12,7 @@ import { TextLink } from "../../components/TextLink"
 import { GithubButton } from "../../features/AuthPages/components/GithubButton"
 import { GoogleButton } from "../../features/AuthPages/components/GoogleButton"
 import { Database } from "../../types/supabase"
+import { parseQuery } from "../../utils/parseQuery"
 
 const signUpForm = z.object({
   email: z.string().email(),
@@ -20,6 +22,10 @@ const signUpForm = z.object({
 type SignUpForm = z.infer<typeof signUpForm>
 
 const SigninPage = () => {
+  const [error, setError] = useState("")
+  const router = useRouter()
+  const { auth } = useSupabaseClient<Database>()
+
   const {
     register,
     handleSubmit,
@@ -32,30 +38,34 @@ const SigninPage = () => {
     },
   })
 
-  const router = useRouter()
-
-  const { auth } = useSupabaseClient<Database>()
-
   const onSubmit = async (values: SignUpForm) => {
-    const { data, error } = await auth.signInWithPassword({
+    const { error } = await auth.signInWithPassword({
       email: values.email,
       password: values.password,
     })
 
     if (error) {
-      throw console.log(error)
+      return setError(error.message)
     }
-
-    console.log("Signed in")
 
     router.push("/dashboard")
   }
 
+  useEffect(() => {
+    const query = parseQuery("/auth/signin#", router.asPath)
+    const errorMessage = query.get("error_description")
+
+    if (errorMessage) {
+      setError(errorMessage)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <AuthLayout>
       <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="relative z-20 flex flex-col gap-4 p-12 border bg-accents-1 border-accents-2 rounded-marketing"
+        onSubmit={handleSubmit(onSubmit, (errors, event) => {})}
+        className="relative z-20 flex flex-col gap-4 p-6 border md:p-12 bg-accents-1 border-accents-2 rounded-marketing"
       >
         <Text as="h1" size="2xl" weight="bold" align="center" className="mb-4">
           Sign in
@@ -97,6 +107,12 @@ const SigninPage = () => {
         />
 
         <Button size="large">Sign in</Button>
+
+        {error && (
+          <Text as="p" weight="medium" intent="error" align="center">
+            Error: {error}
+          </Text>
+        )}
 
         <TextLink
           intent="secondary"

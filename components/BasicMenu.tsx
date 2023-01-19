@@ -20,7 +20,7 @@ export const BasicMenu = ({ children, button }: Props) => {
         leaveFrom="opacity-100 scale-100"
         leaveTo="opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 flex flex-col w-64 p-2 border top-10 gap-y-2 border-accents-2 bg-accents-1 backdrop-blur-2xl rounded-base overflow-clip">
+        <Menu.Items className="absolute right-0 z-10 flex flex-col w-64 p-2 border top-10 gap-y-2 border-accents-2 bg-accents-1 backdrop-blur-2xl rounded-base">
           {children}
         </Menu.Items>
       </Transition>
