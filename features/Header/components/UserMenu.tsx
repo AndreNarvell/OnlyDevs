@@ -2,6 +2,7 @@ import { Menu } from "@headlessui/react"
 import {
   ArrowLeftOnRectangleIcon,
   BookOpenIcon,
+  HeartIcon,
   WrenchScrewdriverIcon,
 } from "@heroicons/react/24/outline"
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react"
@@ -42,6 +43,20 @@ export const UserMenu = () => {
             className={clsx("hover:bg-success/100", active && "bg-success/100")}
           >
             My courses
+          </ButtonLink>
+        )}
+      </Menu.Item>
+
+      <Menu.Item>
+        {({ active }) => (
+          <ButtonLink
+            href="/saved-courses"
+            variant="ghost"
+            align="left"
+            icon={HeartIcon}
+            className={clsx("hover:bg-success/100", active && "bg-success/100")}
+          >
+            Saved courses
           </ButtonLink>
         )}
       </Menu.Item>

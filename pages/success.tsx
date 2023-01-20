@@ -1,5 +1,6 @@
 import { GetServerSideProps, NextPage } from "next"
 import Stripe from "stripe"
+import { Button, ButtonLink } from "../components/Button"
 import { Layout } from "../components/layouts/Layout"
 import { Text } from "../components/Text"
 import { stripe } from "../lib/stripe"
@@ -16,16 +17,27 @@ const SuccessPage: NextPage<Props> = ({ lineItems }) => {
         You did it!
       </Text>
 
-      {lineItems.map(lineItem => (
-        <div key={lineItem.id}>
-          <Text as="h2" align="center" className="mt-16">
-            {lineItem.description}
-          </Text>
-          <Text as="h3" align="center">
-            {formatPrice(lineItem.amount_total)}
-          </Text>
-        </div>
-      ))}
+      <section className="mb-12">
+        {lineItems.map(lineItem => (
+          <div key={lineItem.id}>
+            <Text as="h2" align="center" className="mt-16">
+              {lineItem.description}
+            </Text>
+            <Text as="h3" align="center">
+              {formatPrice(lineItem.amount_total)}
+            </Text>
+          </div>
+        ))}
+      </section>
+
+      <ButtonLink
+        href="/dashboard"
+        size="large"
+        intent="success"
+        className="mx-auto w-max"
+      >
+        Go to my courses
+      </ButtonLink>
     </Layout>
   )
 }

@@ -1,9 +1,12 @@
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { NextApiHandler } from "next"
 import Stripe from "stripe"
 import { z } from "zod"
 import { siteUrl } from "../../constants/siteUrl"
 import { stripe } from "../../lib/stripe"
-import { supabase } from "../../lib/supabase"
+import { serverSideSupabase } from "../../lib/supabase"
+import { getProfileById } from "../../models/profile"
+import { Database } from "../../types/supabase"
 
 const checkoutSchema = z.object({
   cartItems: z.string().array(),
@@ -12,19 +15,49 @@ const checkoutSchema = z.object({
 const handler: NextApiHandler = async (req, res) => {
   const body = checkoutSchema.parse(req.body)
 
-  const { data, error } = await supabase
+  const supabase = createServerSupabaseClient<Database>({ req, res })
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  if (!session) {
+    return res.status(401).json({ error: "Not authenticated" })
+  }
+
+  const { data: profile, error: profileError } = await getProfileById(
+    session.user.id
+  )
+
+  if (profileError) {
+    console.log(profileError)
+    return res.status(400).json({ error: "Could not fetch profile" })
+  }
+
+  if (!profile) {
+    return res.status(500).json({ error: "No profile found" })
+  }
+
+  if (!profile.stripe_customer) {
+    return res
+      .status(400)
+      .json({ error: "No stripe customer found. Contact support." })
+  }
+
+  const { data: courses, error } = await supabase
     .from("courses")
     .select("*")
     .in("id", body.cartItems)
 
   if (error) {
-    return res.status(500).json({ error: "Could not fetch courses" })
+    return res.status(400).json({ error: "Could not fetch courses" })
   }
-  if (!data) {
+
+  if (!courses) {
     return res.status(500).json({ error: "Not courses returned" })
   }
 
-  const lineItems = data.map<Stripe.Checkout.SessionCreateParams.LineItem>(
+  const lineItems = courses.map<Stripe.Checkout.SessionCreateParams.LineItem>(
     course => ({
       price_data: {
         currency: "usd",
@@ -34,26 +67,33 @@ const handler: NextApiHandler = async (req, res) => {
           metadata: {
             course_id: course.id,
           },
+          description: course.short_desc,
         },
         unit_amount: course.price,
       },
       quantity: 1,
     })
   )
+  try {
+    const checkoutSession = await stripe.checkout.sessions.create({
+      success_url: `${siteUrl}/success?checkoutSessionId={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteUrl}/dashboard`,
+      line_items: lineItems,
+      mode: "payment",
+      payment_method_types: ["card"],
+      customer: profile.stripe_customer,
+    })
 
-  const session = await stripe.checkout.sessions.create({
-    success_url: `${siteUrl}/success?checkoutSessionId={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${siteUrl}/dashboard`,
-    line_items: lineItems,
-    mode: "payment",
-    payment_method_types: ["card"],
-  })
+    if (!checkoutSession.url) {
+      console.log(checkoutSession)
+      return res.status(500).json({ error: "Something went wrong" })
+    }
 
-  if (!session.url) {
-    return res.status(500).json({ error: "Something went wrong" })
+    res.json(checkoutSession.url)
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ error: "Internal server error" })
   }
-
-  res.json(session.url)
 }
 
 export default handler

@@ -5,14 +5,14 @@ import { useRouter } from "next/router"
 import { useEffect } from "react"
 import { DashboardLayout } from "../components/layouts/DashboardLayout"
 import { DashboardCourseGrid } from "../features/Dashboard/components/DashboardCourseGrid"
-import { getUsersOwnedCourses } from "../models/courses"
+import { getUsersSavedCourses } from "../models/courses"
 import { Course } from "../types/Course"
 
 interface Props {
-  ownedCourses: Course[]
+  savedCourses: Course[]
 }
 
-const DashboardPage: NextPage<Props> = ({ ownedCourses }) => {
+const SavedCoursesPage: NextPage<Props> = ({ savedCourses }) => {
   const session = useSession()
   const router = useRouter()
 
@@ -24,12 +24,12 @@ const DashboardPage: NextPage<Props> = ({ ownedCourses }) => {
 
   return (
     <DashboardLayout>
-      <DashboardCourseGrid courses={ownedCourses} />
+      <DashboardCourseGrid courses={savedCourses} />
     </DashboardLayout>
   )
 }
 
-export default DashboardPage
+export default SavedCoursesPage
 
 export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
   const supabase = createServerSupabaseClient(ctx)
@@ -46,13 +46,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
       },
     }
 
-  const ownedCourses = await getUsersOwnedCourses(session.user.id)
+  const savedCourses = await getUsersSavedCourses(session.user.id)
 
   return {
     props: {
       initialSession: session,
       user: session.user,
-      ownedCourses: ownedCourses ?? [],
+      savedCourses: savedCourses ?? [],
     },
   }
 }

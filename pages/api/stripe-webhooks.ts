@@ -51,28 +51,31 @@ const handler: NextApiHandler = async (req, res) => {
         throw new Error("Invalid session")
       }
 
-      const newCourses = session.line_items.data.map(item => {
-        if (
-          item.price === null ||
-          item.price.product === undefined ||
-          typeof item.price.product === "string" ||
-          item.price.product.deleted === true ||
-          item.price.product.metadata.course_id === undefined
-        ) {
-          console.log(
-            "item.price?.product.metadata.course_id:",
-            item.price?.product.metadata?.course_id
-          )
-          throw new Error("Invalid price object")
-        }
+      const newCourses = session.line_items.data
+        .map(item => {
+          if (
+            item.price === null ||
+            item.price.product === undefined ||
+            typeof item.price.product === "string" ||
+            item.price.product.deleted === true ||
+            item.price.product.metadata.course_id === undefined
+          ) {
+            return undefined
+            // throw new Error("Invalid price object")
+          }
 
-        return item.price.product.metadata.course_id
-      })
+          return item.price.product.metadata.course_id
+        })
+        .filter((item): item is string => item !== undefined)
 
-      serverSideSupabase()
+      const removeDuplicates = Array.from(
+        new Set([...ownedCourses, ...newCourses])
+      )
+
+      await serverSideSupabase()
         .from("profiles")
         .update({
-          owned_courses: [...ownedCourses, ...newCourses],
+          owned_courses: removeDuplicates,
         })
         .eq("stripe_customer", session.customer)
 

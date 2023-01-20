@@ -42,10 +42,6 @@ function MyApp({
     return () => clearInterval(interval)
   }, [refreshCourseData])
 
-  supabase.auth.onAuthStateChange((event, session) => {
-    console.log("Auth state changed", event, session)
-  })
-
   return (
     <>
       <Head>

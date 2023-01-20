@@ -13,7 +13,7 @@ export const goToCheckout = async () => {
   })
 
   if (!response.ok) {
-    throw new Error("Something went wrong")
+    throw new Error("Error while creating checkout session")
   }
 
   const url = await response.json()

@@ -4,6 +4,7 @@ import {
   ArrowLeftOnRectangleIcon,
   Bars3Icon,
   BookOpenIcon,
+  HeartIcon,
   WrenchScrewdriverIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline"
@@ -118,6 +119,14 @@ export function Header() {
                         icon={BookOpenIcon}
                       >
                         My courses
+                      </ButtonLink>
+
+                      <ButtonLink
+                        href="/saved-courses"
+                        variant="ghost"
+                        icon={HeartIcon}
+                      >
+                        Saved courses
                       </ButtonLink>
 
                       <ButtonLink

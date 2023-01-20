@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-types": "npx supabase gen types typescript --project-id fjtuvaikvjxuufpzuhxi --schema public > types/supabase.ts"
+    "generate-types": "npx supabase gen types typescript --project-id fjtuvaikvjxuufpzuhxi --schema public > types/supabase.ts",
+    "stripe:webhooks": "stripe listen --forward-to localhost:3000/api/stripe-webhooks",
+    "ngrok": "ngrok http 3000"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.7",

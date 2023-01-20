@@ -134,6 +134,7 @@ export interface Database {
           name: string | null
           owned_courses: string[] | null
           picture: string | null
+          saved_courses: string[] | null
           stripe_customer: string | null
         }
         Insert: {
@@ -144,6 +145,7 @@ export interface Database {
           name?: string | null
           owned_courses?: string[] | null
           picture?: string | null
+          saved_courses?: string[] | null
           stripe_customer?: string | null
         }
         Update: {
@@ -154,6 +156,7 @@ export interface Database {
           name?: string | null
           owned_courses?: string[] | null
           picture?: string | null
+          saved_courses?: string[] | null
           stripe_customer?: string | null
         }
       }

@@ -157,7 +157,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   const teacher = await getTeacherById(course.creator)
   if (!teacher) throw new Error("Teacher not found")
 
-  if (Array.isArray(teacher.profiles) || teacher.profiles === null) {
+  if (
+    Array.isArray(teacher.profiles) ||
+    teacher.profiles === null ||
+    teacher.profiles === undefined
+  ) {
     throw new Error("Expected teacher to have one profile")
   }
 

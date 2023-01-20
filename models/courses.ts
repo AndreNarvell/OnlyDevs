@@ -1,6 +1,15 @@
-import { supabase } from "../lib/supabase"
+import { serverSideSupabase, supabase } from "../lib/supabase"
 import { Course } from "../types/Course"
 import { Database } from "../types/supabase"
+import { getProfileById } from "./profile"
+
+/**
+ * Types
+ */
+export type CategoryWithCourses =
+  Database["public"]["Tables"]["categories"]["Row"] & {
+    courses: Database["public"]["Tables"]["courses"]["Row"][]
+  }
 
 /**
  * All courses as array
@@ -103,14 +112,6 @@ export const getAllCoursesInCategory = async (
 }
 
 /**
- * Types
- */
-export type CategoryWithCourses =
-  Database["public"]["Tables"]["categories"]["Row"] & {
-    courses: Database["public"]["Tables"]["courses"]["Row"][]
-  }
-
-/**
  * Fetch all courses in the shopping cart
  */
 export const getCoursesInCart = async (
@@ -126,4 +127,54 @@ export const getCoursesInCart = async (
   }
 
   return []
+}
+
+export const getUsersOwnedCourses = async (
+  userId: string
+): Promise<Course[] | undefined> => {
+  const { data: profile } = await serverSideSupabase()
+    .from("profiles")
+    .select("owned_courses")
+    .eq("id", userId)
+    .single()
+
+  if (!profile || !profile.owned_courses) {
+    return undefined
+  }
+
+  const { data: courses } = await supabase
+    .from("courses")
+    .select("*")
+    .in("id", profile.owned_courses)
+
+  if (!courses) {
+    return undefined
+  }
+
+  return courses
+}
+
+export const getUsersSavedCourses = async (
+  userId: string
+): Promise<Course[] | undefined> => {
+  const { data: profile } = await serverSideSupabase()
+    .from("profiles")
+    .select("saved_courses")
+    .eq("id", userId)
+    .single()
+
+  if (!profile || !profile.saved_courses) {
+    return undefined
+  }
+
+  const { data: courses } = await supabase
+    .from("courses")
+    .select("*")
+    .in("id", profile.saved_courses)
+
+  if (!courses) {
+    return undefined
+  }
+
+  return courses
 }
