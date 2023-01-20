@@ -46,7 +46,7 @@ export const ShoppingCart = () => {
 
   const isEmpty = cartItems.length === 0
 
-  if (!show) return null
+  if (!show) return <div className="w-8 h-8" />
 
   return (
     <BasicPopover
@@ -54,7 +54,7 @@ export const ShoppingCart = () => {
         <button
           ref={buttonRef}
           aria-label="Your profile"
-          className="flex items-center justify-center h-8 rounded-full focus-visible:ring-2 focus:ring-offset-1 focus:ring-offset-background"
+          className="flex items-center justify-end w-8 h-8 rounded-full focus-visible:ring-2 focus:ring-offset-1 focus:ring-offset-background"
         >
           {!isEmpty && (
             <Text as="span" size="sm" weight="semibold" className="mr-1">
