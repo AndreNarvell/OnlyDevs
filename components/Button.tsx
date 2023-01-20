@@ -4,7 +4,7 @@ import Link from "next/link"
 import { IconComponent } from "../types/IconComponent"
 
 const button = cva(
-  "font-semibold rounded-base flex gap-x-2 items-center transition select-none whitespace-nowrap focus:outline-none focus-visible:ring-2 focus:ring-offset-1 focus:ring-offset-background",
+  "font-semibold rounded-base flex gap-x-2 items-center transition select-none whitespace-nowrap focus:outline-none tracking-wide focus-visible:ring-2 focus:ring-offset-1 focus:ring-offset-background",
   {
     variants: {
       intent: {
