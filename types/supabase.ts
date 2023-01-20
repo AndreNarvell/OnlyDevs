@@ -214,7 +214,10 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment: {
+        Args: { course_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

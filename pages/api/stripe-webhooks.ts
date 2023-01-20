@@ -79,6 +79,16 @@ const handler: NextApiHandler = async (req, res) => {
         })
         .eq("stripe_customer", session.customer)
 
+      newCourses.forEach(async course => {
+        const { error } = await serverSideSupabase().rpc("increment", {
+          course_id: course,
+        })
+
+        if (error) {
+          console.log(error)
+        }
+      })
+
       break
     default:
       console.log(`Unhandled event type ${event.type}`)
