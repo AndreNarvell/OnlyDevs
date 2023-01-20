@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-types": "npx supabase gen types typescript --project-id fjtuvaikvjxuufpzuhxi --schema public > types/supabase.ts"
+    "generate-types": "npx supabase gen types typescript --project-id fjtuvaikvjxuufpzuhxi --schema public > types/supabase.ts",
+    "stripe:webhooks": "stripe listen --forward-to localhost:3000/api/stripe-webhooks",
+    "ngrok": "ngrok http 3000"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.7",
@@ -22,12 +24,15 @@
     "clsx": "^1.2.1",
     "framer-motion": "^8.4.2",
     "fuzzysort": "^2.0.4",
+    "micro": "^10.0.1",
     "next": "13.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.41.5",
     "react-wrap-balancer": "^0.3.0",
-    "zod": "^3.20.2"
+    "stripe": "^11.6.0",
+    "zod": "^3.20.2",
+    "zustand": "^4.3.2"
   },
   "devDependencies": {
     "@tailwindcss/line-clamp": "^0.4.2",

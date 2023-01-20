@@ -42,10 +42,11 @@ interface Props
   checked?: boolean
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void
   disabled?: boolean
+  required?: boolean
 }
 
 export const Checkbox: FC<Props> = forwardRef<HTMLInputElement, Props>(
-  ({ label, id, disabled, error, className, ...rest }, ref) => {
+  ({ label, id, disabled, error, className, required, ...rest }, ref) => {
     return (
       <div className={className}>
         <div className="flex items-center">
@@ -53,6 +54,7 @@ export const Checkbox: FC<Props> = forwardRef<HTMLInputElement, Props>(
             type="checkbox"
             id={id}
             ref={ref}
+            aria-invalid={!!error}
             className={checkbox({
               disabled,
               error: !!error,
@@ -65,17 +67,24 @@ export const Checkbox: FC<Props> = forwardRef<HTMLInputElement, Props>(
             htmlFor={id}
             className={cx(
               "cursor-pointer select-none pl-2 transition",
-              "peer-disabled:cursor-not-allowed",
+              "peer-disabled:cursor-not-allowed py-1",
               error && "text-error"
             )}
           >
-            <Text as="span" size="sm" className={clsx(!!error && "text-error")}>
+            <Text as="span" size="sm">
               {label}
+              {required && <span className="ml-0.5 text-error-light">*</span>}
             </Text>
           </label>
+
+          {error && (
+            <span role="alert" className="sr-only">
+              {error}
+            </span>
+          )}
         </div>
 
-        {error && <FieldError error={error} mr />}
+        {/* {error && <FieldError error={error} mr />} */}
       </div>
     )
   }

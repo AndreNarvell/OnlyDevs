@@ -1,12 +1,14 @@
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import "../styles/globals.scss"
 import type { AppProps } from "next/app"
 import { Plus_Jakarta_Sans } from "@next/font/google"
 import Head from "next/head"
 import { Meta } from "../components/Meta"
 import { Database } from "../types/supabase"
+import { useShoppingCart } from "../stores/shoppingCart"
+import { supabase } from "../lib/supabase"
 
 export const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -23,6 +25,22 @@ function MyApp({
   const [supabaseClient] = useState(() =>
     createBrowserSupabaseClient<Database>()
   )
+
+  const refreshCourseData = useShoppingCart(prev => prev.refreshCourseData)
+
+  // Refresh course data on initial load
+  useEffect(() => {
+    refreshCourseData()
+  }, [])
+
+  // Refresh course data every minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshCourseData()
+    }, 1000 * 60)
+
+    return () => clearInterval(interval)
+  }, [refreshCourseData])
 
   return (
     <>

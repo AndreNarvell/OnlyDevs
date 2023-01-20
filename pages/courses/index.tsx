@@ -1,7 +1,6 @@
 import React, { FC } from "react"
 import { Input } from "../../components/Input"
 import { Text } from "../../components/Text"
-import { CourseCard } from "../../components/CourseCard"
 import { GetServerSideProps } from "next"
 import {
   CategoryWithCourses,
@@ -14,12 +13,13 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline"
 import { Course } from "../../types/Course"
 import { searchCourses } from "../../utils/searchCourses"
 import { Category } from "../../types/Category"
-import { GridLayout } from "../../components/layouts/GridLayout"
+import { SidebarLayout } from "../../components/layouts/SidebarLayout"
 import { useSearch } from "../../features/CourseCatalog/hooks/useSearch"
 import { parseCategories } from "../../features/CourseCatalog/utils/filter"
 import { DesktopFilterMenu } from "../../features/CourseCatalog/components/DesktopFilterMenu"
 import { MobileFilterMenu } from "../../features/CourseCatalog/components/MobileFilterMenu"
 import { CourseContainer } from "../../features/CourseCatalog/components/CourseContainer"
+import { Layout } from "../../components/layouts/Layout"
 
 interface Props {
   allCourses: Course[]
@@ -77,76 +77,78 @@ const CoursesPage: FC<Props> = ({
   // 0 results in chosen categories matching ""
 
   return (
-    <GridLayout
-      title="Find the course for you"
-      paragraph="Unlock Your Potential with the Right Course"
-      sidebar={
-        <div className="px-6">
-          <Input
-            size="large"
-            name="search"
-            label="Search"
-            fullWidth
-            placeholder="Search"
-            icon={MagnifyingGlassIcon}
-            onChange={handleSearchChange}
-            value={search}
-            className="mb-6"
-          />
-
-          <DesktopFilterMenu categories={categoriesData} />
-          <MobileFilterMenu categories={categoriesData} />
-        </div>
-      }
-    >
-      {/* This shows when the user is searching */}
-      {showSearch || showCategories ? (
-        <CourseContainer
-          title={
-            <Text
-              as="h2"
-              intent="primary"
-              tracking="wide"
-              align="left"
-              className="mt-2 mb-5 ml-6"
-            >
-              {allTemplatesCombined}
-            </Text>
-          }
-          courses={
-            search.length > 0
-              ? searchResults.map(result => ({
-                  ...result,
-                  tags: result.tags.split(" "),
-                }))
-              : coursesInChosenCategories
-          }
-        />
-      ) : (
-        <>
-          {/* This shows when a user is not searching */}
-
-          {/* Featured courses */}
-          <CourseContainer
-            title="Featured"
-            courses={allCourses}
-            showImage
-            limit={3}
-          />
-
-          {/* Courses sorted by category */}
-          {categorisedCourses.map(category => (
-            <CourseContainer
-              title={category.title}
-              key={category.id}
-              courses={category.courses}
+    <Layout wide background="accents-1">
+      <SidebarLayout
+        title="Find the course for you"
+        paragraph="Unlock Your Potential with the Right Course"
+        sidebar={
+          <div className="px-6">
+            <Input
+              size="large"
+              name="search"
+              label="Search"
+              fullWidth
+              placeholder="Search"
+              icon={MagnifyingGlassIcon}
+              onChange={handleSearchChange}
+              value={search}
+              className="mb-6"
             />
-          ))}
-        </>
-      )}
 
-      <div className="h-32" />
-    </GridLayout>
+            <DesktopFilterMenu categories={categoriesData} />
+            <MobileFilterMenu categories={categoriesData} />
+          </div>
+        }
+      >
+        {/* This shows when the user is searching */}
+        {showSearch || showCategories ? (
+          <CourseContainer
+            title={
+              <Text
+                as="h2"
+                intent="primary"
+                tracking="wide"
+                align="left"
+                className="mt-2 mb-5 ml-6"
+              >
+                {allTemplatesCombined}
+              </Text>
+            }
+            courses={
+              search.length > 0
+                ? searchResults.map(result => ({
+                    ...result,
+                    tags: result.tags.split(" "),
+                  }))
+                : coursesInChosenCategories
+            }
+          />
+        ) : (
+          <>
+            {/* This shows when a user is not searching */}
+
+            {/* Featured courses */}
+            <CourseContainer
+              title="Featured"
+              courses={allCourses}
+              showImage
+              limit={3}
+            />
+
+            {/* Courses sorted by category */}
+            {categorisedCourses.map(category => (
+              <CourseContainer
+                title={category.title}
+                key={category.id}
+                courses={category.courses}
+              />
+            ))}
+          </>
+        )}
+
+        <div className="h-32" />
+      </SidebarLayout>
+    </Layout>
   )
 }
 

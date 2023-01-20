@@ -49,6 +49,7 @@ interface Props
   icon?: IconComponent
   value?: string
   readOnly?: boolean
+  inputClassName?: string
   labelClassName?: string
 }
 
@@ -66,6 +67,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
       fullWidth,
       className,
       icon,
+      inputClassName,
       labelClassName,
       ...rest
     },
@@ -74,7 +76,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
     const Icon = icon
 
     return (
-      <div className={`relative h-max ${fullWidth ? "w-full" : ""}`}>
+      <div className={clsx("relative h-max", fullWidth && "w-full", className)}>
         <label
           className={clsx(showLabel ? "mb-1 block" : "sr-only")}
           htmlFor={id}
@@ -86,8 +88,8 @@ export const Input = forwardRef<HTMLInputElement, Props>(
 
         <div className="relative">
           <input
-            {...rest}
             type={type}
+            aria-invalid={!!error}
             placeholder={placeholder ?? label}
             disabled={disabled}
             title={disabled ? "This field is disabled" : undefined}
@@ -103,9 +105,10 @@ export const Input = forwardRef<HTMLInputElement, Props>(
                   "pl-10": Icon,
                   "pl-3": !Icon,
                 },
-                className
+                inputClassName
               ),
             })}
+            {...rest}
           />
 
           {Icon && (
@@ -118,7 +121,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
           )}
         </div>
 
-        {error && <FieldError error={error} />}
+        <FieldError error={error} />
       </div>
     )
   }
@@ -126,9 +129,19 @@ export const Input = forwardRef<HTMLInputElement, Props>(
 
 Input.displayName = "Input"
 
-export const FieldError = ({ error, mr }: { error: string; mr?: boolean }) => (
-  <div className="flex items-center mt-1 text-error gap-x-1">
-    <ExclamationCircleIcon className={clsx("w-5 h-5", mr && "mr-0.5")} />
+export const FieldError = ({ error, mr }: { error?: string; mr?: boolean }) => (
+  <div
+    aria-hidden={!error}
+    role="alert"
+    className={clsx(
+      "flex items-center mt-1 text-error gap-x-1 overflow-clip duration-300 ease-out",
+      error ? "h-5" : "h-0"
+    )}
+  >
+    {error && (
+      <ExclamationCircleIcon className={clsx("w-5 h-5", mr && "mr-0.5")} />
+    )}
+
     <Text size="sm" intent="error" as="p">
       {error}
     </Text>

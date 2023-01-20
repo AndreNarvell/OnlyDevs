@@ -27,7 +27,6 @@ export const Footer = () => {
             <li key={link.name}>
               <TextLink
                 href={link.href}
-                as="span"
                 weight="medium"
                 tracking="wide"
                 className="transition duration-300 hover:text-accents-6 hover:transition-none"
@@ -41,7 +40,6 @@ export const Footer = () => {
             <li>
               <TextLink
                 href="/design-system"
-                as="span"
                 weight="medium"
                 tracking="wide"
                 className="transition duration-300 hover:text-accents-6 hover:transition-none"

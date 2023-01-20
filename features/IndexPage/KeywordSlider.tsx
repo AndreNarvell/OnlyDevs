@@ -35,6 +35,7 @@ const InfiniteLoopSlider: FC<Props> = ({
           "--direction": reverse ? "reverse" : "normal",
         } as any
       }
+      suppressHydrationWarning
     >
       <div className="keyword-slider-row ">
         {children}
@@ -57,6 +58,7 @@ const Tag = ({
       background: colors[0],
       borderColor: colors[1],
     }}
+    suppressHydrationWarning
   >
     <Text
       suppressHydrationWarning
