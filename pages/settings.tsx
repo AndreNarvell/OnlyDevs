@@ -3,10 +3,12 @@ import { useSession } from "@supabase/auth-helpers-react"
 import { GetServerSideProps, NextPage } from "next"
 import { useRouter } from "next/router"
 import { useEffect } from "react"
+import { Input } from "../components/Input"
 import { DashboardLayout } from "../components/layouts/DashboardLayout"
 import { SidebarLayout } from "../components/layouts/SidebarLayout"
 import { Text } from "../components/Text"
 import { TextLink } from "../components/TextLink"
+import { SettingsSection } from "../features/Dashboard/components/SettingsSection"
 
 const categories = [
   {
@@ -55,7 +57,19 @@ const SavedCoursesPage: NextPage = () => {
           </div>
         }
       >
-        <section>section</section>
+        <SettingsSection
+          title="Your Name"
+          description="Please enter your full name, or a display name you are comfortable with."
+        >
+          <Input label="Name" name="Hej" />
+        </SettingsSection>
+
+        <SettingsSection
+          title="Your Profile Picture"
+          description="The picture associated with your profile. Only visible to others if you are signed up as a teacher."
+        >
+          <Input label="Name" name="Hej" />
+        </SettingsSection>
       </SidebarLayout>
     </DashboardLayout>
   )
