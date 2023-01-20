@@ -39,10 +39,6 @@ const SavedCoursesPage: NextPage = () => {
         sidebar={
           <div className="hidden mb-72 lg:block">
             <ul>
-              <Text as="label" className="mb-2 ml-4">
-                Categories
-              </Text>
-
               {categories.map(category => (
                 <li key={category.title}>
                   <TextLink

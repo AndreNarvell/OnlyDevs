@@ -4,9 +4,11 @@ import { GetServerSideProps, NextPage } from "next"
 import { useRouter } from "next/router"
 import { useEffect } from "react"
 import { DashboardLayout } from "../components/layouts/DashboardLayout"
+import { Text } from "../components/Text"
 import { DashboardCourseGrid } from "../features/Dashboard/components/DashboardCourseGrid"
 import { getUsersOwnedCourses } from "../models/courses"
 import { Course } from "../types/Course"
+import Balancer from "react-wrap-balancer"
 
 interface Props {
   ownedCourses: Course[]
@@ -24,6 +26,14 @@ const DashboardPage: NextPage<Props> = ({ ownedCourses }) => {
 
   return (
     <DashboardLayout>
+      <div className="text-center">
+        <Balancer>
+          <Text as="h1" size="3xl" weight="bold" align="center">
+            My courses
+          </Text>
+        </Balancer>
+      </div>
+
       <DashboardCourseGrid courses={ownedCourses} />
     </DashboardLayout>
   )

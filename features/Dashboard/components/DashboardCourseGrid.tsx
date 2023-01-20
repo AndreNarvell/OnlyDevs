@@ -18,8 +18,8 @@ export const DashboardCourseGrid: FC<DashboardCourseGridProps> = ({
           title={course.title}
           shortDesc={course.short_desc}
           href={{
-            pathname: "courses/[slug]",
-            query: { slug: course.slug },
+            pathname: "/my-courses/[id]",
+            query: { id: course.id },
           }}
           key={course.id}
         />
