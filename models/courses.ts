@@ -1,15 +1,6 @@
 import { serverSideSupabase, supabase } from "../lib/supabase"
+import { CategoryWithCourses } from "../types/Category"
 import { Course } from "../types/Course"
-import { Database } from "../types/supabase"
-import { getProfileById } from "./profile"
-
-/**
- * Types
- */
-export type CategoryWithCourses =
-  Database["public"]["Tables"]["categories"]["Row"] & {
-    courses: Database["public"]["Tables"]["courses"]["Row"][]
-  }
 
 /**
  * All courses as array
@@ -177,4 +168,29 @@ export const getUsersSavedCourses = async (
   }
 
   return courses
+}
+
+/**
+ * Course player
+ */
+
+export const getSectionsAndLectures = async (courseId: string) => {
+  return supabase
+    .from("courses")
+    .select(
+      `title,
+       description,
+       sections (
+         id,
+         title,
+         sort_order,
+         lectures (
+           id,
+           title,
+           sort_order
+         )
+       )`
+    )
+    .eq("id", courseId)
+    .single()
 }

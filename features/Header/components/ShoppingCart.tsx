@@ -1,7 +1,3 @@
-import { FaceFrownIcon, ShoppingCartIcon } from "@heroicons/react/24/outline"
-import { ShoppingCartIcon as ShoppingCartIconSolid } from "@heroicons/react/24/solid"
-import { useSupabaseClient } from "@supabase/auth-helpers-react"
-import { useEffect, useRef, useState } from "react"
 import {
   BasicPopover,
   BasicPopoverDivider,
@@ -10,16 +6,17 @@ import { Button } from "../../../components/Button"
 import { Text } from "../../../components/Text"
 import { useGlobalState } from "../../../stores/globalState"
 import { useShoppingCart } from "../../../stores/shoppingCart"
-import { Course } from "../../../types/Course"
-import { Database } from "../../../types/supabase"
 import { formatPrice } from "../../../utils/formatPrice"
 import { goToCheckout } from "../../../utils/goToCheckout"
 import { CartItem } from "./CartItem"
+import { FaceFrownIcon, ShoppingCartIcon } from "@heroicons/react/24/outline"
+import { ShoppingCartIcon as ShoppingCartIconSolid } from "@heroicons/react/24/solid"
+import { useRouter } from "next/router"
+import { useEffect, useRef, useState } from "react"
 
 export const ShoppingCart = () => {
-  const supabase = useSupabaseClient<Database>()
-  const [courses, setCourses] = useState<Course[]>([])
   const [show, setShow] = useState(false)
+  const { asPath } = useRouter()
 
   useEffect(() => {
     setShow(true)
@@ -98,7 +95,7 @@ export const ShoppingCart = () => {
               Total: {formatPrice(totalPrice)}
             </Text>
 
-            <Button onClick={() => goToCheckout()} fullWidth>
+            <Button onClick={() => goToCheckout(cartItems, asPath)} fullWidth>
               Go to checkout
             </Button>
           </>

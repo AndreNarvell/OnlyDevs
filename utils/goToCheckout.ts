@@ -1,14 +1,12 @@
-import { useShoppingCart } from "../stores/shoppingCart"
-
-export const goToCheckout = async () => {
-  const cartItems = useShoppingCart.getState().cartItems
+export const goToCheckout = async (cartItems: string[], cancelUrl: string) => {
+  console.log(cancelUrl)
 
   const response = await fetch("/api/checkout", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ cartItems }),
+    body: JSON.stringify({ cartItems, cancelUrl }),
     redirect: "follow",
   })
 

@@ -4,6 +4,7 @@ import { FC } from "react"
 interface Props {
   title?: string
   description?: string
+  noIndex?: boolean
 }
 
 const defaultDescription =
@@ -12,6 +13,7 @@ const defaultDescription =
 export const Meta: FC<Props> = ({
   title,
   description = defaultDescription,
+  noIndex = false,
 }) => {
   const titleTemplate = title ? `${title} – OnlyDevs` : "OnlyDevs"
 
@@ -26,6 +28,8 @@ export const Meta: FC<Props> = ({
         content={description}
         key="og:description"
       />
+
+      {!noIndex && <meta name="robots" content="noindex" />}
     </Head>
   )
 }

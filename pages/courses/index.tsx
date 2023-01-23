@@ -20,6 +20,7 @@ import { DesktopFilterMenu } from "../../features/CourseCatalog/components/Deskt
 import { MobileFilterMenu } from "../../features/CourseCatalog/components/MobileFilterMenu"
 import { CourseContainer } from "../../features/CourseCatalog/components/CourseContainer"
 import { Layout } from "../../components/layouts/Layout"
+import { Meta } from "../../components/Meta"
 
 interface Props {
   allCourses: Course[]
@@ -77,78 +78,85 @@ const CoursesPage: FC<Props> = ({
   // 0 results in chosen categories matching ""
 
   return (
-    <Layout wide background="accents-1">
-      <SidebarLayout
-        title="Find the course for you"
-        paragraph="Unlock Your Potential with the Right Course"
-        sidebar={
-          <div className="px-6">
-            <Input
-              size="large"
-              name="search"
-              label="Search"
-              fullWidth
-              placeholder="Search"
-              icon={MagnifyingGlassIcon}
-              onChange={handleSearchChange}
-              value={search}
-              className="mb-6"
-            />
+    <>
+      <Meta
+        title="Courses"
+        description="Unlock Your Potential with the Right Course"
+      />
 
-            <DesktopFilterMenu categories={categoriesData} />
-            <MobileFilterMenu categories={categoriesData} />
-          </div>
-        }
-      >
-        {/* This shows when the user is searching */}
-        {showSearch || showCategories ? (
-          <CourseContainer
-            title={
-              <Text
-                as="h2"
-                intent="primary"
-                tracking="wide"
-                align="left"
-                className="mt-2 mb-5 ml-6"
-              >
-                {allTemplatesCombined}
-              </Text>
-            }
-            courses={
-              search.length > 0
-                ? searchResults.map(result => ({
-                    ...result,
-                    tags: result.tags.split(" "),
-                  }))
-                : coursesInChosenCategories
-            }
-          />
-        ) : (
-          <>
-            {/* This shows when a user is not searching */}
-
-            {/* Featured courses */}
-            <CourseContainer
-              title="Featured"
-              courses={allCourses}
-              showImage
-              limit={3}
-            />
-
-            {/* Courses sorted by category */}
-            {categorisedCourses.map(category => (
-              <CourseContainer
-                title={category.title}
-                key={category.id}
-                courses={category.courses}
+      <Layout wide background="accents-1">
+        <SidebarLayout
+          title="Find the course for you"
+          paragraph="Unlock Your Potential with the Right Course"
+          sidebar={
+            <div className="px-6">
+              <Input
+                size="large"
+                name="search"
+                label="Search"
+                fullWidth
+                placeholder="Search"
+                icon={MagnifyingGlassIcon}
+                onChange={handleSearchChange}
+                value={search}
+                className="mb-6"
               />
-            ))}
-          </>
-        )}
 
-        <div className="h-32" />
-      </SidebarLayout>
-    </Layout>
+              <DesktopFilterMenu categories={categoriesData} />
+              <MobileFilterMenu categories={categoriesData} />
+            </div>
+          }
+        >
+          {/* This shows when the user is searching */}
+          {showSearch || showCategories ? (
+            <CourseContainer
+              title={
+                <Text
+                  as="h2"
+                  intent="primary"
+                  tracking="wide"
+                  align="left"
+                  className="mt-2 mb-5 ml-6"
+                >
+                  {allTemplatesCombined}
+                </Text>
+              }
+              courses={
+                search.length > 0
+                  ? searchResults.map(result => ({
+                      ...result,
+                      tags: result.tags.split(" "),
+                    }))
+                  : coursesInChosenCategories
+              }
+            />
+          ) : (
+            <>
+              {/* This shows when a user is not searching */}
+
+              {/* Featured courses */}
+              <CourseContainer
+                title="Featured"
+                courses={allCourses}
+                showImage
+                limit={3}
+              />
+
+              {/* Courses sorted by category */}
+              {categorisedCourses.map(category => (
+                <CourseContainer
+                  title={category.title}
+                  key={category.id}
+                  courses={category.courses}
+                />
+              ))}
+            </>
+          )}
+
+          <div className="h-32" />
+        </SidebarLayout>
+      </Layout>
+    </>
   )
 }
 
