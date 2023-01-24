@@ -76,36 +76,39 @@ export interface Database {
           title?: string
         }
       }
-      lectures: {
+      lessons: {
         Row: {
           content_type: string | null
           created_at: string | null
+          description: string | null
           id: string
-          lecture_data: string | null
-          section_id: string
+          lesson_data: string | null
+          module: string
           sort_order: number
           title: string
         }
         Insert: {
           content_type?: string | null
           created_at?: string | null
+          description?: string | null
           id?: string
-          lecture_data?: string | null
-          section_id: string
+          lesson_data?: string | null
+          module: string
           sort_order: number
           title: string
         }
         Update: {
           content_type?: string | null
           created_at?: string | null
+          description?: string | null
           id?: string
-          lecture_data?: string | null
-          section_id?: string
+          lesson_data?: string | null
+          module?: string
           sort_order?: number
           title?: string
         }
       }
-      lectures_data: {
+      lessons_data: {
         Row: {
           article_data: Json | null
           created_at: string | null
@@ -123,6 +126,29 @@ export interface Database {
           created_at?: string | null
           id?: string
           video_url?: string | null
+        }
+      }
+      modules: {
+        Row: {
+          course_id: string
+          created_at: string | null
+          id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string | null
+          id?: string
+          sort_order: number
+          title: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string | null
+          id?: string
+          sort_order?: number
+          title?: string
         }
       }
       profiles: {
@@ -158,35 +184,6 @@ export interface Database {
           picture?: string | null
           saved_courses?: string[] | null
           stripe_customer?: string | null
-        }
-      }
-      sections: {
-        Row: {
-          course_id: string
-          created_at: string | null
-          description: string
-          id: string
-          slug: string
-          sort_order: number
-          title: string
-        }
-        Insert: {
-          course_id: string
-          created_at?: string | null
-          description: string
-          id?: string
-          slug: string
-          sort_order: number
-          title: string
-        }
-        Update: {
-          course_id?: string
-          created_at?: string | null
-          description?: string
-          id?: string
-          slug?: string
-          sort_order?: number
-          title?: string
         }
       }
       teachers: {

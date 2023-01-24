@@ -72,10 +72,12 @@ export const useShoppingCart = create(
           }
         })
       },
+
       clearCart: () => {
         set(prev => ({
           ...prev,
           cartItems: [],
+          enrichedCartItems: [],
         }))
       },
     }),

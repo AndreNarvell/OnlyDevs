@@ -1,15 +1,6 @@
 import { serverSideSupabase, supabase } from "../lib/supabase"
-import { Course } from "../types/Course"
-import { Database } from "../types/supabase"
-import { getProfileById } from "./profile"
-
-/**
- * Types
- */
-export type CategoryWithCourses =
-  Database["public"]["Tables"]["categories"]["Row"] & {
-    courses: Database["public"]["Tables"]["courses"]["Row"][]
-  }
+import { CategoryWithCourses } from "../types/Category"
+import { Course, CourseStructure, Module } from "../types/Course"
 
 /**
  * All courses as array
@@ -29,7 +20,7 @@ export const getLatestCourses = async (quantity: number = 1) => {
     .limit(quantity)
 }
 
-const entireCourseQuery = `*, sections (*, lectures (*))`
+const entireCourseQuery = `*, modules (*, lessons (*))`
 
 /**
  * Single course by id
@@ -177,4 +168,64 @@ export const getUsersSavedCourses = async (
   }
 
   return courses
+}
+
+/**
+ * Course player
+ */
+
+export const getModulesAndLessons = async (
+  courseId: string
+): Promise<CourseStructure | undefined> => {
+  const { data, error } = await supabase
+    .from("courses")
+    .select(
+      `id,
+       title,
+       description,
+       modules (
+         id,
+         title,
+         sort_order,
+         lessons (
+           id,
+           title,
+           sort_order,
+           content_type
+         )
+       )`
+    )
+    .eq("id", courseId)
+    .single()
+
+  if (error) {
+    console.log(error)
+    return undefined
+  }
+
+  if (!data || !Array.isArray(data.modules)) {
+    return undefined
+  }
+
+  const nonNullModules = data.modules.filter(
+    (modules): modules is NonNullable<CourseStructure["modules"][0]> =>
+      modules.lessons !== null
+  )
+
+  // Sort modules and lessons
+  const sortedModules = nonNullModules.sort(
+    (a, b) => a.sort_order - b.sort_order
+  )
+
+  const sortedLessons = sortedModules.map(module => ({
+    ...module,
+    lessons: Array.isArray(module.lessons)
+      ? module.lessons.sort((a, b) => a.sort_order - b.sort_order)
+      : [],
+  }))
+
+  return {
+    ...data,
+    modules: sortedLessons,
+  }
 }

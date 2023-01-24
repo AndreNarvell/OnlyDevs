@@ -4,10 +4,10 @@ import { z } from "zod"
 import { updateSavedCourses } from "../../../models/profile"
 import { Database } from "../../../types/supabase"
 
-const updateSavedCoursesSchema = z.string().array()
+const courseIdSchema = z.string()
 
 const handler: NextApiHandler = async (req, res) => {
-  const savedCourses = updateSavedCoursesSchema.parse(req.body)
+  const savedCourses = courseIdSchema.parse(req.body)
 
   const supabase = createServerSupabaseClient<Database>({ req, res })
 
@@ -16,17 +16,21 @@ const handler: NextApiHandler = async (req, res) => {
   } = await supabase.auth.getSession()
 
   if (!session) {
+    console.log("Not authenticated")
     return res.status(401).json({ error: "Not authenticated" })
   }
 
-  const { error } = await updateSavedCourses(session.user.id, savedCourses)
+  const { error, data } = await updateSavedCourses(
+    session.user.id,
+    savedCourses
+  )
 
-  if (error) {
+  if (error || !data) {
     console.log(error)
     return res.status(500).json({ error: "Could not update saved courses" })
   }
 
-  return res.status(200).json({ success: true })
+  return res.status(200).json(data)
 }
 
 export default handler

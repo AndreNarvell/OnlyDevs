@@ -8,7 +8,6 @@ import Head from "next/head"
 import { Meta } from "../components/Meta"
 import { Database } from "../types/supabase"
 import { useShoppingCart } from "../stores/shoppingCart"
-import { supabase } from "../lib/supabase"
 
 export const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -31,6 +30,7 @@ function MyApp({
   // Refresh course data on initial load
   useEffect(() => {
     refreshCourseData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Refresh course data every minute

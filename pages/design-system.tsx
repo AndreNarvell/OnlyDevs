@@ -1,7 +1,9 @@
-import { FC, ReactNode } from "react"
-import { Layout } from "../components/layouts/Layout"
 import { Button } from "../components/Button"
+import { Checkbox } from "../components/Checkbox"
+import { Input } from "../components/Input"
 import { Text } from "../components/Text"
+import { Layout } from "../components/layouts/Layout"
+import { ArrowDownTrayIcon as ArrowDownTrayIcon20 } from "@heroicons/react/20/solid"
 import {
   ArrowDownTrayIcon,
   ArrowPathRoundedSquareIcon,
@@ -12,9 +14,7 @@ import {
   WrenchScrewdriverIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline"
-import { ArrowDownTrayIcon as ArrowDownTrayIcon20 } from "@heroicons/react/20/solid"
-import { Input } from "../components/Input"
-import { Checkbox } from "../components/Checkbox"
+import { FC, ReactNode } from "react"
 
 const DesignSystemPage = () => {
   return (

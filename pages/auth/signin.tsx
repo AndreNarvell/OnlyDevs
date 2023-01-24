@@ -7,6 +7,7 @@ import { z } from "zod"
 import { Button } from "../../components/Button"
 import { Input } from "../../components/Input"
 import { AuthLayout } from "../../components/layouts/AuthLayout"
+import { Meta } from "../../components/Meta"
 import { Text } from "../../components/Text"
 import { TextLink } from "../../components/TextLink"
 import { GithubButton } from "../../features/AuthPages/components/GithubButton"
@@ -62,67 +63,77 @@ const SigninPage = () => {
   }, [])
 
   return (
-    <AuthLayout>
-      <form
-        onSubmit={handleSubmit(onSubmit, (errors, event) => {})}
-        className="relative z-20 flex flex-col gap-4 p-6 border md:p-12 bg-accents-1 border-accents-2 rounded-marketing"
-      >
-        <Text as="h1" size="2xl" weight="bold" align="center" className="mb-4">
-          Sign in
-        </Text>
+    <>
+      <Meta title="Sign in to OnlyDevs" />
 
-        <GoogleButton label="Sign in with Google" />
-        <GithubButton label="Sign in with Github" />
-
-        <div className="flex items-center">
-          <div className="w-full h-px bg-accents-2" />
-
-          <Text as="p" className="flex-shrink-0 px-4">
-            Or
-          </Text>
-
-          <div className="w-full h-px bg-accents-2" />
-        </div>
-
-        <Input
-          size="large"
-          label="Email"
-          fullWidth
-          showLabel
-          error={errors.email?.message}
-          id="email"
-          {...register("email")}
-        />
-
-        <Input
-          size="large"
-          label="Password"
-          fullWidth
-          showLabel
-          type="password"
-          error={errors.password?.message}
-          id="password"
-          {...register("password")}
-          className="mb-6"
-        />
-
-        <Button size="large">Sign in</Button>
-
-        {error && (
-          <Text as="p" weight="medium" intent="error" align="center">
-            Error: {error}
-          </Text>
-        )}
-
-        <TextLink
-          intent="secondary"
-          align="center"
-          href="/auth/forgot-password"
+      <AuthLayout>
+        <form
+          onSubmit={handleSubmit(onSubmit, (errors, event) => {})}
+          className="relative z-20 flex flex-col gap-4 p-6 border md:p-12 bg-accents-1 border-accents-2 rounded-marketing"
         >
-          Forgot password? Click here →
-        </TextLink>
-      </form>
-    </AuthLayout>
+          <Text
+            as="h1"
+            size="2xl"
+            weight="bold"
+            align="center"
+            className="mb-4"
+          >
+            Sign in
+          </Text>
+
+          <GoogleButton label="Sign in with Google" />
+          <GithubButton label="Sign in with Github" />
+
+          <div className="flex items-center">
+            <div className="w-full h-px bg-accents-2" />
+
+            <Text as="p" className="flex-shrink-0 px-4">
+              Or
+            </Text>
+
+            <div className="w-full h-px bg-accents-2" />
+          </div>
+
+          <Input
+            size="large"
+            label="Email"
+            fullWidth
+            showLabel
+            error={errors.email?.message}
+            id="email"
+            {...register("email")}
+          />
+
+          <Input
+            size="large"
+            label="Password"
+            fullWidth
+            showLabel
+            type="password"
+            error={errors.password?.message}
+            id="password"
+            {...register("password")}
+            className="mb-6"
+          />
+
+          <Button size="large">Sign in</Button>
+
+          {error && (
+            <Text as="p" weight="medium" intent="error" align="center">
+              Error: {error}
+            </Text>
+          )}
+
+          <TextLink
+            intent="secondary"
+            align="center"
+            href="/auth/forgot-password"
+          >
+            Forgot password? Click here →
+          </TextLink>
+        </form>
+      </AuthLayout>
+    </>
   )
 }
 

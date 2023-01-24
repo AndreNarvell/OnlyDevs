@@ -4,12 +4,12 @@ import Stripe from "stripe"
 import { z } from "zod"
 import { siteUrl } from "../../constants/siteUrl"
 import { stripe } from "../../lib/stripe"
-import { serverSideSupabase } from "../../lib/supabase"
 import { getProfileById } from "../../models/profile"
 import { Database } from "../../types/supabase"
 
 const checkoutSchema = z.object({
   cartItems: z.string().array(),
+  cancelUrl: z.string(),
 })
 
 const handler: NextApiHandler = async (req, res) => {
@@ -77,7 +77,7 @@ const handler: NextApiHandler = async (req, res) => {
   try {
     const checkoutSession = await stripe.checkout.sessions.create({
       success_url: `${siteUrl}/success?checkoutSessionId={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/dashboard`,
+      cancel_url: `${siteUrl}/${body.cancelUrl}`,
       line_items: lineItems,
       mode: "payment",
       payment_method_types: ["card"],

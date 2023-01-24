@@ -1,8 +1,8 @@
+import { stripe } from "../../lib/stripe"
+import { serverSideSupabase } from "../../lib/supabase"
+import { buffer } from "micro"
 import { NextApiHandler } from "next"
 import Stripe from "stripe"
-import { stripe } from "../../lib/stripe"
-import { buffer } from "micro"
-import { serverSideSupabase } from "../../lib/supabase"
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
@@ -41,11 +41,12 @@ const handler: NextApiHandler = async (req, res) => {
 
       const { data } = await serverSideSupabase()
         .from("profiles")
-        .select("owned_courses")
+        .select("owned_courses, saved_courses")
         .eq("stripe_customer", session.customer)
         .single()
 
       const ownedCourses = data?.owned_courses ?? []
+      const savedCourses = data?.saved_courses ?? []
 
       if (session.line_items === undefined) {
         throw new Error("Invalid session")
@@ -72,12 +73,22 @@ const handler: NextApiHandler = async (req, res) => {
         new Set([...ownedCourses, ...newCourses])
       )
 
+      // Adds newly purchase courses to owned courses
       await serverSideSupabase()
         .from("profiles")
         .update({
           owned_courses: removeDuplicates,
         })
         .eq("stripe_customer", session.customer)
+
+      // Removes owned courses from saved courses
+      await serverSideSupabase()
+        .from("profiles")
+        .update({
+          saved_courses: savedCourses.filter(
+            course => !removeDuplicates.includes(course)
+          ),
+        })
 
       newCourses.forEach(async course => {
         const { error } = await serverSideSupabase().rpc("increment", {

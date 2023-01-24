@@ -1,14 +1,14 @@
+import { Layout } from "../components/layouts/Layout"
 import { GoalsText } from "../features/IndexPage/GoalsText"
 import { HeroText } from "../features/IndexPage/HeroText"
-import { LatestCourses } from "../features/IndexPage/LatestCourses"
-import { ForwardIcon, AcademicCapIcon } from "@heroicons/react/24/outline"
-import { Layout } from "../components/layouts/Layout"
-import { GetServerSideProps, NextPage } from "next"
-import { getLatestCourses } from "../models/courses"
 import { KeywordSlider } from "../features/IndexPage/KeywordSlider"
+import { LatestCourses } from "../features/IndexPage/LatestCourses"
 import { getAllCategories } from "../models/categories"
-import { Course } from "../types/Course"
+import { getLatestCourses } from "../models/courses"
 import { Category } from "../types/Category"
+import { Course } from "../types/Course"
+import { ForwardIcon, AcademicCapIcon } from "@heroicons/react/24/outline"
+import { GetServerSideProps, NextPage } from "next"
 
 interface Props {
   courses: Course[]
