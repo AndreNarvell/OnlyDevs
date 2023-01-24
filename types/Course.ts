@@ -2,33 +2,35 @@ import { Database } from "./supabase"
 
 export type Course = Database["public"]["Tables"]["courses"]["Row"]
 
-export type Section = Database["public"]["Tables"]["sections"]["Row"]
+export type Module = Database["public"]["Tables"]["modules"]["Row"]
 
-export type Lecture = Database["public"]["Tables"]["lectures"]["Row"]
-export type LectureData = Database["public"]["Tables"]["lectures_data"]["Row"]
+export type Lesson = Database["public"]["Tables"]["lessons"]["Row"]
+export type LessonData = Database["public"]["Tables"]["lessons_data"]["Row"]
 
 export type CourseWithSections = Course & {
-  sections: Section[]
+  modules: Module[]
 }
 
-export type CourseWithSectionsAndLectures = CourseWithSections & {
-  sections: (Section & {
-    lessons: Lecture[]
+export type CourseWithSectionsAndLessons = CourseWithSections & {
+  modules: (Module & {
+    lessons: Lesson[]
   })[]
 }
 
-export type LectureStructure = {
+export type CourseStructure = {
   id: Course["id"]
   title: Course["title"]
   description: Course["description"]
-  sections: {
-    id: Section["id"]
-    title: Section["title"]
-    lectures: {
-      id: Lecture["id"]
-      title: Lecture["title"]
-      // description: Lecture["description"]
-      sort_order: Lecture["sort_order"]
+  modules: {
+    id: Module["id"]
+    title: Module["title"]
+    sort_order: Module["sort_order"]
+    lessons: {
+      id: Lesson["id"]
+      title: Lesson["title"]
+      description: Lesson["description"]
+      sort_order: Lesson["sort_order"]
+      content_type: Lesson["content_type"]
     }[]
   }[]
 }
