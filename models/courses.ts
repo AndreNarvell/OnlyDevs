@@ -1,6 +1,7 @@
 import { serverSideSupabase, supabase } from "../lib/supabase"
 import { CategoryWithCourses } from "../types/Category"
 import { Course, CourseStructure, Module } from "../types/Course"
+import { CourseProgress } from "../types/CourseProgress"
 
 /**
  * All courses as array
@@ -228,4 +229,22 @@ export const getModulesAndLessons = async (
     ...data,
     modules: sortedLessons,
   }
+}
+
+export const getUsersProgress = async (
+  userId: string,
+  courseId: string
+): Promise<CourseProgress["completed_lessons"] | undefined> => {
+  const { data: progress } = await serverSideSupabase()
+    .from("course_progress")
+    .select("completed_lessons")
+    .eq("profile", userId)
+    .eq("course", courseId)
+    .single()
+
+  if (!progress || !progress.completed_lessons) {
+    return undefined
+  }
+
+  return progress.completed_lessons ?? undefined
 }

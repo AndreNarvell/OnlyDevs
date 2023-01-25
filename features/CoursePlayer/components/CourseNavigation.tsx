@@ -1,7 +1,6 @@
 import { Text } from "../../../components/Text"
 import { CourseStructure } from "../../../types/Course"
 import { NavModule } from "./NavModule"
-import { FlagIcon } from "@heroicons/react/24/solid"
 import { FC } from "react"
 
 interface Props {
@@ -11,7 +10,7 @@ interface Props {
 
 export const CourseNavigation: FC<Props> = ({ course, progress }) => {
   return (
-    <div className="px-8 mt-44 w-96">
+    <div className="flex-grow-0 flex-shrink-0 px-8 mt-44 w-96">
       <Text as="h4" weight="bold" className="mb-4">
         Course content
       </Text>
@@ -38,9 +37,9 @@ export const CourseNavigation: FC<Props> = ({ course, progress }) => {
           <path
             d="M3 3V4.5M3 4.5L5.77 3.807C7.8544 3.28605 10.0564 3.52795 11.978 4.489L12.086 4.543C13.9688 5.4843 16.1219 5.73589 18.171 5.254L21.281 4.522C20.9029 8.01155 20.9046 11.5318 21.286 15.021L18.172 15.753C16.1227 16.2354 13.9692 15.9842 12.086 15.043L11.978 14.989C10.0564 14.028 7.8544 13.786 5.77 14.307L3 15M3 4.5V15M3 28V15"
             stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       </ol>

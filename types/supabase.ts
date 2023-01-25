@@ -23,6 +23,29 @@ export interface Database {
           title?: string
         }
       }
+      course_progress: {
+        Row: {
+          completed_lessons: string[] | null
+          course: string
+          created_at: string
+          id: string
+          profile: string
+        }
+        Insert: {
+          completed_lessons?: string[] | null
+          course: string
+          created_at?: string
+          id?: string
+          profile: string
+        }
+        Update: {
+          completed_lessons?: string[] | null
+          course?: string
+          created_at?: string
+          id?: string
+          profile?: string
+        }
+      }
       courses: {
         Row: {
           background_image: string
@@ -82,7 +105,6 @@ export interface Database {
           created_at: string | null
           description: string | null
           id: string
-          lesson_data: string | null
           module: string
           sort_order: number
           title: string
@@ -92,7 +114,6 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: string
-          lesson_data?: string | null
           module: string
           sort_order: number
           title: string
@@ -102,7 +123,6 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: string
-          lesson_data?: string | null
           module?: string
           sort_order?: number
           title?: string
@@ -110,19 +130,19 @@ export interface Database {
       }
       lessons_data: {
         Row: {
-          article_data: Json | null
+          article_data: string | null
           created_at: string | null
           id: string
           video_url: string | null
         }
         Insert: {
-          article_data?: Json | null
+          article_data?: string | null
           created_at?: string | null
           id: string
           video_url?: string | null
         }
         Update: {
-          article_data?: Json | null
+          article_data?: string | null
           created_at?: string | null
           id?: string
           video_url?: string | null
