@@ -27,12 +27,7 @@ const MyCoursesPage: NextPage<Props> = ({
   lessonData,
   progress = [],
 }) => {
-  const { query } = useRouter()
-
-  // Find the lesson based on the URL
-  const lesson = course.modules
-    .flatMap(module => module.lessons)
-    .find(lesson => lesson.id === query.lessonId)
+  console.log(course)
 
   return (
     <div className="bg-accents-1">
@@ -55,10 +50,12 @@ const MyCoursesPage: NextPage<Props> = ({
       </header>
 
       <main
-        style={{ height: "calc(100vh - 5rem)" }}
-        className="overflow-y-auto snap-y snap-mandatory"
+        style={{
+          height: "calc(100vh - 5rem)",
+        }}
+        className="overflow-y-auto !scrollbar-thin !scrollbar-track-transparent !scrollbar-thumb-accents-3 !scrollbar-thumb-rounded-full"
       >
-        <section className="relative snap-start snap-always">
+        <section className="relative">
           <div
             className="absolute inset-0 w-full pointer-events-none opacity-20"
             style={{ background: gradient(course.title) }}
@@ -83,15 +80,15 @@ const MyCoursesPage: NextPage<Props> = ({
           </div>
         </section>
 
-        <hr className="border-accents-2 snap-align-none" />
+        <hr className="border-accents-2" />
 
         <section
           style={{ height: "calc(100vh - 5rem)" }}
-          className="container flex snap-start snap-always xl:max-w-screen-xl 2xl:max-w-screen-2xl"
+          className="container flex xl:max-w-screen-xl 2xl:max-w-screen-2xl"
         >
           <CourseNavigation course={course} progress={progress} />
 
-          <CoursePlayer lesson={lesson} lessonData={lessonData} />
+          <CoursePlayer course={course} lessonData={lessonData} />
         </section>
       </main>
     </div>

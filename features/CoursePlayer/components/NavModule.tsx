@@ -52,30 +52,30 @@ export const NavModule: FC<Props> = ({ module, progress }) => {
               )}
 
               {open ? (
-                /* Curved connector */
                 <svg
                   className={clsx(
-                    "absolute top-6 left-2",
+                    "absolute top-[22px] left-[9px]",
                     isCompleted ? "text-success" : "text-accents-3"
                   )}
                   width="10"
-                  height="32"
-                  viewBox="0 0 10 32"
+                  height="24"
+                  viewBox="0 0 10 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M1 1V12C1 14.7614 3.23858 17 6 17H9"
+                    d="M1 1V18C1 20.7614 3.23858 23 6 23H9"
                     stroke="currentColor"
-                    strokeWidth={2}
                     strokeLinecap="round"
+                    strokeWidth={2}
                   />
                 </svg>
               ) : (
                 /* Straight connector */
+
                 <div
                   className={clsx(
-                    "flex-grow flex-shrink-0 w-px h-auto min-h-auto",
+                    "flex-grow flex-shrink-0 w-[1.5px] h-auto min-h-auto",
                     isCompleted ? "bg-success" : "bg-accents-3"
                   )}
                 />

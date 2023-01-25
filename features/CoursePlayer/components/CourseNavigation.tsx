@@ -10,17 +10,15 @@ interface Props {
 
 export const CourseNavigation: FC<Props> = ({ course, progress }) => {
   return (
-    <div className="flex-grow-0 flex-shrink-0 px-8 mt-44 w-96">
+    <div className="flex-grow-0 flex-shrink-0 pb-32 pr-8 mt-28 w-96">
       <Text as="h4" weight="bold" className="mb-4">
         Course content
       </Text>
 
-      <ol>
+      <ol className="h-full overflow-y-auto !scrollbar-thin !scrollbar-track-transparent !scrollbar-thumb-accents-3 !scrollbar-thumb-rounded-full pr-8">
         {course.modules.map(module => (
           <NavModule module={module} progress={progress} key={module.id} />
         ))}
-
-        {/* <FlagIcon className="w-6 h-8 text-accents-3" /> */}
 
         <svg
           width="22"
