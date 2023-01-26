@@ -29,7 +29,6 @@ export const text = cva("", {
       medium: "font-medium",
       semibold: "font-semibold",
       bold: "font-bold",
-      extrabold: "font-extrabold",
     },
     intent: {
       primary: "text-foreground",

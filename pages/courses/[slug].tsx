@@ -93,12 +93,7 @@ const CourseDetailsPage: NextPage<Props> = ({
               />
 
               <div>
-                <Text
-                  as="h1"
-                  size="2xl"
-                  weight="extrabold"
-                  className="max-w-md"
-                >
+                <Text as="h1" size="2xl" weight="bold" className="max-w-md">
                   {course.title}
                 </Text>
 
@@ -123,8 +118,8 @@ const CourseDetailsPage: NextPage<Props> = ({
                 </Text>
                 <ButtonLink
                   href={{
-                    pathname: "/my-courses/[id]",
-                    query: { id: course.id },
+                    pathname: "/my-courses",
+                    query: { courseId: course.id },
                   }}
                   intent="success"
                 >

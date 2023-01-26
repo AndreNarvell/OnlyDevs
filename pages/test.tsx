@@ -1,37 +1,37 @@
-import { GetServerSideProps } from "next"
-import { KeywordSlider } from "../features/IndexPage/KeywordSlider"
-import { supabase } from "../lib/supabase"
+import { Button } from "../components/Button"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
 
 const Test = () => {
+  const editor = useEditor({
+    editable: true,
+    content: "",
+    extensions: [StarterKit],
+  })
+
   return (
     <>
-      <KeywordSlider rows={20} duration={[50000, 500000]} />
+      {/* <KeywordSlider rows={20} duration={[50000, 500000]} /> */}
 
-      <div className="container py-64"></div>
+      <div className="container py-64">
+        <EditorContent
+          editor={editor}
+          className="p-4 border border-accents-3 rounded-base"
+        />
+
+        <Button
+          className="my-4"
+          onClick={() => {
+            editor && navigator.clipboard.writeText(editor.getHTML())
+          }}
+        >
+          Copy
+        </Button>
+
+        <pre>{editor?.getHTML()}</pre>
+      </div>
     </>
   )
 }
 
 export default Test
-
-export const getServerSideProps: GetServerSideProps = async ({}) => {
-  const creator = "56820e25-0643-4d30-8ace-fa2083bab794"
-
-  const { data, error } = await supabase
-    .from("courses")
-    .select("number_of_students")
-    .eq("creator", creator)
-
-  console.log(data, error)
-
-  const numberOfStudents = data?.reduce<number>((prev, curr) => {
-    const currentOrZero = curr?.number_of_students ?? 0
-    return prev + currentOrZero
-  }, 0)
-
-  console.log({ numberOfStudents })
-
-  return {
-    props: {},
-  }
-}

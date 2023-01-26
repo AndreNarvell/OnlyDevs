@@ -2,33 +2,22 @@ import { Text } from "../components/Text"
 import { TextLink } from "../components/TextLink"
 import { CourseNavigation } from "../features/CoursePlayer/components/CourseNavigation"
 import { CoursePlayer } from "../features/CoursePlayer/components/CoursePlayer"
+import { useCourseProgress } from "../hooks/useCourseProgress"
 import { serverSideSupabase } from "../lib/supabase"
-import {
-  getModulesAndLessons,
-  getUsersOwnedCourses,
-  getUsersProgress,
-} from "../models/courses"
+import { getModulesAndLessons, getUsersOwnedCourses } from "../models/courses"
 import { LessonData, CourseStructure } from "../types/Course"
 import { Database } from "../types/supabase"
 import { ChevronLeftIcon } from "@heroicons/react/20/solid"
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { GetServerSideProps, NextPage } from "next"
-import { useRouter } from "next/router"
 import gradient from "random-gradient"
 
 interface Props {
   course: CourseStructure
   lessonData: LessonData | null
-  progress: string[]
 }
 
-const MyCoursesPage: NextPage<Props> = ({
-  course,
-  lessonData,
-  progress = [],
-}) => {
-  console.log(course)
-
+const MyCoursesPage: NextPage<Props> = ({ course, lessonData }) => {
   return (
     <div className="bg-accents-1">
       <header className="flex items-center justify-between h-20 px-8 backdrop-blur-md bg-accents-1/50">
@@ -86,7 +75,7 @@ const MyCoursesPage: NextPage<Props> = ({
           style={{ height: "calc(100vh - 5rem)" }}
           className="container flex xl:max-w-screen-xl 2xl:max-w-screen-2xl"
         >
-          <CourseNavigation course={course} progress={progress} />
+          <CourseNavigation course={course} />
 
           <CoursePlayer course={course} lessonData={lessonData} />
         </section>
@@ -125,9 +114,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
   }
 
   // Check if the user owns the course
-  const [ownedCourses, courseProgress, course] = await Promise.all([
+  const [ownedCourses, course] = await Promise.all([
     getUsersOwnedCourses(session.user.id),
-    getUsersProgress(session.user.id, courseId),
     getModulesAndLessons(courseId),
   ])
 
@@ -184,7 +172,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
       props: {
         course,
         lessonData,
-        progress: courseProgress ?? [],
       },
     }
   }
@@ -193,7 +180,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
     props: {
       course,
       lessonData: null,
-      progress: courseProgress ?? [],
     },
   }
 }

@@ -1,7 +1,7 @@
-import { cva, VariantProps } from "class-variance-authority"
-import { FC, HTMLAttributes, ComponentProps, forwardRef } from "react"
-import Link from "next/link"
 import { IconComponent } from "../types/IconComponent"
+import { cva, VariantProps } from "class-variance-authority"
+import Link from "next/link"
+import { FC, HTMLAttributes, ComponentProps, forwardRef } from "react"
 
 const button = cva(
   "font-semibold rounded-base flex gap-x-2 items-center transition select-none whitespace-nowrap focus:outline-none tracking-wide focus-visible:ring-2 focus:ring-offset-1 focus:ring-offset-background",
@@ -106,17 +106,17 @@ const button = cva(
       {
         svgOnly: false,
         size: "small",
-        className: "pr-4",
+        className: "",
       },
       {
         svgOnly: false,
         size: "base",
-        className: "pr-4",
+        className: "",
       },
       {
         svgOnly: false,
         size: "large",
-        className: "pr-5",
+        className: "",
       },
     ],
 

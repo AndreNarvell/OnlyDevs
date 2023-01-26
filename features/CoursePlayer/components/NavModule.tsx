@@ -1,19 +1,15 @@
 import { Text } from "../../../components/Text"
 import { TextLink } from "../../../components/TextLink"
 import { CourseStructure } from "../../../types/Course"
-import { Disclosure } from "@headlessui/react"
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-} from "@heroicons/react/20/solid"
+import { Disclosure, Transition } from "@headlessui/react"
+import { CheckIcon, ChevronRightIcon } from "@heroicons/react/20/solid"
 import clsx from "clsx"
 import { useRouter } from "next/router"
 import { FC } from "react"
 
 interface Props {
   module: CourseStructure["modules"][0]
-  progress: string[]
+  progress: string[] | undefined
 }
 
 export const NavModule: FC<Props> = ({ module, progress }) => {
@@ -21,11 +17,21 @@ export const NavModule: FC<Props> = ({ module, progress }) => {
 
   const isCompleted =
     module.lessons.length > 0
-      ? module.lessons.every(lesson => progress.includes(lesson.id))
+      ? module.lessons.every(lesson => progress?.includes(lesson.id))
+      : false
+
+  const isFirstLessonCompleted =
+    module.lessons[0] !== undefined
+      ? progress?.includes(module.lessons[0].id)
+      : false
+
+  const isLastLessonCompleted =
+    module.lessons[module.lessons.length - 1] !== undefined
+      ? progress?.includes(module.lessons[module.lessons.length - 1].id)
       : false
 
   const isInProgress = module.lessons.some(lesson =>
-    progress.includes(lesson.id)
+    progress?.includes(lesson.id)
   )
 
   const isCurrentModule = module.lessons.some(
@@ -39,7 +45,7 @@ export const NavModule: FC<Props> = ({ module, progress }) => {
           <Disclosure.Button className="flex items-stretch mt-px gap-x-2">
             <div className="relative flex flex-col items-center gap-y-0.5">
               {isCompleted ? (
-                <CheckIcon className="flex-shrink-0 w-5 h-5 text-success" />
+                <CheckIcon className="flex-shrink-0 w-5 h-5 transition text-success" />
               ) : (
                 <div className="flex items-center justify-center w-5 h-5">
                   <div
@@ -52,10 +58,11 @@ export const NavModule: FC<Props> = ({ module, progress }) => {
               )}
 
               {open ? (
+                // Bendy connector
                 <svg
                   className={clsx(
                     "absolute top-[22px] left-[9px]",
-                    isCompleted ? "text-success" : "text-accents-3"
+                    isFirstLessonCompleted ? "text-success" : "text-accents-3"
                   )}
                   width="10"
                   height="24"
@@ -75,7 +82,7 @@ export const NavModule: FC<Props> = ({ module, progress }) => {
 
                 <div
                   className={clsx(
-                    "flex-grow flex-shrink-0 w-[1.5px] h-auto min-h-auto",
+                    "flex-grow flex-shrink-0 w-[2px] h-auto min-h-auto rounded-full",
                     isCompleted ? "bg-success" : "bg-accents-3"
                   )}
                 />
@@ -87,23 +94,29 @@ export const NavModule: FC<Props> = ({ module, progress }) => {
               size="xs"
               intent="secondary"
               className={clsx(
+                "transition",
                 open ? "pb-5" : "pb-5",
-                isCurrentModule ? "!text-foreground" : "text-accents-6"
+                isCurrentModule
+                  ? "!text-foreground"
+                  : "text-accents-6 hover:text-foreground hover:transition-none"
               )}
             >
               {module.title}
             </Text>
 
-            {open ? (
-              <ChevronDownIcon className="flex-shrink-0 w-5 h-5 text-secondary" />
-            ) : (
-              <ChevronRightIcon className="flex-shrink-0 w-5 h-5 text-secondary" />
-            )}
+            <ChevronRightIcon
+              className={clsx(
+                "flex-shrink-0 w-5 h-5 text-secondary transition duration-100",
+                open && "rotate-90"
+              )}
+            />
           </Disclosure.Button>
 
           <Disclosure.Panel as="ol">
+            {/* Lessons */}
             {module.lessons.map((lesson, index, array) => {
               const isCurrentLesson = query.lessonId === lesson.id
+              const lessonCompleted = progress?.includes(lesson.id)
 
               return (
                 <li
@@ -111,25 +124,28 @@ export const NavModule: FC<Props> = ({ module, progress }) => {
                   key={lesson.id}
                 >
                   <div className="relative flex flex-col items-center gap-y-0.5">
+                    {/* Lesson circle */}
                     <div className="flex items-center justify-center w-5 h-5">
                       <div
                         className={clsx(
                           "flex-shrink-0 w-3 h-3 rounded-full",
-                          isInProgress ? "bg-success" : "bg-accents-3"
+                          lessonCompleted ? "bg-success" : "bg-accents-3"
                         )}
                       />
                     </div>
 
+                    {/* Lesson connector */}
                     {index !== array.length - 1 && (
                       <div
                         className={clsx(
-                          "flex-grow flex-shrink-0 w-px h-auto min-h-auto",
-                          isCompleted ? "bg-success" : "bg-accents-3"
+                          "flex-grow flex-shrink-0 w-0.5 rounded-full h-auto min-h-auto",
+                          lessonCompleted ? "bg-success" : "bg-accents-3"
                         )}
                       />
                     )}
                   </div>
 
+                  {/* Lesson title + link */}
                   <TextLink
                     size="xs"
                     intent="secondary"
@@ -137,7 +153,7 @@ export const NavModule: FC<Props> = ({ module, progress }) => {
                       "w-full",
                       index !== array.length - 1 && "pb-5",
                       isCurrentLesson
-                        ? "font-bold !text-foreground"
+                        ? "!font-bold !text-foreground"
                         : "text-accents-6"
                     )}
                     href={{
@@ -154,12 +170,13 @@ export const NavModule: FC<Props> = ({ module, progress }) => {
               )
             })}
 
+            {/* Squiggly connector at the end */}
             <svg
               width="21"
               height="18"
               className={clsx(
                 "relative ml-2.5",
-                isCompleted ? "text-success" : "text-accents-3"
+                isLastLessonCompleted ? "text-success" : "text-accents-3"
               )}
               viewBox="0 0 22 18"
               fill="none"
@@ -179,6 +196,15 @@ export const NavModule: FC<Props> = ({ module, progress }) => {
               />
             </svg>
           </Disclosure.Panel>
+
+          <Transition
+            enter="transition duration-100 ease-out"
+            enterFrom="transform h-0 opacity-0"
+            enterTo="transform h-auto opacity-100"
+            leave="transition duration-75 ease-out"
+            leaveFrom="transform h-auto opacity-100"
+            leaveTo="transform h-0 opacity-0"
+          ></Transition>
         </>
       )}
     </Disclosure>
