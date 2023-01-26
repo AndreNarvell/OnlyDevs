@@ -1,6 +1,6 @@
 import { serverSideSupabase, supabase } from "../lib/supabase"
 import { CategoryWithCourses } from "../types/Category"
-import { Course, CourseStructure, Module } from "../types/Course"
+import { Course, CourseStructure } from "../types/Course"
 import { CourseProgress } from "../types/CourseProgress"
 
 /**
