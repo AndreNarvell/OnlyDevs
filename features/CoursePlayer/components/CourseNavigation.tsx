@@ -1,14 +1,21 @@
 import { Text } from "../../../components/Text"
+import { useCourseProgress } from "../../../hooks/useCourseProgress"
 import { CourseStructure } from "../../../types/Course"
 import { NavModule } from "./NavModule"
+import clsx from "clsx"
 import { FC } from "react"
 
 interface Props {
   course: CourseStructure
-  progress: string[]
 }
 
-export const CourseNavigation: FC<Props> = ({ course, progress }) => {
+export const CourseNavigation: FC<Props> = ({ course }) => {
+  const { progress } = useCourseProgress()
+
+  const allLessonsCompleted = course.modules.every(module =>
+    module.lessons.every(lesson => progress?.includes(lesson.id))
+  )
+
   return (
     <div className="flex-grow-0 flex-shrink-0 pb-32 pr-8 mt-28 w-96">
       <Text as="h4" weight="bold" className="mb-4">
@@ -23,7 +30,10 @@ export const CourseNavigation: FC<Props> = ({ course, progress }) => {
         <svg
           width="22"
           height="29"
-          className="-ml-0.5 text-accents-3"
+          className={clsx(
+            "-ml-0.5",
+            allLessonsCompleted ? "text-success" : "text-accents-3"
+          )}
           viewBox="0 0 24 31"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

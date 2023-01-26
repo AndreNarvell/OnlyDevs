@@ -235,16 +235,16 @@ export const getUsersProgress = async (
   userId: string,
   courseId: string
 ): Promise<CourseProgress["completed_lessons"] | undefined> => {
-  const { data: progress } = await serverSideSupabase()
+  const { data: progress } = await supabase
     .from("course_progress")
     .select("completed_lessons")
     .eq("profile", userId)
     .eq("course", courseId)
     .single()
 
-  if (!progress || !progress.completed_lessons) {
+  if (!progress) {
     return undefined
   }
 
-  return progress.completed_lessons ?? undefined
+  return progress.completed_lessons ?? []
 }

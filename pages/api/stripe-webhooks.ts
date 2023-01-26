@@ -29,30 +29,42 @@ const handler: NextApiHandler = async (req, res) => {
   // Handle the event
   switch (event.type) {
     case "checkout.session.completed":
+      // Do 3 things on purchase completion:
+      // 1. Add the purchased course to the user's owned_courses
+      // 2. Remove the purchased course from the user's saved_courses
+      // 3. Add the purchased course to the user's progress
+
       const sessionId = (event.data.object as Stripe.Checkout.Session).id
 
-      const session = await stripe.checkout.sessions.retrieve(sessionId, {
-        expand: [
-          "line_items",
-          "line_items.data.price",
-          "line_items.data.price.product",
-        ],
-      })
+      const checkoutSession = await stripe.checkout.sessions.retrieve(
+        sessionId,
+        {
+          expand: [
+            "line_items",
+            "line_items.data.price",
+            "line_items.data.price.product",
+          ],
+        }
+      )
 
-      const { data } = await serverSideSupabase()
+      const { data: profile } = await serverSideSupabase()
         .from("profiles")
-        .select("owned_courses, saved_courses")
-        .eq("stripe_customer", session.customer)
+        .select("id, owned_courses, saved_courses")
+        .eq("stripe_customer", checkoutSession.customer)
         .single()
 
-      const ownedCourses = data?.owned_courses ?? []
-      const savedCourses = data?.saved_courses ?? []
-
-      if (session.line_items === undefined) {
+      if (!profile) {
         throw new Error("Invalid session")
       }
 
-      const newCourses = session.line_items.data
+      const ownedCourses = profile.owned_courses ?? []
+      const savedCourses = profile.saved_courses ?? []
+
+      if (checkoutSession.line_items === undefined) {
+        throw new Error("Invalid session")
+      }
+
+      const newCourses = checkoutSession.line_items.data
         .map(item => {
           if (
             item.price === null ||
@@ -79,7 +91,7 @@ const handler: NextApiHandler = async (req, res) => {
         .update({
           owned_courses: removeDuplicates,
         })
-        .eq("stripe_customer", session.customer)
+        .eq("id", profile.id)
 
       // Removes owned courses from saved courses
       await serverSideSupabase()
@@ -89,11 +101,24 @@ const handler: NextApiHandler = async (req, res) => {
             course => !removeDuplicates.includes(course)
           ),
         })
+        .eq("id", profile.id)
 
+      // Run the increment rpc function for each course
       newCourses.forEach(async course => {
         const { error } = await serverSideSupabase().rpc("increment", {
           course_id: course,
         })
+
+        if (error) {
+          console.log(error)
+        }
+      })
+
+      // Add the purchased course to the user's progress
+      newCourses.forEach(async course => {
+        const { error } = await serverSideSupabase()
+          .from("course_progress")
+          .insert({ course, profile: profile.id, completed_lessons: [] })
 
         if (error) {
           console.log(error)

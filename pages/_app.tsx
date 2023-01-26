@@ -1,17 +1,17 @@
+import { Meta } from "../components/Meta"
+import { useShoppingCart } from "../stores/shoppingCart"
+import "../styles/globals.scss"
+import { Database } from "../types/supabase"
+import { Plus_Jakarta_Sans } from "@next/font/google"
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react"
-import { useEffect, useState } from "react"
-import "../styles/globals.scss"
 import type { AppProps } from "next/app"
-import { Plus_Jakarta_Sans } from "@next/font/google"
 import Head from "next/head"
-import { Meta } from "../components/Meta"
-import { Database } from "../types/supabase"
-import { useShoppingCart } from "../stores/shoppingCart"
+import { useEffect, useState } from "react"
 
 export const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
   style: "normal",
 })
 
