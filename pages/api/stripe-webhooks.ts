@@ -110,7 +110,7 @@ const handler: NextApiHandler = async (req, res) => {
         })
 
         if (error) {
-          console.log(error)
+          console.log("Error incrementing course students", error)
         }
       })
 
@@ -121,7 +121,7 @@ const handler: NextApiHandler = async (req, res) => {
           .insert({ course, profile: profile.id, completed_lessons: [] })
 
         if (error) {
-          console.log(error)
+          console.log("Error creating course progress row", error)
         }
       })
 
