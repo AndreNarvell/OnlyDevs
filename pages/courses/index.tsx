@@ -1,26 +1,25 @@
-import React, { FC } from "react"
 import { Input } from "../../components/Input"
+import { Meta } from "../../components/Meta"
 import { Text } from "../../components/Text"
-import { GetServerSideProps } from "next"
+import { Layout } from "../../components/layouts/Layout"
+import { SidebarLayout } from "../../components/layouts/SidebarLayout"
+import { CourseContainer } from "../../features/CourseCatalog/components/CourseContainer"
+import { DesktopFilterMenu } from "../../features/CourseCatalog/components/DesktopFilterMenu"
+import { MobileFilterMenu } from "../../features/CourseCatalog/components/MobileFilterMenu"
+import { useSearch } from "../../features/CourseCatalog/hooks/useSearch"
+import { parseCategories } from "../../features/CourseCatalog/utils/filter"
+import { getAllCategories } from "../../models/categories"
 import {
-  CategoryWithCourses,
   getAllCourses,
   getAllCoursesSortedByCategory,
 } from "../../models/courses"
-import { useRouter } from "next/router"
-import { getAllCategories } from "../../models/categories"
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline"
+import { Category, CategoryWithCourses } from "../../types/Category"
 import { Course } from "../../types/Course"
 import { searchCourses } from "../../utils/searchCourses"
-import { Category } from "../../types/Category"
-import { SidebarLayout } from "../../components/layouts/SidebarLayout"
-import { useSearch } from "../../features/CourseCatalog/hooks/useSearch"
-import { parseCategories } from "../../features/CourseCatalog/utils/filter"
-import { DesktopFilterMenu } from "../../features/CourseCatalog/components/DesktopFilterMenu"
-import { MobileFilterMenu } from "../../features/CourseCatalog/components/MobileFilterMenu"
-import { CourseContainer } from "../../features/CourseCatalog/components/CourseContainer"
-import { Layout } from "../../components/layouts/Layout"
-import { Meta } from "../../components/Meta"
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline"
+import { GetServerSideProps } from "next"
+import { useRouter } from "next/router"
+import React, { FC } from "react"
 
 interface Props {
   allCourses: Course[]

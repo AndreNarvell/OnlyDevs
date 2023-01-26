@@ -3,13 +3,18 @@ import { TextLink } from "../components/TextLink"
 import { CourseNavigation } from "../features/CoursePlayer/components/CourseNavigation"
 import { CoursePlayer } from "../features/CoursePlayer/components/CoursePlayer"
 import { serverSideSupabase } from "../lib/supabase"
-import { getModulesAndLessons, getUsersOwnedCourses } from "../models/courses"
+import {
+  getModulesAndLessons,
+  getUsersOwnedCourses,
+  getUsersProgress,
+} from "../models/courses"
 import { LessonData, CourseStructure } from "../types/Course"
 import { Database } from "../types/supabase"
 import { ChevronLeftIcon } from "@heroicons/react/20/solid"
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { GetServerSideProps, NextPage } from "next"
 import { useRouter } from "next/router"
+import gradient from "random-gradient"
 
 interface Props {
   course: CourseStructure
@@ -22,12 +27,7 @@ const MyCoursesPage: NextPage<Props> = ({
   lessonData,
   progress = [],
 }) => {
-  const { query } = useRouter()
-
-  // Find the lesson based on the URL
-  const lesson = course.modules
-    .flatMap(module => module.lessons)
-    .find(lesson => lesson.id === query.lessonId)
+  console.log(course)
 
   return (
     <div className="bg-accents-1">
@@ -50,36 +50,45 @@ const MyCoursesPage: NextPage<Props> = ({
       </header>
 
       <main
-        style={{ height: "calc(100vh - 5rem)" }}
-        className="overflow-y-auto snap-y snap-mandatory"
+        style={{
+          height: "calc(100vh - 5rem)",
+        }}
+        className="overflow-y-auto !scrollbar-thin !scrollbar-track-transparent !scrollbar-thumb-accents-3 !scrollbar-thumb-rounded-full"
       >
-        <section className="container py-36 snap-start snap-always">
-          <div className="max-w-lg">
-            <Text
-              as="h2"
-              size="3xl"
-              weight="bold"
-              tracking="wide"
-              className="mb-4"
-            >
-              {course.title}
-            </Text>
+        <section className="relative">
+          <div
+            className="absolute inset-0 w-full pointer-events-none opacity-20"
+            style={{ background: gradient(course.title) }}
+          />
 
-            <Text as="p" tracking="wide" intent="secondary">
-              {course.description}
-            </Text>
+          <div className="container relative py-36">
+            <div className="max-w-lg">
+              <Text
+                as="h2"
+                size="3xl"
+                weight="bold"
+                tracking="wide"
+                className="mb-4"
+              >
+                {course.title}
+              </Text>
+
+              <Text as="p" tracking="wide" className="opacity-70">
+                {course.description}
+              </Text>
+            </div>
           </div>
         </section>
 
-        <hr className="border-accents-2 snap-align-none" />
+        <hr className="border-accents-2" />
 
         <section
           style={{ height: "calc(100vh - 5rem)" }}
-          className="container flex snap-start snap-always xl:max-w-screen-xl 2xl:max-w-screen-2xl"
+          className="container flex xl:max-w-screen-xl 2xl:max-w-screen-2xl"
         >
           <CourseNavigation course={course} progress={progress} />
 
-          <CoursePlayer lesson={lesson} lessonData={lessonData} />
+          <CoursePlayer course={course} lessonData={lessonData} />
         </section>
       </main>
     </div>
@@ -116,7 +125,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
   }
 
   // Check if the user owns the course
-  const ownedCourses = await getUsersOwnedCourses(session.user.id)
+  const [ownedCourses, courseProgress, course] = await Promise.all([
+    getUsersOwnedCourses(session.user.id),
+    getUsersProgress(session.user.id, courseId),
+    getModulesAndLessons(courseId),
+  ])
 
   // If owned courses can't be fetched, redirect to dashboard
   if (!ownedCourses) {
@@ -143,8 +156,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
       },
     }
   }
-
-  const course = await getModulesAndLessons(courseId)
 
   if (!course) {
     return {
@@ -173,10 +184,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
       props: {
         course,
         lessonData,
-        progress: [
-          "cab7153c-a9be-43a6-be62-58cf3f9aee1b",
-          "00b5d372-3a54-4af7-820b-cc2d40cdf8a0",
-        ],
+        progress: courseProgress ?? [],
       },
     }
   }
@@ -185,7 +193,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
     props: {
       course,
       lessonData: null,
-      progress: [],
+      progress: courseProgress ?? [],
     },
   }
 }
