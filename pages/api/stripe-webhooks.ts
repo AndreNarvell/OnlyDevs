@@ -36,94 +36,169 @@ const handler: NextApiHandler = async (req, res) => {
 
       const sessionId = (event.data.object as Stripe.Checkout.Session).id
 
-      const checkoutSession = await stripe.checkout.sessions.retrieve(
-        sessionId,
-        {
-          expand: [
-            "line_items",
-            "line_items.data.price",
-            "line_items.data.price.product",
-          ],
+      console.log("Handling checkout.session.completed event for", sessionId)
+
+      try {
+        const checkoutSession = await stripe.checkout.sessions.retrieve(
+          sessionId,
+          {
+            expand: [
+              "line_items",
+              "line_items.data.price",
+              "line_items.data.price.product",
+            ],
+          }
+        )
+
+        const {
+          data: profile,
+          status: getProfileStatus,
+          statusText: getProfileStatusText,
+        } = await serverSideSupabase()
+          .from("profiles")
+          .select("id, owned_courses, saved_courses")
+          .eq("stripe_customer", checkoutSession.customer)
+          .single()
+
+        console.log(
+          getProfileStatus,
+          getProfileStatusText,
+          "Got profile",
+          profile
+        )
+
+        if (!profile) {
+          console.log("A profile was not found for this stripe customer")
+          throw new Error("Invalid session")
         }
-      )
 
-      const { data: profile } = await serverSideSupabase()
-        .from("profiles")
-        .select("id, owned_courses, saved_courses")
-        .eq("stripe_customer", checkoutSession.customer)
-        .single()
+        const ownedCourses = profile.owned_courses ?? []
+        const savedCourses = profile.saved_courses ?? []
 
-      if (!profile) {
-        throw new Error("Invalid session")
-      }
+        if (checkoutSession.line_items === undefined) {
+          console.log("The checkout session has no line items")
+          throw new Error("Invalid session")
+        }
 
-      const ownedCourses = profile.owned_courses ?? []
-      const savedCourses = profile.saved_courses ?? []
+        console.log(
+          "The checkout session has",
+          checkoutSession.line_items.data.length,
+          "line items"
+        )
 
-      if (checkoutSession.line_items === undefined) {
-        throw new Error("Invalid session")
-      }
+        // Get the course id from metadata in every line item
+        const newCourses = checkoutSession.line_items.data
+          .map(item => {
+            if (
+              item.price === null ||
+              item.price.product === undefined ||
+              typeof item.price.product === "string" ||
+              item.price.product.deleted === true ||
+              item.price.product.metadata.course_id === undefined
+            ) {
+              console.log("Found an invalid line item", item)
+              return undefined
+            }
 
-      const newCourses = checkoutSession.line_items.data
-        .map(item => {
-          if (
-            item.price === null ||
-            item.price.product === undefined ||
-            typeof item.price.product === "string" ||
-            item.price.product.deleted === true ||
-            item.price.product.metadata.course_id === undefined
-          ) {
-            return undefined
-            // throw new Error("Invalid price object")
+            console.log("Found a valid line item", item)
+            return item.price.product.metadata.course_id
+          })
+          .filter((item): item is string => item !== undefined)
+
+        console.log("The new courses are", newCourses)
+
+        const removeDuplicates = Array.from(
+          new Set([...ownedCourses, ...newCourses])
+        )
+
+        // Adds newly purchase courses to owned courses
+        const { status: addCoursesStatus, statusText: addCoursesStatusText } =
+          await serverSideSupabase()
+            .from("profiles")
+            .update({
+              owned_courses: removeDuplicates,
+            })
+            .eq("id", profile.id)
+
+        console.log(
+          addCoursesStatus,
+          addCoursesStatusText,
+          "Added",
+          "courses to",
+          profile.id
+        )
+
+        // Removes owned courses from saved courses
+        const {
+          status: updateSavedCoursesStatus,
+          statusText: updateSavedCoursesStatusText,
+        } = await serverSideSupabase()
+          .from("profiles")
+          .update({
+            saved_courses: savedCourses.filter(
+              course => !removeDuplicates.includes(course)
+            ),
+          })
+          .eq("id", profile.id)
+
+        console.log(
+          updateSavedCoursesStatus,
+          updateSavedCoursesStatusText,
+          "Updated one or more rows of saved courses from profile",
+          profile.id
+        )
+
+        // Run the increment rpc function for each course
+        newCourses.forEach(async course => {
+          console.log("Incrementing course students for", course, "...")
+          const { error, status, statusText } = await serverSideSupabase().rpc(
+            "increment",
+            {
+              course_id: course,
+            }
+          )
+
+          if (error) {
+            return console.log("Error incrementing course students", error)
           }
 
-          return item.price.product.metadata.course_id
-        })
-        .filter((item): item is string => item !== undefined)
-
-      const removeDuplicates = Array.from(
-        new Set([...ownedCourses, ...newCourses])
-      )
-
-      // Adds newly purchase courses to owned courses
-      await serverSideSupabase()
-        .from("profiles")
-        .update({
-          owned_courses: removeDuplicates,
-        })
-        .eq("id", profile.id)
-
-      // Removes owned courses from saved courses
-      await serverSideSupabase()
-        .from("profiles")
-        .update({
-          saved_courses: savedCourses.filter(
-            course => !removeDuplicates.includes(course)
-          ),
-        })
-        .eq("id", profile.id)
-
-      // Run the increment rpc function for each course
-      newCourses.forEach(async course => {
-        const { error } = await serverSideSupabase().rpc("increment", {
-          course_id: course,
+          console.log(
+            status,
+            statusText,
+            "Incremented course students for",
+            course
+          )
         })
 
-        if (error) {
-          console.log("Error incrementing course students", error)
-        }
-      })
+        // Add the purchased course to the user's progress
+        newCourses.forEach(async course => {
+          console.log("Creating course progress row for", course, "...")
 
-      // Add the purchased course to the user's progress
-      newCourses.forEach(async course => {
-        const { error } = await serverSideSupabase()
-          .from("course_progress")
-          .insert({ course, profile: profile.id, completed_lessons: [] })
+          const { error, status, statusText } = await serverSideSupabase()
+            .from("course_progress")
+            .insert({
+              course,
 
-        if (error) {
-          console.log("Error creating course progress row", error)
-        }
-      })
+              profile: profile.id,
+              completed_lessons: [],
+            })
+
+          if (error) {
+            return console.log("Error creating course progress row", error)
+          }
+
+          console.log(
+            status,
+            statusText,
+            "Created course progress row for",
+            course
+          )
+        })
+
+        console.log("Finished handling checkout.session.completed event")
+      } catch (error) {
+        console.log("Something went wrong inside Stripe webhook handler", error)
+      }
 
       break
     default:
