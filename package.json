@@ -15,6 +15,7 @@
     "@headlessui/react": "^1.7.7",
     "@heroicons/react": "^2.0.13",
     "@hookform/resolvers": "^2.9.10",
+    "@mux/mux-node": "^7.3.0",
     "@mux/mux-player-react": "^1.6.0",
     "@next/font": "^13.1.1",
     "@radix-ui/colors": "^0.1.8",

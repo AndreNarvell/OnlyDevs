@@ -164,7 +164,7 @@ export const CoursePlayer: FC<Props> = ({ course, lessonData }) => {
           <MuxPlayer
             streamType="on-demand"
             className="aspect-video"
-            playbackId="3Yc001cyCUCjSP7zal8DRev302CyA01cb1TLMYo93XDanw"
+            playbackId=/* {lessonData?.video_url ?? undefined} */ "aHWrpaFJrJHnTXfMxuOgEj7Q8H4AjGbyPJ8B2XLEhxo"
             metadata={{
               video_id: "video-id-54321",
               video_title: "Test video title",

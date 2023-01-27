@@ -184,6 +184,7 @@ export const getModulesAndLessons = async (
       `id,
        title,
        description,
+       short_desc,
        modules (
          id,
          title,

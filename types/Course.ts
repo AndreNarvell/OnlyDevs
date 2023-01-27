@@ -20,6 +20,7 @@ export type CourseWithSectionsAndLessons = CourseWithSections & {
 export type CourseStructure = {
   id: Course["id"]
   title: Course["title"]
+  short_desc: Course["short_desc"]
   description: Course["description"]
   modules: {
     id: Module["id"]

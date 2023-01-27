@@ -1,3 +1,4 @@
+import { Meta } from "../components/Meta"
 import { Text } from "../components/Text"
 import { TextLink } from "../components/TextLink"
 import { CourseNavigation } from "../features/CoursePlayer/components/CourseNavigation"
@@ -19,68 +20,72 @@ interface Props {
 
 const MyCoursesPage: NextPage<Props> = ({ course, lessonData }) => {
   return (
-    <div className="bg-accents-1">
-      <header className="flex items-center justify-between h-20 px-8 backdrop-blur-md bg-accents-1/50">
-        <TextLink
-          href="/dashboard"
-          size="sm"
-          weight="bold"
-          intent="secondary"
-          className="flex items-center gap-x-1 w-44"
+    <>
+      <Meta title={course.title} />
+
+      <div className="bg-accents-1">
+        <header className="flex items-center justify-between h-20 px-8 backdrop-blur-md bg-accents-1/50">
+          <TextLink
+            href="/dashboard"
+            size="sm"
+            weight="bold"
+            intent="secondary"
+            className="flex items-center gap-x-1 w-44"
+          >
+            <ChevronLeftIcon className="w-5 h-5" /> Go back to dashboard
+          </TextLink>
+
+          <Text as="h1" weight="bold" size="lg">
+            {course.title}
+          </Text>
+
+          <div className="w-44" />
+        </header>
+
+        <main
+          style={{
+            height: "calc(100vh - 5rem)",
+          }}
+          className="overflow-y-auto !scrollbar-thin !scrollbar-track-transparent !scrollbar-thumb-accents-3 !scrollbar-thumb-rounded-full"
         >
-          <ChevronLeftIcon className="w-5 h-5" /> Go back to dashboard
-        </TextLink>
+          <section className="relative">
+            <div
+              className="absolute inset-0 w-full pointer-events-none opacity-20"
+              style={{ background: gradient(course.title) }}
+            />
 
-        <Text as="h1" weight="bold" size="lg">
-          {course.title}
-        </Text>
+            <div className="container relative py-36">
+              <div className="max-w-lg">
+                <Text
+                  as="h2"
+                  size="3xl"
+                  weight="bold"
+                  tracking="wide"
+                  className="mb-4"
+                >
+                  {course.title}
+                </Text>
 
-        <div className="w-44" />
-      </header>
-
-      <main
-        style={{
-          height: "calc(100vh - 5rem)",
-        }}
-        className="overflow-y-auto !scrollbar-thin !scrollbar-track-transparent !scrollbar-thumb-accents-3 !scrollbar-thumb-rounded-full"
-      >
-        <section className="relative">
-          <div
-            className="absolute inset-0 w-full pointer-events-none opacity-20"
-            style={{ background: gradient(course.title) }}
-          />
-
-          <div className="container relative py-36">
-            <div className="max-w-lg">
-              <Text
-                as="h2"
-                size="3xl"
-                weight="bold"
-                tracking="wide"
-                className="mb-4"
-              >
-                {course.title}
-              </Text>
-
-              <Text as="p" tracking="wide" className="opacity-70">
-                {course.description}
-              </Text>
+                <Text as="p" tracking="wide" className="opacity-70">
+                  {course.short_desc}
+                </Text>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <hr className="border-accents-2" />
+          <hr className="border-accents-2" />
 
-        <section
-          style={{ height: "calc(100vh - 5rem)" }}
-          className="container flex xl:max-w-screen-xl 2xl:max-w-screen-2xl"
-        >
-          <CourseNavigation course={course} />
+          <section
+            style={{ height: "calc(100vh - 5rem)" }}
+            className="container flex xl:max-w-screen-xl 2xl:max-w-screen-2xl"
+          >
+            <CourseNavigation course={course} />
 
-          <CoursePlayer course={course} lessonData={lessonData} />
-        </section>
-      </main>
-    </div>
+            <CoursePlayer course={course} lessonData={lessonData} />
+          </section>
+        </main>
+      </div>
+    </>
   )
 }
 export default MyCoursesPage
