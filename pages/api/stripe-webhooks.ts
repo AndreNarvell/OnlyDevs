@@ -149,8 +149,9 @@ const handler: NextApiHandler = async (req, res) => {
         )
 
         // Run the increment rpc function for each course
-        newCourses.forEach(async course => {
+        for (const course of newCourses) {
           console.log("Incrementing course students for", course, "...")
+
           const { error, status, statusText } = await serverSideSupabase().rpc(
             "increment",
             {
@@ -168,10 +169,10 @@ const handler: NextApiHandler = async (req, res) => {
             "Incremented course students for",
             course
           )
-        })
+        }
 
         // Add the purchased course to the user's progress
-        newCourses.forEach(async course => {
+        for (const course of newCourses) {
           console.log("Creating course progress row for", course, "...")
 
           const { error, status, statusText } = await serverSideSupabase()
@@ -193,7 +194,7 @@ const handler: NextApiHandler = async (req, res) => {
             "Created course progress row for",
             course
           )
-        })
+        }
 
         console.log("Finished handling checkout.session.completed event")
       } catch (error) {
