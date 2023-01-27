@@ -14,9 +14,13 @@ import { FC, useEffect } from "react"
 interface Props {
   course: CourseStructure
   lessonData: LessonData | null
+  tokens?: {
+    video: string
+    thumbnail: string
+  }
 }
 
-export const CoursePlayer: FC<Props> = ({ course, lessonData }) => {
+export const CoursePlayer: FC<Props> = ({ course, lessonData, tokens }) => {
   const { progress, mutate } = useCourseProgress()
 
   console.log("render")
@@ -161,16 +165,26 @@ export const CoursePlayer: FC<Props> = ({ course, lessonData }) => {
         )}
 
         {isVideo && (
-          <MuxPlayer
-            streamType="on-demand"
-            className="aspect-video"
-            playbackId=/* {lessonData?.video_url ?? undefined} */ "aHWrpaFJrJHnTXfMxuOgEj7Q8H4AjGbyPJ8B2XLEhxo"
-            metadata={{
-              video_id: "video-id-54321",
-              video_title: "Test video title",
-              viewer_user_id: "user-id-007",
-            }}
-          />
+          <>
+            {!tokens ? (
+              <Text as="p">You do not have permission to view this video</Text>
+            ) : (
+              <MuxPlayer
+                streamType="on-demand"
+                className="aspect-video"
+                playbackId={lessonData?.video_url ?? undefined}
+                tokens={{
+                  playback: tokens.video,
+                  thumbnail: tokens.thumbnail,
+                }}
+                metadata={{
+                  video_id: "video-id-54321",
+                  video_title: "Test video title",
+                  viewer_user_id: "user-id-007",
+                }}
+              />
+            )}
+          </>
         )}
       </div>
     </section>

@@ -3,22 +3,27 @@ import { Text } from "../components/Text"
 import { TextLink } from "../components/TextLink"
 import { CourseNavigation } from "../features/CoursePlayer/components/CourseNavigation"
 import { CoursePlayer } from "../features/CoursePlayer/components/CoursePlayer"
-import { useCourseProgress } from "../hooks/useCourseProgress"
 import { serverSideSupabase } from "../lib/supabase"
 import { getModulesAndLessons, getUsersOwnedCourses } from "../models/courses"
 import { LessonData, CourseStructure } from "../types/Course"
 import { Database } from "../types/supabase"
 import { ChevronLeftIcon } from "@heroicons/react/20/solid"
+import Mux from "@mux/mux-node"
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
+import { readFile } from "fs/promises"
 import { GetServerSideProps, NextPage } from "next"
 import gradient from "random-gradient"
 
 interface Props {
   course: CourseStructure
   lessonData: LessonData | null
+  tokens?: {
+    video: string
+    thumbnail: string
+  }
 }
 
-const MyCoursesPage: NextPage<Props> = ({ course, lessonData }) => {
+const MyCoursesPage: NextPage<Props> = ({ course, lessonData, tokens }) => {
   return (
     <>
       <Meta title={course.title} />
@@ -81,7 +86,11 @@ const MyCoursesPage: NextPage<Props> = ({ course, lessonData }) => {
           >
             <CourseNavigation course={course} />
 
-            <CoursePlayer course={course} lessonData={lessonData} />
+            <CoursePlayer
+              course={course}
+              lessonData={lessonData}
+              tokens={tokens}
+            />
           </section>
         </main>
       </div>
@@ -170,6 +179,43 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
     if (lessonDataError) {
       if (lessonDataError?.code !== "PGRST116") {
         console.log("Error fetching lessons data", lessonDataError)
+      }
+    }
+
+    console.log(process.env.MUX_PRIVATE_KEY)
+
+    const baseOptions = {
+      keyId: process.env.MUX_SIGNING_KEY, // Enter your signing key id here
+      keySecret: process.env.MUX_PRIVATE_KEY, // Enter your base64 encoded private key here
+      expiration: "20m", // E.g 60, "2 days", "10h", "7d", numeric value interpreted as seconds
+    }
+
+    if (lessonData?.video_url) {
+      const playbackId = lessonData?.video_url
+
+      const videoToken = Mux.JWT.signPlaybackId(playbackId, {
+        ...baseOptions,
+        type: "video",
+      })
+
+      const thumbnailToken = Mux.JWT.signPlaybackId(playbackId, {
+        ...baseOptions,
+        type: "thumbnail",
+        params: {
+          playback_restriction_id:
+            "gI1g33l4OfFTqK5TK6FfreEv02JlCZ2lwtEcNfWsYxqA",
+        },
+      })
+
+      return {
+        props: {
+          course,
+          lessonData,
+          tokens: {
+            video: videoToken,
+            thumbnail: thumbnailToken,
+          },
+        },
       }
     }
 
