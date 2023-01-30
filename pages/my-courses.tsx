@@ -182,8 +182,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
       }
     }
 
-    console.log(process.env.MUX_PRIVATE_KEY)
-
     const baseOptions = {
       keyId: process.env.MUX_SIGNING_KEY, // Enter your signing key id here
       keySecret: process.env.MUX_PRIVATE_KEY, // Enter your base64 encoded private key here
@@ -201,10 +199,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
       const thumbnailToken = Mux.JWT.signPlaybackId(playbackId, {
         ...baseOptions,
         type: "thumbnail",
-        params: {
-          playback_restriction_id:
-            "gI1g33l4OfFTqK5TK6FfreEv02JlCZ2lwtEcNfWsYxqA",
-        },
       })
 
       return {

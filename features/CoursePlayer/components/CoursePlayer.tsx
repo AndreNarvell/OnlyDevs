@@ -114,42 +114,9 @@ export const CoursePlayer: FC<Props> = ({ course, lessonData, tokens }) => {
             {lesson ? lesson?.title : "No lesson selected"}
           </Text>
         </div>
-
-        {lesson && (
-          <div className="flex gap-x-2">
-            <ButtonLink
-              href={{
-                pathname: "/my-courses",
-                query: { ...query, lessonId: previousLessonId },
-              }}
-              size="small"
-              intent="secondary"
-            >
-              Previous
-            </ButtonLink>
-            <ButtonLink
-              onClick={() => {
-                if (progress) {
-                  addCompleted(progress, lesson.id)
-                }
-              }}
-              href={{
-                pathname: "/my-courses",
-                query: {
-                  ...query,
-                  lessonId: nextLessonId,
-                },
-              }}
-              intent="success"
-              size="small"
-            >
-              {isLastLesson ? "Finish course" : "Next"}
-            </ButtonLink>
-          </div>
-        )}
       </div>
 
-      <div className="w-full p-12 border border-accents-2 rounded-marketing min-h-[20rem] md:min-h-[30rem] lg:min-h-[40rem] mb-16">
+      <div className="w-full p-12 border border-accents-2 rounded-marketing min-h-[20rem] md:min-h-[30rem] lg:min-h-[40rem] mb-4">
         {noContent && (
           <Text as="p">
             This course does not have any {lesson?.content_type} content
@@ -185,6 +152,41 @@ export const CoursePlayer: FC<Props> = ({ course, lessonData, tokens }) => {
               />
             )}
           </>
+        )}
+      </div>
+
+      <div className="flex justify-end w-full mb-16">
+        {lesson && (
+          <div className="flex gap-x-2">
+            <ButtonLink
+              href={{
+                pathname: "/my-courses",
+                query: { ...query, lessonId: previousLessonId },
+              }}
+              size="small"
+              intent="secondary"
+            >
+              Previous
+            </ButtonLink>
+            <ButtonLink
+              onClick={() => {
+                if (progress) {
+                  addCompleted(progress, lesson.id)
+                }
+              }}
+              href={{
+                pathname: "/my-courses",
+                query: {
+                  ...query,
+                  lessonId: nextLessonId,
+                },
+              }}
+              intent="success"
+              size="small"
+            >
+              {isLastLesson ? "Finish course" : "Next"}
+            </ButtonLink>
+          </div>
         )}
       </div>
     </section>
