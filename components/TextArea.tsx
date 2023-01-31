@@ -1,64 +1,17 @@
-import { IconComponent } from "../types/IconComponent"
+import { CustomInputProps, input } from "./Input"
 import { Text } from "./Text"
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid"
-import { cva, VariantProps } from "class-variance-authority"
+import { VariantProps } from "class-variance-authority"
 import clsx from "clsx"
 import { forwardRef, HTMLAttributes } from "react"
 
-export const input = cva(
-  "border rounded-base flex items-center justify-center transition whitespace-nowrap bg-background border-accents-2 focus:outline-none focus:border-accents-5 placeholder:opacity-40 placeholder:text-foreground font-medium scroll-mt-input file:hidden file:inset-0 file:cursor-pointer",
-  {
-    variants: {
-      size: {
-        small: "text-sm h-8 px-3",
-        base: "text-base h-10 px-3",
-        large: "text-base h-12 py-2 px-4",
-      },
-      disabled: {
-        true: "bg-accents-1 border-accents-2 placeholder:text-accents-4 text-accents-5 cursor-not-allowed",
-      },
-      error: {
-        true: "border-error focus:border-error placeholder:text-error text-error caret-error",
-      },
-      fullWidth: {
-        true: "w-full",
-        false: "w-max",
-      },
-    },
-
-    defaultVariants: {
-      size: "base",
-      disabled: false,
-      error: false,
-      fullWidth: false,
-    },
-  }
-)
-
-export interface CustomInputProps {
-  label: string
-  name: string
-  placeholder?: string
-  showLabel?: boolean
-  id?: string
-  disabled?: boolean
-  error?: string
-  type?: "text" | "email" | "password" | "number" | "file"
-  icon?: IconComponent
-  value?: string
-  readOnly?: boolean
-  inputClassName?: string
-  labelClassName?: string
-}
-
-type Props = HTMLAttributes<HTMLInputElement> &
+type Props = HTMLAttributes<HTMLTextAreaElement> &
   Omit<VariantProps<typeof input>, "error"> &
-  CustomInputProps
+  Omit<CustomInputProps, "type">
 
-export const Input = forwardRef<HTMLInputElement, Props>(
+export const TextArea = forwardRef<HTMLTextAreaElement, Props>(
   (
     {
-      type = "text",
       id,
       showLabel,
       label,
@@ -89,8 +42,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
         </label>
 
         <div className="relative">
-          <input
-            type={type}
+          <textarea
             aria-invalid={!!error}
             placeholder={placeholder ?? label}
             disabled={disabled}
@@ -107,8 +59,9 @@ export const Input = forwardRef<HTMLInputElement, Props>(
                   "pl-10": Icon,
                   "pl-3": !Icon,
                 },
-                inputClassName,
-                type === "file" && "cursor-pointer leading-9"
+                "py-2",
+                "h-48 whitespace-pre-line",
+                inputClassName
               ),
             })}
             {...rest}
@@ -130,7 +83,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
   }
 )
 
-Input.displayName = "Input"
+TextArea.displayName = "TextArea"
 
 export const FieldError = ({ error, mr }: { error?: string; mr?: boolean }) => (
   <div

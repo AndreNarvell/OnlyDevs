@@ -1,7 +1,7 @@
-import { FC, ReactNode } from "react"
 import { CourseCard } from "../../../components/CourseCard"
 import { Text } from "../../../components/Text"
 import { Course } from "../../../types/Course"
+import { FC, ReactNode } from "react"
 
 interface Props {
   title: ReactNode
@@ -38,8 +38,7 @@ export const CourseContainer: FC<Props> = ({
         <div className="flex gap-6 px-6 pb-6 overflow-x-scroll xl:flex-wrap xl:overflow-x-auto">
           {courses.slice(0, limit).map(course => (
             <CourseCard
-              backgroundImage={showImage ? course.background_image : undefined}
-              icon={course.icon}
+              id={course.id}
               title={course.title}
               shortDesc={course.short_desc}
               href={{

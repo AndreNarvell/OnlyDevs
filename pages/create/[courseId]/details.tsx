@@ -1,106 +1,276 @@
+import { ArrayInput } from "../../../components/ArrayInput"
+import { Button } from "../../../components/Button"
 import { Input } from "../../../components/Input"
 import { Meta } from "../../../components/Meta"
 import { Text } from "../../../components/Text"
+import { TextArea } from "../../../components/TextArea"
 import { CourseCreatorLayout } from "../../../components/layouts/CourseCreatorLayout"
-import { useEditorContent } from "../../../features/CourseCreator/stores/editorContent"
+import { useLoadCourse } from "../../../features/CourseCreator/hooks/useLoadCourse"
 import {
-  getCourseDetailsById,
-  getModulesAndLessons,
-} from "../../../models/courses"
+  EditorContent,
+  useEditorContent,
+} from "../../../features/CourseCreator/stores/editorContent"
+import { getModulesAndLessons } from "../../../models/courses"
+import { CourseStructure } from "../../../types/Course"
+import { Database } from "../../../types/supabase"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { GetServerSideProps, NextPage } from "next"
-import { useEffect } from "react"
+import Image from "next/image"
+import { FormEvent, useState } from "react"
+import { useForm, FormProvider } from "react-hook-form"
+import { z } from "zod"
+
+const courseDetailsSchema = z.object({
+  title: z.string().min(10).max(100),
+  description: z.string().min(100).max(1000),
+  short_desc: z.string().min(10).max(100),
+  includes: z.array(z.string().min(5).max(100)).min(1),
+  requirements: z.array(z.string().min(2).max(100)).min(1),
+  tags: z.array(z.string().min(2).max(100)).min(1),
+  background_image: z.instanceof(File).optional(),
+  icon: z.instanceof(File).optional(),
+})
 
 interface Props {
-  course: NonNullable<Awaited<ReturnType<typeof getModulesAndLessons>>>
+  course: CourseStructure
 }
 
-const CreatePage: NextPage<Props> = ({ course }) => {
-  const { details, curriculum, setDetails, setCurriculum } = useEditorContent()
+const iconsTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/pre-`
 
-  useEffect(() => {
-    if (!curriculum || !details) {
-      setCurriculum(course.modules)
-      setDetails({
-        title: course.title,
-        description: course.description,
-        short_desc: course.short_desc,
-        includes: course.includes,
-        requirements: course.requirements,
-        background_image: course.background_image,
-        icon: course.icon,
-        price: course.price,
-        tags: course.tags,
-      })
+const bgImagesTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-backgrounds/pre-`
+
+const CreatePage: NextPage<Props> = ({ course }) => {
+  const details = useEditorContent(state => state.details)
+  useLoadCourse(course)
+
+  const [iconUrl, setIconUrl] = useState(
+    `${iconsTemplate}${course.id}?t=${Date.now()}`
+  )
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState(
+    `${bgImagesTemplate}${course.id}?t=${Date.now()}`
+  )
+
+  const refreshPreviews = () => {
+    setIconUrl(`${iconsTemplate}${course.id}?t=${Date.now()}`)
+    setBackgroundImageUrl(`${bgImagesTemplate}${course.id}?t=${Date.now()}`)
+  }
+
+  const methods = useForm<
+    EditorContent["details"] & {
+      icon: File | undefined
+      background_image: File | undefined
     }
-  }, [])
+  >({
+    values: {
+      ...details,
+      icon: undefined,
+      background_image: undefined,
+    },
+    resolver: zodResolver(courseDetailsSchema),
+  })
+
+  const supabase = useSupabaseClient<Database>()
+
+  const {
+    register,
+    setValue,
+    formState: { errors },
+  } = methods
+
+  // console.log("watch", methods.watch())
+  // console.log("errors:", errors)
+
+  const handleFileChange = async (
+    e: FormEvent<HTMLInputElement>,
+    bucket: string,
+    fieldName: "icon" | "background_image"
+  ) => {
+    const file = e.currentTarget.files?.[0]
+
+    console.log("Set file", file)
+
+    setValue(fieldName, file)
+
+    if (!file) return
+
+    await supabase.storage.from(bucket).upload("pre-" + course.id, file, {
+      upsert: true,
+      cacheControl: "10",
+    })
+
+    refreshPreviews()
+  }
 
   return (
     <>
       <Meta title="Course creator" />
 
       <CourseCreatorLayout>
-        <section className="p-16 border rounded-marketing border-accents-2">
-          <Input
-            name="title"
-            id="title"
-            className="mb-2"
-            showLabel
-            label="Title"
-          />
-          <Text as="p" size="sm" className="mb-12 italic">
-            Your title should be as we say in swedish “kort and koncis”!
-          </Text>
+        <FormProvider {...methods}>
+          <form
+            onSubmit={methods.handleSubmit(
+              data => console.log(data),
+              errors => console.log("Submit errors:", errors)
+            )}
+            className="p-16 border rounded-marketing border-accents-2"
+          >
+            <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
+              <Input
+                id="title"
+                {...register("title")}
+                className="mb-2"
+                fullWidth
+                showLabel
+                label="Title"
+                error={errors.title?.message}
+              />
+              <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
+                Your title should be as we say in swedish “kort and koncis”!
+              </Text>
+            </div>
 
-          <Input
-            name="description"
-            id="description"
-            className="mb-2"
-            showLabel
-            label="Description"
-          />
-          <Text as="p" size="sm" className="mb-12 italic">
-            The description is your main selling point! This is where you lockar
-            till dig students. Really think this through when writing your
-            description.
-          </Text>
+            <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
+              <TextArea
+                id="description"
+                {...register("description")}
+                className="mb-2"
+                fullWidth
+                showLabel
+                label="Description"
+                error={errors.description?.message}
+              />
+              <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
+                The description is your main selling point! This is where you
+                lockar till dig students. Really think this through when writing
+                your description.
+              </Text>
+            </div>
 
-          <Input
-            name="short_desc"
-            id="short_desc"
-            className="mb-2"
-            showLabel
-            label="Short description"
-          />
-          <Text as="p" size="sm" className="mb-12 italic">
-            Here you write a summarize of your main description. This goes on
-            all the cards.
-          </Text>
+            <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
+              <TextArea
+                id="short_desc"
+                {...register("short_desc")}
+                className="mb-2"
+                fullWidth
+                showLabel
+                label="Short description"
+                error={errors.short_desc?.message}
+              />
+              <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
+                Here you write a summarize of your main description. This goes
+                on all the cards.
+              </Text>
+            </div>
 
-          <Input
-            name="includes"
-            id="includes"
-            className="mb-2"
-            showLabel
-            label="This course includes"
-          />
-          <Text as="p" size="sm" className="mb-12 italic">
-            You need to specify what this course includes. For example, 30 hours
-            of video material and/or text documents.
-          </Text>
+            <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
+              <ArrayInput
+                name="includes"
+                label="This course includes"
+                error={errors.includes?.message}
+              />
+              <Text
+                as="p"
+                size="sm"
+                className="mt-5 italic "
+                intent="secondary"
+              >
+                You need to specify what this course includes. For example, 30
+                hours of video material and/or text documents.
+              </Text>
+            </div>
 
-          <Input
-            name="requirements"
-            id="requirements"
-            className="mb-2"
-            showLabel
-            label="Requirements"
-          />
-          <Text as="p" size="sm" className="mb-12 italic">
-            You also need to write down the requirements for taking this course.
-            If the student needs a modern computer, or previous knowledge of
-            JavaScript etc.
-          </Text>
-        </section>
+            <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
+              <ArrayInput
+                name="requirements"
+                label="Requirements"
+                error={errors.requirements?.message}
+              />
+              <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
+                You also need to write down the requirements for taking this
+                course. If the student needs a modern computer, or previous
+                knowledge of JavaScript etc.
+              </Text>
+            </div>
+
+            <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
+              <ArrayInput
+                name="tags"
+                label="Tags"
+                error={errors.tags?.message}
+              />
+              <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
+                You also need to write down the requirements for taking this
+                course. If the student needs a modern computer, or previous
+                knowledge of JavaScript etc.
+              </Text>
+            </div>
+
+            <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
+              <div>
+                <Input
+                  onChange={e => handleFileChange(e, "course-icons", "icon")}
+                  type="file"
+                  name="icon"
+                  label="Icon"
+                  fullWidth
+                  showLabel
+                  error={errors.icon?.message}
+                />
+
+                <Image
+                  width={100}
+                  height={100}
+                  alt="Preview of course icon"
+                  src={iconUrl}
+                  unoptimized
+                />
+              </div>
+              <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
+                This is the icon displayed on the course card and in the course
+                catalog. Select a square image with a minimum size of 128x128
+                pixels.
+              </Text>
+            </div>
+
+            <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
+              <div>
+                <Input
+                  onChange={e =>
+                    handleFileChange(
+                      e,
+                      "course-backgrounds",
+                      "background_image"
+                    )
+                  }
+                  type="file"
+                  name="background_image"
+                  label="Background image"
+                  fullWidth
+                  showLabel
+                  error={errors.background_image?.message}
+                />
+
+                <Image
+                  width={100}
+                  unoptimized
+                  height={100}
+                  alt="Preview of background image"
+                  src={backgroundImageUrl}
+                />
+              </div>
+              <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
+                This is the icon displayed on the course card and in the course
+                catalog. Select a square image with a minimum size of 128x128
+                pixels.
+              </Text>
+            </div>
+
+            <Button intent="success" className="mt-8">
+              Save
+            </Button>
+          </form>
+        </FormProvider>
       </CourseCreatorLayout>
     </>
   )
@@ -109,18 +279,22 @@ export default CreatePage
 
 export const getServerSideProps: GetServerSideProps<Props> = async context => {
   const courseId = context.params?.courseId
-
   if (typeof courseId !== "string") {
     return {
-      notFound: true,
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
     }
   }
 
   const course = await getModulesAndLessons(courseId)
-
-  if (course) {
+  if (!course) {
     return {
-      notFound: true,
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
     }
   }
 

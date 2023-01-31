@@ -23,8 +23,6 @@ interface Props {
 export const CoursePlayer: FC<Props> = ({ course, lessonData, tokens }) => {
   const { progress, mutate } = useCourseProgress()
 
-  console.log("render")
-
   const { query } = useRouter()
   const supabase = useSupabaseClient<Database>()
   const session = useSession()

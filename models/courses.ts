@@ -185,6 +185,10 @@ export const getModulesAndLessons = async (
        title,
        description,
        short_desc,
+       includes,
+       requirements,
+       price,
+       tags,
        modules (
          id,
          title,

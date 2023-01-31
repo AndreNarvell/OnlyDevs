@@ -7,32 +7,29 @@ type EditorModule = Pick<Module, "id" | "title" | "sort_order"> & {
 
 type EditorLesson = Pick<Lesson, "id" | "title" | "content_type" | "sort_order">
 
-type EditorContent = {
-  details?: Pick<
+export type EditorContent = {
+  details: Pick<
     Course,
     | "title"
     | "description"
     | "short_desc"
-    | "background_image"
-    | "icon"
     | "includes"
     | "requirements"
     | "price"
     | "tags"
   >
-
-  curriculum: EditorModule[]
+  curriculum: EditorModule[] | undefined
 
   setDetails: (details: EditorContent["details"]) => void
   setCurriculum: (curriculum: EditorContent["curriculum"]) => void
 }
 
 export const useEditorContent = create<EditorContent>(set => ({
-  details: undefined,
-  curriculum: [],
+  details: {} as EditorContent["details"],
+  curriculum: undefined,
 
-  setDetails: (details: EditorContent["details"]) =>
-    set(state => ({ ...state, details })),
+  setDetails: (fields: Partial<EditorContent["details"]>) =>
+    set(state => ({ ...state, details: { ...state.details, ...fields } })),
 
   setCurriculum: (curriculum: EditorContent["curriculum"]) =>
     set(state => ({ ...state, curriculum })),
