@@ -1,7 +1,7 @@
-import { Dialog, Transition } from "@headlessui/react"
-import { FC, Fragment, ReactNode } from "react"
 import { plusJakartaSans } from "../pages/_app"
 import { Text } from "./Text"
+import { Dialog, Transition } from "@headlessui/react"
+import { FC, Fragment, ReactNode } from "react"
 
 interface Props {
   open: boolean
@@ -23,7 +23,7 @@ export const SidebarMenu: FC<Props> = ({
       <Dialog
         as="div"
         onClose={onClose}
-        className={`relative md:hidden ${plusJakartaSans.className}`}
+        className={`relative ${plusJakartaSans.className}`}
       >
         {({ open }) => (
           <>
