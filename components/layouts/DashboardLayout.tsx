@@ -1,25 +1,39 @@
+import { Layout } from "./Layout"
 import clsx from "clsx"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { FC, PropsWithChildren, ReactNode } from "react"
-import { Layout } from "./Layout"
+import { FC, ReactNode } from "react"
 
-export const DashboardLayout = ({ children }: PropsWithChildren) => {
+interface Props {
+  children: ReactNode
+  isTeacher: boolean
+}
+
+export const DashboardLayout: FC<Props> = ({ children, isTeacher }) => {
   return (
     <Layout background="accents-1">
-      <DashboardNavigation />
+      <DashboardNavigation isTeacher={isTeacher} />
       {children}
     </Layout>
   )
 }
 
-const DashboardNavigation = () => {
+interface DashboardNavigationProps {
+  isTeacher: boolean
+}
+
+const DashboardNavigation: FC<DashboardNavigationProps> = ({ isTeacher }) => {
   return (
     <div className="flex p-1 mx-auto mb-12 border gap-x-1 border-accents-2 rounded-marketing w-max">
       <DashboardNavButton href="/dashboard">My courses</DashboardNavButton>
       <DashboardNavButton href="/saved-courses">
         Saved courses
       </DashboardNavButton>
+      {isTeacher && (
+        <DashboardNavButton href="/created-courses">
+          Created courses
+        </DashboardNavButton>
+      )}
       <DashboardNavButton href="/settings">Settings</DashboardNavButton>
     </div>
   )

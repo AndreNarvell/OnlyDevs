@@ -1,7 +1,7 @@
 import { Course, Module, Lesson } from "../../../types/Course"
 import { create } from "zustand"
 
-type EditorModule = Pick<Module, "id" | "title" | "sort_order"> & {
+export type EditorModule = Pick<Module, "id" | "title" | "sort_order"> & {
   lessons: EditorLesson[]
 }
 

@@ -171,6 +171,21 @@ export const getUsersSavedCourses = async (
   return courses
 }
 
+export const getUsersCreatedCourses = async (
+  userId: string
+): Promise<Course[] | undefined> => {
+  const { data: courses } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("creator", userId)
+
+  if (!courses) {
+    return undefined
+  }
+
+  return courses
+}
+
 /**
  * Course player
  */

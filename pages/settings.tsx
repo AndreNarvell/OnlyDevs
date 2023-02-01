@@ -5,6 +5,8 @@ import { TextLink } from "../components/TextLink"
 import { DashboardLayout } from "../components/layouts/DashboardLayout"
 import { SidebarLayout } from "../components/layouts/SidebarLayout"
 import { SettingsSection } from "../features/Dashboard/components/SettingsSection"
+import { checkIfUserIsTeacher } from "../models/teacher"
+import { protectRoute } from "../utils/protectRoute"
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { useSession } from "@supabase/auth-helpers-react"
 import { GetServerSideProps, NextPage } from "next"
@@ -22,7 +24,11 @@ const categories = [
   },
 ]
 
-const SavedCoursesPage: NextPage = () => {
+interface Props {
+  isTeacher: boolean
+}
+
+const SavedCoursesPage: NextPage<Props> = ({ isTeacher }) => {
   const session = useSession()
   const router = useRouter()
 
@@ -36,7 +42,7 @@ const SavedCoursesPage: NextPage = () => {
     <>
       <Meta title="Profile settings" />
 
-      <DashboardLayout>
+      <DashboardLayout isTeacher={isTeacher}>
         <SidebarLayout
           title="Profile settings"
           paragraph="Coming soon !"
@@ -80,25 +86,20 @@ const SavedCoursesPage: NextPage = () => {
 
 export default SavedCoursesPage
 
-export const getServerSideProps: GetServerSideProps = async ctx => {
-  const supabase = createServerSupabaseClient(ctx)
+export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
+  const auth = await protectRoute(ctx)
+  if (!auth.isAuthed) {
+    return auth.redirect
+  }
+  const { session } = auth
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  if (!session)
-    return {
-      redirect: {
-        destination: "/auth/signin",
-        permanent: false,
-      },
-    }
+  const isTeacher = await checkIfUserIsTeacher(session.user.id)
 
   return {
     props: {
       initialSession: session,
       user: session.user,
+      isTeacher,
     },
   }
 }

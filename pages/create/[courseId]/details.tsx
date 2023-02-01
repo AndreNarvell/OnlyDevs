@@ -10,6 +10,7 @@ import {
   EditorContent,
   useEditorContent,
 } from "../../../features/CourseCreator/stores/editorContent"
+import { courseDetailsSchema } from "../../../features/CourseCreator/types/CourseDetails"
 import { getModulesAndLessons } from "../../../models/courses"
 import { CourseStructure } from "../../../types/Course"
 import { Database } from "../../../types/supabase"
@@ -19,18 +20,6 @@ import { GetServerSideProps, NextPage } from "next"
 import Image from "next/image"
 import { FormEvent, useState } from "react"
 import { useForm, FormProvider } from "react-hook-form"
-import { z } from "zod"
-
-const courseDetailsSchema = z.object({
-  title: z.string().min(10).max(100),
-  description: z.string().min(100).max(1000),
-  short_desc: z.string().min(10).max(100),
-  includes: z.array(z.string().min(5).max(100)).min(1),
-  requirements: z.array(z.string().min(2).max(100)).min(1),
-  tags: z.array(z.string().min(2).max(100)).min(1),
-  background_image: z.instanceof(File).optional(),
-  icon: z.instanceof(File).optional(),
-})
 
 interface Props {
   course: CourseStructure
@@ -40,8 +29,16 @@ const iconsTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object
 
 const bgImagesTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-backgrounds/pre-`
 
+type DetailsForm = EditorContent["details"] & {
+  icon: File | undefined
+  background_image: File | undefined
+}
+
 const CreatePage: NextPage<Props> = ({ course }) => {
-  const details = useEditorContent(state => state.details)
+  const [details, setDetails] = useEditorContent(state => [
+    state.details,
+    state.setDetails,
+  ])
   useLoadCourse(course)
 
   const [iconUrl, setIconUrl] = useState(
@@ -56,12 +53,7 @@ const CreatePage: NextPage<Props> = ({ course }) => {
     setBackgroundImageUrl(`${bgImagesTemplate}${course.id}?t=${Date.now()}`)
   }
 
-  const methods = useForm<
-    EditorContent["details"] & {
-      icon: File | undefined
-      background_image: File | undefined
-    }
-  >({
+  const methods = useForm<DetailsForm>({
     values: {
       ...details,
       icon: undefined,
@@ -102,6 +94,10 @@ const CreatePage: NextPage<Props> = ({ course }) => {
     refreshPreviews()
   }
 
+  const onSubmit = (formValues: DetailsForm) => {
+    setDetails(formValues)
+  }
+
   return (
     <>
       <Meta title="Course creator" />
@@ -109,10 +105,7 @@ const CreatePage: NextPage<Props> = ({ course }) => {
       <CourseCreatorLayout>
         <FormProvider {...methods}>
           <form
-            onSubmit={methods.handleSubmit(
-              data => console.log(data),
-              errors => console.log("Submit errors:", errors)
-            )}
+            onSubmit={methods.handleSubmit(onSubmit)}
             className="p-16 border rounded-marketing border-accents-2"
           >
             <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">

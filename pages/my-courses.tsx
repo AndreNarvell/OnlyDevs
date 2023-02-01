@@ -7,6 +7,7 @@ import { serverSideSupabase } from "../lib/supabase"
 import { getModulesAndLessons, getUsersOwnedCourses } from "../models/courses"
 import { LessonData, CourseStructure } from "../types/Course"
 import { Database } from "../types/supabase"
+import { protectRoute } from "../utils/protectRoute"
 import { ChevronLeftIcon } from "@heroicons/react/20/solid"
 import Mux from "@mux/mux-node"
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
@@ -100,20 +101,11 @@ const MyCoursesPage: NextPage<Props> = ({ course, lessonData, tokens }) => {
 export default MyCoursesPage
 
 export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
-  const supabase = createServerSupabaseClient<Database>(ctx)
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/auth/signin",
-        permanent: false,
-      },
-    }
+  const auth = await protectRoute(ctx)
+  if (!auth.isAuthed) {
+    return auth.redirect
   }
+  const { session, supabase } = auth
 
   const courseId = ctx.query?.courseId
   const lessonId = ctx.query?.lessonId

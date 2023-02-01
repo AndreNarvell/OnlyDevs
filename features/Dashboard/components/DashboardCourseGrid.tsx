@@ -10,7 +10,7 @@ export const DashboardCourseGrid: FC<DashboardCourseGridProps> = ({
   courses,
 }) => {
   return (
-    <section className="grid grid-cols-1 gap-8 mx-auto w-max place-items-center sm:grid-cols-2 lg:grid-cols-3">
+    <section className="grid grid-cols-1 gap-8 pb-16 mx-auto w-max place-items-center sm:grid-cols-2 lg:grid-cols-3">
       {courses.map(course => (
         <CourseCard
           id={course.id}

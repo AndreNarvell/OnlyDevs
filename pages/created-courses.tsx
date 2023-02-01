@@ -2,11 +2,10 @@ import { Meta } from "../components/Meta"
 import { Text } from "../components/Text"
 import { DashboardLayout } from "../components/layouts/DashboardLayout"
 import { DashboardCourseGrid } from "../features/Dashboard/components/DashboardCourseGrid"
-import { getUsersOwnedCourses } from "../models/courses"
-import { checkIfUserIsTeacher, getTeacherById } from "../models/teacher"
+import { getUsersCreatedCourses } from "../models/courses"
+import { checkIfUserIsTeacher } from "../models/teacher"
 import { Course } from "../types/Course"
 import { protectRoute } from "../utils/protectRoute"
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { useSession } from "@supabase/auth-helpers-react"
 import { GetServerSideProps, NextPage } from "next"
 import { useRouter } from "next/router"
@@ -14,11 +13,11 @@ import { useEffect } from "react"
 import Balancer from "react-wrap-balancer"
 
 interface Props {
-  ownedCourses: Course[]
+  createdCourses: Course[]
   isTeacher: boolean
 }
 
-const DashboardPage: NextPage<Props> = ({ ownedCourses, isTeacher }) => {
+const CreatedCoursesPage: NextPage<Props> = ({ createdCourses, isTeacher }) => {
   const session = useSession()
   const router = useRouter()
 
@@ -42,18 +41,18 @@ const DashboardPage: NextPage<Props> = ({ ownedCourses, isTeacher }) => {
               align="center"
               className="mb-8"
             >
-              My courses
+              Created courses
             </Text>
           </Balancer>
         </div>
 
-        <DashboardCourseGrid courses={ownedCourses} />
+        <DashboardCourseGrid courses={createdCourses} />
       </DashboardLayout>
     </>
   )
 }
 
-export default DashboardPage
+export default CreatedCoursesPage
 
 export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
   const auth = await protectRoute(ctx)
@@ -62,16 +61,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
   }
   const { session } = auth
 
-  const [ownedCourses, isTeacher] = await Promise.all([
-    getUsersOwnedCourses(session.user.id),
+  const [createdCourses, isTeacher] = await Promise.all([
+    getUsersCreatedCourses(session.user.id),
     checkIfUserIsTeacher(session.user.id),
   ])
-
   return {
     props: {
       initialSession: session,
       user: session.user,
-      ownedCourses: ownedCourses ?? [],
+      createdCourses: createdCourses ?? [],
       isTeacher,
     },
   }

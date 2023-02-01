@@ -12,21 +12,30 @@ interface Props {
   title: Course["title"]
   shortDesc: Course["short_desc"]
   href: string | UrlObject
+  showImage?: boolean
 }
 
-export const CourseCard: FC<Props> = ({ id, title, shortDesc, href }) => {
+export const CourseCard: FC<Props> = ({
+  id,
+  title,
+  shortDesc,
+  href,
+  showImage = true,
+}) => {
   return (
     <article className="flex flex-col flex-shrink-0 h-full transition border bg-background rounded-marketing overflow-clip border-accents-2 hover:border-accents-5 w-full max-w-[18rem]">
       <Link href={href}>
-        <div className="w-full aspect-[5/3] min-h-[12rem]">
-          <Image
-            width={500}
-            height={300}
-            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-backgrounds/${id}`}
-            alt={`Background for ${title}`}
-            className="object-cover object-center w-full h-full"
-          />
-        </div>
+        {showImage && (
+          <div className="w-full aspect-[5/3] min-h-[12rem]">
+            <Image
+              width={500}
+              height={300}
+              src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-backgrounds/${id}`}
+              alt={`Background for ${title}`}
+              className="object-cover object-center w-full h-full"
+            />
+          </div>
+        )}
 
         <div className="w-full p-4 pt-3 pb-8 bg-background">
           <div className="flex flex-row items-center gap-x-3 h-14">

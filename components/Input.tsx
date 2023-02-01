@@ -45,7 +45,7 @@ export interface CustomInputProps {
   error?: string
   type?: "text" | "email" | "password" | "number" | "file"
   icon?: IconComponent
-  value?: string
+  value?: string | number
   readOnly?: boolean
   inputClassName?: string
   labelClassName?: string

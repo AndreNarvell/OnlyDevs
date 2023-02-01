@@ -28,3 +28,18 @@ export const getTeacherById = async (id: string) => {
     totalNumberOfStudents: totalNumberOfStudents ?? 0,
   }
 }
+
+export const checkIfUserIsTeacher = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("teachers")
+    .select("id")
+    .eq("id", userId)
+    .single()
+
+  if (error) {
+    console.log(error)
+    return false
+  }
+
+  return data !== null
+}

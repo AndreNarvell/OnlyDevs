@@ -13,7 +13,7 @@ interface Props {
 export const CourseContainer: FC<Props> = ({
   title,
   courses,
-  showImage,
+  showImage = false,
   limit,
 }) => {
   return (
@@ -38,6 +38,7 @@ export const CourseContainer: FC<Props> = ({
         <div className="flex gap-6 px-6 pb-6 overflow-x-scroll xl:flex-wrap xl:overflow-x-auto">
           {courses.slice(0, limit).map(course => (
             <CourseCard
+              showImage={showImage}
               id={course.id}
               title={course.title}
               shortDesc={course.short_desc}

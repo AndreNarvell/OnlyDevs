@@ -105,8 +105,8 @@ const SuccessPage: NextPage<Props> = ({ lineItems }) => {
           refConfetti={getInstance}
           className="fixed inset-0 w-full h-full pointer-events-none"
         />
-        <div className="md:flex md:justify-between w-full gap-16 md:mt-32 px-6 mt-10 sm:px-28 md:px-10">
-          <motion.section className="md:flex-shrink-0 mb-12 md:w-80">
+        <div className="w-full gap-16 px-6 mt-10 md:flex md:justify-between md:mt-32 sm:px-28 md:px-10">
+          <motion.section className="mb-12 md:flex-shrink-0 md:w-80">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -150,7 +150,7 @@ const SuccessPage: NextPage<Props> = ({ lineItems }) => {
             </Text>
             <Balancer>
             <Text as="p" align="center" intent="secondary">
-              Congratulations! You just purchased a course. Head over to "My courses" to start your new journey to become the best you you can be!
+              Congratulations! You just purchased a course. Head over to &quot;My courses&quot; to start your new journey to become the best you you can be!
               </Text>
               </Balancer>
 
