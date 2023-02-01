@@ -14,6 +14,7 @@ import { useCallback, useEffect, useRef } from "react"
 import ReactCanvasConfetti from "react-canvas-confetti"
 import { useShoppingCart } from "../stores/shoppingCart"
 import { Meta } from "../components/Meta"
+import Balancer from "react-wrap-balancer";
 
 interface Props {
   lineItems: Stripe.LineItem[]
@@ -99,13 +100,13 @@ const SuccessPage: NextPage<Props> = ({ lineItems }) => {
     <>
       <Meta title="Order confirmation" noIndex />
 
-      <Layout>
+      <Layout background="accents-1">
         <ReactCanvasConfetti
           refConfetti={getInstance}
           className="fixed inset-0 w-full h-full pointer-events-none"
         />
-        <div className="flex justify-between w-full gap-16 mt-32">
-          <motion.section className="flex-shrink-0 mb-12 w-80">
+        <div className="md:flex md:justify-between w-full gap-16 md:mt-32 px-6 mt-10 sm:px-28 md:px-10">
+          <motion.section className="md:flex-shrink-0 mb-12 md:w-80">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -145,15 +146,13 @@ const SuccessPage: NextPage<Props> = ({ lineItems }) => {
             className="z-10 flex flex-col items-center w-full gap-4 rounded-marketing"
           >
             <Text as="h1" size="3xl" weight="bold" align="center">
-              You did dit!
+              You did it!
             </Text>
-
+            <Balancer>
             <Text as="p" align="center" intent="secondary">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim
-              ratione non consequatur possimus, in expedita, iste quas odit est
-              quidem vel illum officia reiciendis. Cupiditate reiciendis
-              explicabo a! Quo, ducimus!
-            </Text>
+              Congratulations! You just purchased a course. Head over to "My courses" to start your new journey to become the best you you can be!
+              </Text>
+              </Balancer>
 
             <ButtonLink
               href="/dashboard"
