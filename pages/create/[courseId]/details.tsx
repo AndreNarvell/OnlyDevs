@@ -11,14 +11,17 @@ import {
   useEditorContent,
 } from "../../../features/CourseCreator/stores/editorContent"
 import { courseDetailsSchema } from "../../../features/CourseCreator/types/CourseDetails"
-import { getModulesAndLessons } from "../../../models/courses"
+import {
+  getLessonDataForLessons,
+  getModulesAndLessons,
+} from "../../../models/courses"
 import { CourseStructure } from "../../../types/Course"
 import { Database } from "../../../types/supabase"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { GetServerSideProps, NextPage } from "next"
 import Image from "next/image"
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { useForm, FormProvider } from "react-hook-form"
 
 interface Props {
@@ -35,6 +38,10 @@ type DetailsForm = EditorContent["details"] & {
 }
 
 const CreatePage: NextPage<Props> = ({ course }) => {
+  useEffect(() => {
+    console.log(course)
+  }, [])
+
   const [details, setDetails] = useEditorContent(state => [
     state.details,
     state.setDetails,
@@ -291,9 +298,67 @@ export const getServerSideProps: GetServerSideProps<Props> = async context => {
     }
   }
 
+  const allLessonIds = course.modules
+    .flatMap(module => module.lessons)
+    .map(lesson => lesson.id)
+
+  const lessonData = await getLessonDataForLessons(allLessonIds)
+
+  console.log(lessonData)
+
+  if (!lessonData) {
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    }
+  }
+
+  // Merge lesson data with lesson
+  const newModules = course.modules.map(module => {
+    return {
+      ...module,
+      lessons: module.lessons.map(lesson => {
+        const theLessonData = lessonData.find(
+          lessonData => lessonData.id === lesson.id
+        )
+        if (!theLessonData) {
+          return lesson
+        }
+
+        return {
+          ...lesson,
+          video_url: theLessonData.video_url,
+          article_data: theLessonData.article_data,
+        }
+      }),
+    }
+  })
+
+  // const newModules = course.modules.map(module => {
+  //   return module.lessons.map(lesson => {
+  //     const theLessonData = lessonData.find(
+  //       lessonData => lessonData.id === lesson.id
+  //     )
+  //     if (!theLessonData) {
+  //       return lesson
+  //     }
+
+  //     return {
+  //       ...lesson,
+  //       video_url: theLessonData.video_url,
+  //       article_data: theLessonData.article_data,
+  //     }
+  //   })
+  // })
+
   return {
     props: {
-      course,
+      course: {
+        ...course,
+        modules: newModules,
+      },
     },
   }
 }

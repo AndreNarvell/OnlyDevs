@@ -36,6 +36,8 @@ export type CourseStructure = {
       description: Lesson["description"]
       sort_order: Lesson["sort_order"]
       content_type: Lesson["content_type"]
+      video_url: LessonData["video_url"]
+      article_data: LessonData["article_data"]
     }[]
   }[]
 }

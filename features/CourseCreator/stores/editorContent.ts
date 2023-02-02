@@ -5,7 +5,13 @@ export type EditorModule = Pick<Module, "id" | "title" | "sort_order"> & {
   lessons: EditorLesson[]
 }
 
-type EditorLesson = Pick<Lesson, "id" | "title" | "content_type" | "sort_order">
+export type EditorLesson = Pick<
+  Lesson,
+  "id" | "title" | "content_type" | "sort_order"
+> & {
+  article_data: string | null
+  video_url: string | null
+}
 
 export type EditorContent = {
   details: Pick<

@@ -2,11 +2,16 @@ import { Layout } from "./Layout"
 import clsx from "clsx"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { FC, PropsWithChildren, ReactNode } from "react"
+import { FC, ReactNode } from "react"
 
-export const CourseCreatorLayout = ({ children }: PropsWithChildren) => {
+interface Props {
+  children: ReactNode
+  wide?: boolean
+}
+
+export const CourseCreatorLayout: FC<Props> = ({ children, wide = false }) => {
   return (
-    <Layout background="accents-1">
+    <Layout wide={wide} background="accents-1">
       <CourseCreatorNavigation />
       {children}
 

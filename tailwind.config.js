@@ -8,8 +8,8 @@ module.exports = {
   ],
   theme: {
     colors: {
-      $black: "#000",
-      $white: "#fff",
+      black: "rgb(var(--black) / <alpha-value>)",
+      white: "rgb(var(--white) / <alpha-value>)",
       transparent: "transparent",
       current: "currentColor",
 

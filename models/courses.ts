@@ -1,6 +1,6 @@
 import { serverSideSupabase, supabase } from "../lib/supabase"
 import { CategoryWithCourses } from "../types/Category"
-import { Course, CourseStructure } from "../types/Course"
+import { Course, CourseStructure, LessonData } from "../types/Course"
 import { CourseProgress } from "../types/CourseProgress"
 
 /**
@@ -267,4 +267,19 @@ export const getUsersProgress = async (
   }
 
   return progress.completed_lessons ?? []
+}
+
+export const getLessonDataForLessons = async (
+  lessonIds: string[]
+): Promise<LessonData[] | undefined> => {
+  const { data } = await serverSideSupabase()
+    .from("lessons_data")
+    .select("*")
+    .in("id", lessonIds)
+
+  if (!data) {
+    return undefined
+  }
+
+  return data
 }
