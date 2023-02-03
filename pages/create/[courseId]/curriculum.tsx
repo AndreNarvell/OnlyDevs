@@ -2,17 +2,21 @@ import { Meta } from "../../../components/Meta"
 import { CourseCreatorLayout } from "../../../components/layouts/CourseCreatorLayout"
 import { CurriculumEditor } from "../../../features/CourseCreator/components/CurriculumEditor"
 import { CurriculumModule } from "../../../features/CourseCreator/components/CurriculumModule"
-import { useNoLoadedCourse } from "../../../features/CourseCreator/hooks/useNoLoadedCourse"
+import { useLoadCourse } from "../../../features/CourseCreator/hooks/useLoadCourse"
 import { useEditorContent } from "../../../features/CourseCreator/stores/editorContent"
-import { ChevronUpDownIcon } from "@heroicons/react/24/outline"
+import { getCourseCreatorData } from "../../../models/courses"
+import { CourseStructure } from "../../../types/Course"
+import { protectRoute } from "../../../utils/protectRoute"
 import * as Accordion from "@radix-ui/react-accordion"
-import { Reorder, useDragControls } from "framer-motion"
-import { useRouter } from "next/router"
+import { Reorder } from "framer-motion"
+import { GetServerSideProps, NextPage } from "next"
 
-const CurriculumPage = () => {
-  useNoLoadedCourse()
+interface Props {
+  course: CourseStructure
+}
 
-  const { query, push } = useRouter()
+const CurriculumPage: NextPage<Props> = ({ course }) => {
+  useLoadCourse(course)
 
   const [curriculum, setCurriculum] = useEditorContent(state => [
     state.curriculum,
@@ -33,7 +37,7 @@ const CurriculumPage = () => {
                   onReorder={setCurriculum}
                   className="flex flex-col gap-y-2"
                 >
-                  {curriculum?.map((module, index) => (
+                  {curriculum?.map(module => (
                     <CurriculumModule module={module} key={module.id} />
                   ))}
                 </Reorder.Group>
@@ -49,3 +53,33 @@ const CurriculumPage = () => {
 }
 
 export default CurriculumPage
+
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  const auth = await protectRoute(ctx, "/dashboard")
+  if (!auth.isAuthed) {
+    return auth.redirect
+  }
+
+  const courseId = ctx.query?.courseId
+  if (typeof courseId !== "string") {
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    }
+  }
+
+  const course = await getCourseCreatorData(courseId)
+  if (!course) {
+    return {
+      notFound: true,
+    }
+  }
+
+  return {
+    props: {
+      course,
+    },
+  }
+}

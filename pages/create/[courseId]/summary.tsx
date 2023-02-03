@@ -3,14 +3,22 @@ import { Meta } from "../../../components/Meta"
 import { Select } from "../../../components/Select"
 import { Text } from "../../../components/Text"
 import { CourseCreatorLayout } from "../../../components/layouts/CourseCreatorLayout"
-import { useNoLoadedCourse } from "../../../features/CourseCreator/hooks/useNoLoadedCourse"
+import { useLoadCourse } from "../../../features/CourseCreator/hooks/useLoadCourse"
 import { useEditorContent } from "../../../features/CourseCreator/stores/editorContent"
+import { getCourseCreatorData } from "../../../models/courses"
+import { CourseStructure } from "../../../types/Course"
+import { protectRoute } from "../../../utils/protectRoute"
+import { GetServerSideProps, NextPage } from "next"
 import { useRouter } from "next/router"
 import { useEffect } from "react"
 
-const CreatePage = () => {
+interface Props {
+  course: CourseStructure
+}
+
+const SummaryPage: NextPage<Props> = ({ course }) => {
   const { query } = useRouter()
-  useNoLoadedCourse()
+  useLoadCourse(course)
 
   const [curriculum, details, setDetails] = useEditorContent(state => [
     state.curriculum,
@@ -101,7 +109,7 @@ const CreatePage = () => {
           </section>
 
           <section className="p-8 border border-accents-2 bg-background rounded-marketing">
-            <pre className="text-xs whitespace-pre-wrap">
+            <pre className="text-xs break-words whitespace-pre-wrap">
               {JSON.stringify(details, null, 2)}
             </pre>
           </section>
@@ -110,4 +118,34 @@ const CreatePage = () => {
     </>
   )
 }
-export default CreatePage
+export default SummaryPage
+
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  const auth = await protectRoute(ctx, "/dashboard")
+  if (!auth.isAuthed) {
+    return auth.redirect
+  }
+
+  const courseId = ctx.params?.courseId
+  if (typeof courseId !== "string") {
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    }
+  }
+
+  const course = await getCourseCreatorData(courseId)
+  if (!course) {
+    return {
+      notFound: true,
+    }
+  }
+
+  return {
+    props: {
+      course,
+    },
+  }
+}

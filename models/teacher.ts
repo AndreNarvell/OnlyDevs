@@ -15,10 +15,7 @@ export const getTeacherById = async (id: string) => {
   ])
 
   const totalNumberOfStudents = numberOfStudents.data?.reduce<number>(
-    (prev, curr) => {
-      const currentOrZero = curr?.number_of_students ?? 0
-      return prev + currentOrZero
-    },
+    (prev, curr) => prev + curr.number_of_students,
     0
   )
 

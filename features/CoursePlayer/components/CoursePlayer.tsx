@@ -125,7 +125,7 @@ export const CoursePlayer: FC<Props> = ({ course, lessonData, tokens }) => {
         {isArticle && (
           <EditorContent
             editor={editor}
-            className="prose prose-headings:text-foreground text-foreground prose-strong:text-foreground"
+            className="prose prose-neutral prose-headings:text-foreground text-foreground prose-strong:text-foreground"
           />
         )}
 

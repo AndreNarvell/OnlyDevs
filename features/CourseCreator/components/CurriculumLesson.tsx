@@ -35,6 +35,7 @@ export const CurriculumLesson: FC<Props> = ({ lesson }) => {
         />
 
         <TextLink
+          shallow
           href={{
             pathname: `/create/${query.courseId}/curriculum`,
             query: {

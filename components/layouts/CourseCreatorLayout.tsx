@@ -31,8 +31,8 @@ const CourseCreatorNavigation = () => {
       <CourseCreatorNavButton href={`/create/${query.courseId}/curriculum`}>
         Curriculum
       </CourseCreatorNavButton>
-      <CourseCreatorNavButton href={`/create/${query.courseId}/publish`}>
-        Publish
+      <CourseCreatorNavButton href={`/create/${query.courseId}/summary`}>
+        Summary
       </CourseCreatorNavButton>
     </div>
   )
@@ -45,8 +45,7 @@ interface DashboardNavButton {
 
 const CourseCreatorNavButton: FC<DashboardNavButton> = ({ children, href }) => {
   const router = useRouter()
-
-  const active = router.asPath === href
+  const active = router.asPath.includes(href)
 
   return (
     <Link

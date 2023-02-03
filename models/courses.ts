@@ -1,3 +1,8 @@
+import {
+  EditorContent,
+  EditorModule,
+} from "../features/CourseCreator/stores/editorContent"
+import { CourseDetails } from "../features/CourseCreator/types/CourseDetails"
 import { serverSideSupabase, supabase } from "../lib/supabase"
 import { CategoryWithCourses } from "../types/Category"
 import { Course, CourseStructure, LessonData } from "../types/Course"
@@ -39,8 +44,7 @@ export const getCourseDetailsById = async (id: string) => {
  */
 export const getCourseDetailsBySlug = async (slug: string) => {
   return supabase
-
-    .from("courses, creator")
+    .from("courses")
     .select(entireCourseQuery)
     .eq("slug", slug)
     .single()
@@ -283,4 +287,44 @@ export const getLessonDataForLessons = async (
   }
 
   return data
+}
+
+export const getCourseCreatorData = async (
+  courseId: string
+): Promise<CourseStructure | undefined> => {
+  // Fetch all lessons in their modules
+  const course = await getModulesAndLessons(courseId)
+  if (!course) return
+
+  const allLessonIds = course.modules
+    .flatMap(module => module.lessons)
+    .map(lesson => lesson.id)
+
+  // Fetch all data for lessons
+  const lessonData = await getLessonDataForLessons(allLessonIds)
+  if (!lessonData) return
+
+  // Merge lesson data with lesson
+  const newModules = course.modules.map(module => {
+    return {
+      ...module,
+      lessons: module.lessons.map(lesson => {
+        const theLessonData = lessonData.find(
+          lessonData => lessonData.id === lesson.id
+        )
+        if (!theLessonData) return lesson
+
+        return {
+          ...lesson,
+          video_url: theLessonData.video_url,
+          article_data: theLessonData.article_data,
+        }
+      }),
+    }
+  })
+
+  return {
+    ...course,
+    modules: newModules,
+  }
 }
