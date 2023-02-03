@@ -38,10 +38,6 @@ type DetailsForm = EditorContent["details"] & {
 }
 
 const CreatePage: NextPage<Props> = ({ course }) => {
-  useEffect(() => {
-    console.log(course)
-  }, [])
-
   const [details, setDetails] = useEditorContent(state => [
     state.details,
     state.setDetails,

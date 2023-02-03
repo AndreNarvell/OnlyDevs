@@ -13,6 +13,8 @@ export const curriculumSchema: z.ZodType<EditorModule[]> = z.array(
         title: z.string(),
         content_type: z.string(),
         sort_order: z.number().int(),
+        article_data: z.string().nullable(),
+        video_url: z.string().nullable(),
       })
     ),
   })

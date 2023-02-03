@@ -39,7 +39,8 @@ export const getCourseDetailsById = async (id: string) => {
  */
 export const getCourseDetailsBySlug = async (slug: string) => {
   return supabase
-    .from("courses")
+
+    .from("courses, creator")
     .select(entireCourseQuery)
     .eq("slug", slug)
     .single()
