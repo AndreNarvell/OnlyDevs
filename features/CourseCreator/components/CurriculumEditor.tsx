@@ -5,37 +5,11 @@ import { CodeBracketIcon } from "@heroicons/react/24/outline"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import clsx from "clsx"
-import { useRouter } from "next/router"
 import { HTMLAttributes, useEffect, useState } from "react"
 
 export const CurriculumEditor = () => {
   const { lesson, updateLesson } = useLesson()
-  const { query, events } = useRouter()
-
-  const [contentType, setContentType] = useState<"video" | "article" | null>(
-    (lesson?.content_type as "video" | "article" | undefined) ?? null
-  )
-
-  useEffect(() => {
-    if (lesson?.content_type === undefined || contentType !== null) return
-
-    setContentType(lesson.content_type as "video" | "article")
-  }, [lesson?.content_type, contentType, updateLesson])
-
-  // Switch content type when the query changes if necessary
-  useEffect(() => {
-    if (
-      contentType !== null &&
-      lesson?.content_type &&
-      lesson.content_type !== contentType
-    ) {
-      setContentType(lesson.content_type as "video" | "article")
-    }
-  }, [query, lesson?.content_type])
-
-  // Switch content type when the query changes if necessary
-
-  const getId = () => lesson?.id
+  const [content, setContent] = useState<string | null>(null)
 
   const editor = useEditor({
     content: lesson?.article_data,
@@ -46,101 +20,56 @@ export const CurriculumEditor = () => {
           "px-4 py-3 border border-accents-2 bg-background rounded-base focus:outline-none focus-visible:outline-none focus:border-foreground transition min-h-[20rem]",
       },
     },
-    onBeforeCreate: ({ editor }) => {
-      console.log("Before create", getId())
-    },
-    onCreate: ({ editor }) => {
-      console.log("Created", getId())
-    },
     onUpdate: ({ editor }) => {
-      console.log("trying to update:", getId())
-
-      // if (lesson) {
-      //   console.log("Setting new content to:", lesson.id)
-      //   updateLesson({
-      //     article_data: editor.getHTML(),
-      //   })
-      // } else {
-      //   console.log("Cant set new content: No lesson selected")
-      // }
+      console.log("onUpdate")
+      setContent(editor.getHTML())
     },
   })
 
-  // useEffect(() => {
-  //   return () => {
-  //     editor?.destroy()
-  //   }
-  // }, [])
-
-  useEffect(() => {
-    const routeChange = () => {
-      if (!editor?.isDestroyed) {
-        editor?.destroy()
-        console.log("destroyed")
-      } else {
-        console.log("already destroyed")
-      }
-    }
-
-    events.on("routeChangeStart", routeChange)
-
-    return () => {
-      events.off("routeChangeStart", routeChange)
-    }
-  }, [])
-
-  // Setting content on page change
-  useEffect(() => {
-    const routeChange = () => {
-      if (!editor?.isDestroyed) {
-        editor?.destroy()
-        console.log("destroyed")
-      } else {
-        console.log("already destroyed")
-      }
-    }
-
-    events.on("routeChangeComplete", routeChange)
-
-    return () => {
-      events.off("routeChangeComplete", routeChange)
-    }
-  }, [])
-
+  // Load course content into editor when changing lesson or loading page
   useEffect(() => {
     if (
+      lesson &&
       editor &&
-      editor?.getHTML() !== lesson?.article_data &&
-      !editor.isDestroyed
+      !editor.isDestroyed &&
+      lesson.article_data !== content
     ) {
-      console.log("Setting content on page change")
-      editor.commands.setContent(lesson?.article_data ?? "")
+      console.log("loaded new content into editor from state")
+      editor.commands.setContent(lesson.article_data)
+      setContent(lesson.article_data)
     }
-  }, [query, editor, lesson?.article_data])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lesson, editor])
+
+  // Update lesson's article content on editor content change
+  useEffect(() => {
+    if (lesson && content && lesson.article_data !== content) {
+      console.log("update lesson.article_content")
+      updateLesson({ article_data: content })
+    }
+  }, [lesson, content, updateLesson])
+
+  if (!lesson) return null
 
   return (
     <section className="min-w-full col-span-2 p-6 whitespace-pre-line border shrink grow-0 border-accents-2 rounded-marketing max-w-min">
       <RadioGroup
-        value={contentType}
-        onChange={value => {
-          setContentType(value)
-
-          if (value) {
-            updateLesson({
-              content_type: value,
-            })
-          }
-        }}
+        value={lesson.content_type}
+        onChange={value =>
+          updateLesson({
+            content_type: value,
+          })
+        }
         className="mb-16"
       >
         <RadioGroup.Label className="block mb-1 text-sm">
           Content type
         </RadioGroup.Label>
 
-        <div className="flex p-1 border divide-x cursor-pointer select-none border-accents-2 rounded-marketing bg-background divide-accents-2 gap-x-1 w-max">
+        <div className="flex items-center border select-none border-accents-2 rounded-marketing bg-background w-max">
           <RadioGroup.Option
             value="video"
-            className="flex items-center h-10 px-4 gap-x-2 group"
+            className="flex items-center h-12 px-5 cursor-pointer gap-x-2 group"
           >
             {({ checked }) => (
               <>
@@ -158,9 +87,12 @@ export const CurriculumEditor = () => {
               </>
             )}
           </RadioGroup.Option>
+
+          <div className="w-px h-8 bg-accents-2" />
+
           <RadioGroup.Option
             value="article"
-            className="flex items-center h-10 px-4 gap-x-2 group"
+            className="flex items-center h-12 px-4 cursor-pointer gap-x-2 group"
           >
             {({ checked }) => (
               <>
@@ -183,9 +115,9 @@ export const CurriculumEditor = () => {
         <pre>{lesson?.id}</pre>
       </RadioGroup>
 
-      {contentType === "video" && "video"}
+      {lesson.content_type === "video" && "video"}
 
-      {contentType === "article" && (
+      {lesson.content_type === "article" && (
         <div className="relative flex gap-x-2">
           <div className="w-full">
             <Text as="label" size="sm" className="mb-1">
@@ -328,6 +260,8 @@ export const CurriculumEditor = () => {
           </div>
         </div>
       )}
+
+      <pre className="text-xs whitespace-pre-wrap">{content ?? "null"}</pre>
     </section>
   )
 }

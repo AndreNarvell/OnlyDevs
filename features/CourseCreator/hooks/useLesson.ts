@@ -14,22 +14,18 @@ export const useLesson = () => {
   }))
 
   const lesson = useMemo(() => {
-    const theModule = curriculum?.find(module => {
+    if (!query.lessonId) return
+    if (!curriculum) return
+
+    const theModule = curriculum.find(module => {
       return module.lessons.find(lesson => lesson.id === query.lessonId)
     })
+    if (!theModule) return
 
-    if (!theModule) {
-      console.log("no module found")
-      return undefined
-    }
-    // console.log("the module:", theModule.id)
-
-    const theLesson = theModule.lessons.find((lesson, index, array) => {
+    const theLesson = theModule.lessons.find(lesson => {
       return lesson.id === query.lessonId
     })
-
     if (!theLesson) throw new Error("Lesson not found")
-    // console.log("the lesson:", theLesson.id)
 
     return theLesson
   }, [curriculum, query])

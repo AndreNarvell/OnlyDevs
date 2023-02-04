@@ -26,11 +26,7 @@ export const CurriculumLesson: FC<Props> = ({ lesson }) => {
     >
       <div className="flex gap-x-1">
         <ChevronUpDownIcon
-          onPointerDown={e => {
-            console.log("clicked:", lesson.title)
-            console.log(e.target)
-            controls.start(e)
-          }}
+          onPointerDown={e => controls.start(e)}
           className="w-6 h-6 mt-0.5 shrink-0 text-secondary"
         />
 

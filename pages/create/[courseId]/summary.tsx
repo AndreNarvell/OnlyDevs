@@ -3,6 +3,7 @@ import { Meta } from "../../../components/Meta"
 import { Select } from "../../../components/Select"
 import { Text } from "../../../components/Text"
 import { CourseCreatorLayout } from "../../../components/layouts/CourseCreatorLayout"
+import { PublishSummary } from "../../../features/CourseCreator/components/PublishSummary"
 import { useLoadCourse } from "../../../features/CourseCreator/hooks/useLoadCourse"
 import { useEditorContent } from "../../../features/CourseCreator/stores/editorContent"
 import { getCourseCreatorData } from "../../../models/courses"
@@ -109,9 +110,10 @@ const SummaryPage: NextPage<Props> = ({ course }) => {
           </section>
 
           <section className="p-8 border border-accents-2 bg-background rounded-marketing">
-            <pre className="text-xs break-words whitespace-pre-wrap">
+            <PublishSummary curriculum={curriculum} details={details} />
+            {/* <pre className="text-xs break-words whitespace-pre-wrap">
               {JSON.stringify(details, null, 2)}
-            </pre>
+            </pre> */}
           </section>
         </div>
       </CourseCreatorLayout>

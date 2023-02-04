@@ -13,17 +13,19 @@ export type EditorLesson = Pick<
   video_url: string | null
 }
 
+export type EditorDetails = Pick<
+  Course,
+  | "title"
+  | "description"
+  | "short_desc"
+  | "includes"
+  | "requirements"
+  | "price"
+  | "tags"
+>
+
 export type EditorContent = {
-  details: Pick<
-    Course,
-    | "title"
-    | "description"
-    | "short_desc"
-    | "includes"
-    | "requirements"
-    | "price"
-    | "tags"
-  >
+  details: EditorDetails
   curriculum: EditorModule[] | undefined
 
   setDetails: (details: EditorContent["details"]) => void
