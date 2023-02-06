@@ -1,11 +1,11 @@
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
-import { NextApiHandler } from "next"
-import Stripe from "stripe"
-import { z } from "zod"
 import { siteUrl } from "../../constants/siteUrl"
 import { stripe } from "../../lib/stripe"
 import { getProfileById } from "../../models/profile"
 import { Database } from "../../types/supabase"
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
+import { NextApiHandler } from "next"
+import Stripe from "stripe"
+import { z } from "zod"
 
 const checkoutSchema = z.object({
   cartItems: z.string().array(),
@@ -63,7 +63,9 @@ const handler: NextApiHandler = async (req, res) => {
         currency: "usd",
         product_data: {
           name: course.title,
-          images: [course.icon],
+          images: [
+            `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/${course.id}`,
+          ],
           metadata: {
             course_id: course.id,
           },
