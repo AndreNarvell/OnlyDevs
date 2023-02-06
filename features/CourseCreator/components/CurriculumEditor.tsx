@@ -1,15 +1,30 @@
+import { Button } from "../../../components/Button"
+import { FieldError, Input } from "../../../components/Input"
 import { Text } from "../../../components/Text"
 import { useLesson } from "../hooks/useLesson"
+import { useEditorContent } from "../stores/editorContent"
 import { RadioGroup } from "@headlessui/react"
 import { CodeBracketIcon } from "@heroicons/react/24/outline"
+import * as UpChunk from "@mux/upchunk"
+import * as Progress from "@radix-ui/react-progress"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import clsx from "clsx"
-import { HTMLAttributes, useEffect, useState } from "react"
+import { useRouter } from "next/router"
+import { HTMLAttributes, useEffect, useRef, useState } from "react"
 
 export const CurriculumEditor = () => {
+  const router = useRouter()
+
+  const deleteLesson = useEditorContent(state => state.deleteLesson)
+
   const { lesson, updateLesson } = useLesson()
   const [content, setContent] = useState<string | null>(null)
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [progress, setProgress] = useState(0)
+  const [statusMessage, setStatusMessage] = useState<string>("")
+  const [errorMessage, setErrorMessage] = useState<string>("")
 
   const editor = useEditor({
     content: lesson?.article_data,
@@ -20,11 +35,25 @@ export const CurriculumEditor = () => {
           "px-4 py-3 border border-accents-2 bg-background rounded-base focus:outline-none focus-visible:outline-none focus:border-foreground transition min-h-[20rem]",
       },
     },
+
     onUpdate: ({ editor }) => {
       console.log("onUpdate")
       setContent(editor.getHTML())
     },
   })
+
+  // Clear content on reroute
+  useEffect(() => {
+    const clearContent = () => {
+      setContent(null)
+      if (!editor?.isDestroyed) {
+        editor?.commands.clearContent()
+      }
+    }
+
+    router.events.on("routeChangeStart", clearContent)
+    return () => router.events.off("routeChangeStart", clearContent)
+  }, [router, editor])
 
   // Load course content into editor when changing lesson or loading page
   useEffect(() => {
@@ -43,9 +72,15 @@ export const CurriculumEditor = () => {
 
   // Update lesson's article content on editor content change
   useEffect(() => {
-    if (lesson && content && lesson.article_data !== content) {
+    if (
+      lesson &&
+      content &&
+      lesson.article_data !== content &&
+      (lesson.article_data !== null || content.length > 0)
+    ) {
       console.log("update lesson.article_content")
       updateLesson({ article_data: content })
+      // setContent()
     }
   }, [lesson, content, updateLesson])
 
@@ -53,74 +88,207 @@ export const CurriculumEditor = () => {
 
   return (
     <section className="min-w-full col-span-2 p-6 whitespace-pre-line border shrink grow-0 border-accents-2 rounded-marketing max-w-min">
-      <RadioGroup
-        value={lesson.content_type}
-        onChange={value =>
-          updateLesson({
-            content_type: value,
-          })
-        }
-        className="mb-16"
-      >
-        <RadioGroup.Label className="block mb-1 text-sm">
-          Content type
-        </RadioGroup.Label>
+      <div className="flex flex-col gap-2">
+        <Input
+          fullWidth
+          name="lessonName"
+          label="Lesson name"
+          showLabel
+          // size="large"
+          className="w-96"
+          value={lesson.title}
+          onChange={e =>
+            updateLesson({
+              title: e.target.value,
+            })
+          }
+        />
 
-        <div className="flex items-center border select-none border-accents-2 rounded-marketing bg-background w-max">
-          <RadioGroup.Option
-            value="video"
-            className="flex items-center h-12 px-5 cursor-pointer gap-x-2 group"
-          >
-            {({ checked }) => (
-              <>
-                <div
-                  className={clsx(
-                    "flex items-center justify-center w-4 h-4 border rounded-full border-accents-2",
-                    !checked && "group-hover:bg-accents-2"
-                  )}
-                >
-                  {checked && (
-                    <div className="w-2.5 h-2.5 rounded-full bg-success" />
-                  )}
-                </div>
-                Video
-              </>
-            )}
-          </RadioGroup.Option>
+        <RadioGroup
+          value={lesson.content_type}
+          onChange={value =>
+            updateLesson({
+              content_type: value,
+            })
+          }
+          className="h-10 mb-16"
+        >
+          <RadioGroup.Label className="block mb-1 text-xs font-medium leading-normal">
+            Content type
+          </RadioGroup.Label>
 
-          <div className="w-px h-8 bg-accents-2" />
+          <div className="flex items-center h-full border select-none border-accents-2 rounded-base bg-background w-max">
+            <RadioGroup.Option
+              value="video"
+              className="flex items-center h-full px-3 cursor-pointer gap-x-2 group"
+            >
+              {({ checked }) => (
+                <>
+                  <div
+                    className={clsx(
+                      "flex items-center justify-center w-4 h-4 border rounded-full border-accents-2",
+                      !checked && "group-hover:bg-accents-2"
+                    )}
+                  >
+                    {checked && (
+                      <div className="w-2.5 h-2.5 rounded-full bg-success" />
+                    )}
+                  </div>
+                  Video
+                </>
+              )}
+            </RadioGroup.Option>
 
-          <RadioGroup.Option
-            value="article"
-            className="flex items-center h-12 px-4 cursor-pointer gap-x-2 group"
-          >
-            {({ checked }) => (
-              <>
-                <div
-                  className={clsx(
-                    "flex items-center justify-center w-4 h-4 border rounded-full border-accents-2",
-                    !checked && "group-hover:bg-accents-2"
-                  )}
-                >
-                  {checked && (
-                    <div className="w-2.5 h-2.5 rounded-full bg-success" />
-                  )}
-                </div>
-                Article
-              </>
-            )}
-          </RadioGroup.Option>
-        </div>
+            <div className="w-px h-8 bg-accents-2" />
 
-        <pre>{lesson?.id}</pre>
-      </RadioGroup>
+            <RadioGroup.Option
+              value="article"
+              className="flex items-center h-full px-3 cursor-pointer gap-x-2 group"
+            >
+              {({ checked }) => (
+                <>
+                  <div
+                    className={clsx(
+                      "flex items-center justify-center w-4 h-4 border rounded-full border-accents-2",
+                      !checked && "group-hover:bg-accents-2"
+                    )}
+                  >
+                    {checked && (
+                      <div className="w-2.5 h-2.5 rounded-full bg-success" />
+                    )}
+                  </div>
+                  Article
+                </>
+              )}
+            </RadioGroup.Option>
+          </div>
+        </RadioGroup>
+      </div>
 
-      {lesson.content_type === "video" && "video"}
+      {lesson.content_type === "video" && (
+        <form
+          onSubmit={async e => {
+            e.preventDefault()
+
+            const response = await fetch("/api/upload", {
+              method: "POST",
+            })
+
+            if (!response.ok) {
+              return setErrorMessage("Error getting upload url")
+            }
+
+            const { url, uploadId } = (await response.json()) as {
+              uploadId: string
+              url: string
+            }
+
+            const file = fileInputRef.current?.files?.[0]
+
+            if (!file) {
+              return setErrorMessage("No file")
+            }
+
+            try {
+              const upload = UpChunk.createUpload({
+                endpoint: url, // Authenticated url
+                file: file, // File object with your video file’s properties
+                chunkSize: 5120, // Uploads the file in ~5mb chunks
+              })
+
+              // Subscribe to events
+              upload.on("error", error => {
+                setStatusMessage(error.detail)
+              })
+
+              upload.on("progress", progress => {
+                setProgress(progress.detail)
+              })
+
+              upload.on("success", async () => {
+                setStatusMessage("Wrap it up, we're done here. 👋")
+
+                const response = await fetch("/api/get-playback-id", {
+                  method: "post",
+                  body: JSON.stringify({
+                    uploadId,
+                  }),
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                })
+
+                if (!response.ok) {
+                  return setErrorMessage("Error getting playback id")
+                }
+
+                const playbackId = await response.json()
+
+                updateLesson({
+                  video_url: playbackId,
+                })
+              })
+            } catch (error) {
+              if (error instanceof Error) {
+                setErrorMessage(error.message)
+              } else {
+                setErrorMessage("Upload error")
+              }
+            }
+          }}
+        >
+          <div className="flex items-start gap-2 mb-3">
+            <Input
+              id="video-file-picker"
+              label="Video file"
+              type="file"
+              name="video"
+              fullWidth
+              showLabel
+              accept="video/*"
+              ref={fileInputRef}
+            />
+
+            <Button
+              onClick={() => {
+                setStatusMessage("")
+                setErrorMessage("")
+              }}
+              className="mt-[22px]"
+            >
+              Upload
+            </Button>
+          </div>
+
+          {progress > 0 && (
+            <div>
+              <Progress.Root className="w-full h-2 rounded-full bg-accents-2 overflow-clip">
+                <Progress.Indicator
+                  style={{
+                    transform: `translateX(-${100 - progress}%)`,
+                  }}
+                  className="h-full bg-success"
+                />
+              </Progress.Root>
+
+              <span>{progress.toFixed()} %</span>
+
+              <Text as="p" size="xs" weight="medium" className="h-[18px]">
+                {statusMessage}
+              </Text>
+            </div>
+          )}
+
+          <FieldError error={errorMessage} />
+
+          {/* {errorMessage && <span className="text-error">{errorMessage}</span>} */}
+        </form>
+      )}
 
       {lesson.content_type === "article" && (
         <div className="relative flex gap-x-2">
           <div className="w-full">
-            <Text as="label" size="sm" className="mb-1">
+            <Text as="label" size="xs" weight="medium" className="mb-1">
               Content
             </Text>
             <EditorContent
@@ -129,7 +297,7 @@ export const CurriculumEditor = () => {
             />
           </div>
 
-          <div className="sticky p-1 border border-accents-2 rounded-base flex flex-col mt-[25px] gap-y-1 top-20 h-max bg-background">
+          <div className="sticky p-1 border border-accents-2 rounded-base flex flex-col mt-[22px] gap-y-1 top-20 h-max bg-background">
             <ToolbarButton
               title="Paragraph"
               onClick={() => editor?.chain().focus().setParagraph().run()}
@@ -261,7 +429,27 @@ export const CurriculumEditor = () => {
         </div>
       )}
 
-      <pre className="text-xs whitespace-pre-wrap">{content ?? "null"}</pre>
+      <Button
+        onClick={() => {
+          deleteLesson(lesson.id)
+        }}
+        intent="error"
+        size="small"
+        variant="ghost"
+        className="mt-8"
+      >
+        Delete lesson
+      </Button>
+
+      {/* <pre className="text-xs whitespace-pre-wrap">
+        Local content: {content ?? "null"}
+      </pre>
+      <pre className="text-xs whitespace-pre-wrap">
+        Lesson content: {lesson.article_data ?? "null"}
+      </pre>*/}
+      <pre className="text-xs whitespace-pre-wrap">
+        Video url: {lesson.video_url ?? "null"}
+      </pre>
     </section>
   )
 }

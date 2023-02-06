@@ -1,7 +1,6 @@
 import { TextLink } from "../../../components/TextLink"
 import { EditorLesson } from "../stores/editorContent"
 import { ChevronUpDownIcon } from "@heroicons/react/24/outline"
-import clsx from "clsx"
 import { Reorder, useDragControls } from "framer-motion"
 import { useRouter } from "next/router"
 import { FC } from "react"

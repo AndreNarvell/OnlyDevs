@@ -1,8 +1,13 @@
 import { Button } from "../../../components/Button"
+import { Checkbox } from "../../../components/Checkbox"
 import { Input } from "../../../components/Input"
 import { Text } from "../../../components/Text"
 import { plusJakartaSans } from "../../../pages/_app"
-import { EditorModule, useEditorContent } from "../stores/editorContent"
+import {
+  EditorLesson,
+  EditorModule,
+  useEditorContent,
+} from "../stores/editorContent"
 import { CurriculumLesson } from "./CurriculumLesson"
 import { Dialog } from "@headlessui/react"
 import { ChevronRightIcon } from "@heroicons/react/20/solid"
@@ -29,11 +34,15 @@ interface NewNameForm {
 export const CurriculumModule: FC<Props> = ({ module }) => {
   const controls = useDragControls()
   const [isOpen, setIsOpen] = useState(false)
+  const [isConfirmChecked, setIsConfirmChecked] = useState(false)
 
-  const [curriculum, setCurriculum] = useEditorContent(state => [
-    state.curriculum,
-    state.setCurriculum,
-  ])
+  const [curriculum, setCurriculum, updateModule, deleteModule] =
+    useEditorContent(state => [
+      state.curriculum,
+      state.setCurriculum,
+      state.updateModule,
+      state.deleteModule,
+    ])
 
   const { register, handleSubmit } = useForm<NewNameForm>({
     defaultValues: { name: module.title },
@@ -100,7 +109,7 @@ export const CurriculumModule: FC<Props> = ({ module }) => {
             onClick={() => setIsOpen(true)}
             className="text-xs transition ml-7 text-secondary w-max hover:text-foreground"
           >
-            Edit name
+            Edit
           </button>
 
           <Accordion.Content
@@ -111,6 +120,36 @@ export const CurriculumModule: FC<Props> = ({ module }) => {
               {module.lessons.map(lesson => (
                 <CurriculumLesson lesson={lesson} key={lesson.id} />
               ))}
+
+              <button
+                onClick={() => {
+                  // Add a lesson to the end of the module
+                  if (!curriculum) return
+
+                  const newCurriculum = [...curriculum]
+                  const moduleIndex = newCurriculum.findIndex(
+                    moduleInArray => moduleInArray.id === module.id
+                  )
+
+                  const newLessons: EditorLesson[] = [
+                    ...newCurriculum[moduleIndex].lessons,
+                    {
+                      id: crypto.randomUUID(),
+                      title: "New lesson",
+                      content_type: "video",
+                      sort_order: -1,
+                      article_data: null,
+                      video_url: null,
+                    },
+                  ]
+
+                  // Update state with new lessons
+                  updateModule(module.id, { lessons: newLessons })
+                }}
+                className="mb-2 ml-[3.75rem] text-secondary hover:text-foreground transition hover:transition-none text-sm"
+              >
+                Add a lesson +
+              </button>
             </Reorder.Group>
           </Accordion.Content>
         </Reorder.Item>
@@ -125,10 +164,11 @@ export const CurriculumModule: FC<Props> = ({ module }) => {
 
         <Dialog.Panel className="fixed flex flex-col items-center p-8 -translate-x-1/2 -translate-y-1/2 border bg-accents-1 border-accents-2 rounded-base top-1/2 left-1/2">
           <Dialog.Title as={Text} size="xl" weight="bold">
-            Rename module
+            Edit module
           </Dialog.Title>
+
           <Dialog.Description as={Text} intent="secondary" className="mb-4">
-            Enter a new name for the module
+            Here you can edit the name of the module or delete it.
           </Dialog.Description>
 
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -136,18 +176,40 @@ export const CurriculumModule: FC<Props> = ({ module }) => {
               id="dialog-name-input"
               label="New name"
               className="mb-4"
+              showLabel
               inputClassName="w-96"
               {...register("name")}
             />
 
             <div className="flex justify-center gap-x-2">
-              <Button type="submit">Rename</Button>
+              <Button type="submit">Save</Button>
               <Button
                 type="button"
                 intent="secondary"
                 onClick={() => setIsOpen(false)}
               >
                 Cancel
+              </Button>
+            </div>
+
+            <div className="flex flex-col items-center mx-auto mt-4 gap-y-2">
+              <Checkbox
+                id="confirm-delete"
+                onChange={e => setIsConfirmChecked(e.target.checked)}
+                label="I am sure that I want to delete this module"
+              />
+
+              <Button
+                disabled={!isConfirmChecked}
+                onClick={() => {
+                  setIsOpen(false)
+                  deleteModule(module.id)
+                }}
+                variant="ghost"
+                intent="error"
+                size="small"
+              >
+                Delete module
               </Button>
             </div>
           </form>

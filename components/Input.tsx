@@ -3,7 +3,7 @@ import { Text } from "./Text"
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid"
 import { cva, VariantProps } from "class-variance-authority"
 import clsx from "clsx"
-import { forwardRef, HTMLAttributes } from "react"
+import { ChangeEvent, forwardRef, HTMLAttributes } from "react"
 
 export const input = cva(
   "border rounded-base flex items-center justify-center transition whitespace-nowrap bg-background border-accents-2 focus:outline-none focus:border-accents-5 placeholder:opacity-40 placeholder:text-foreground font-medium scroll-mt-input file:hidden file:inset-0 file:cursor-pointer",
@@ -49,13 +49,15 @@ export interface CustomInputProps {
   readOnly?: boolean
   inputClassName?: string
   labelClassName?: string
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+  accept?: string
 }
 
-type Props = HTMLAttributes<HTMLInputElement> &
+type Props = Omit<HTMLAttributes<HTMLInputElement>, "onChange"> &
   Omit<VariantProps<typeof input>, "error"> &
   CustomInputProps
 
-export const Input = forwardRef<HTMLInputElement, Props>(
+export const Input = forwardRef<HTMLInputElement , Props>(
   (
     {
       type = "text",

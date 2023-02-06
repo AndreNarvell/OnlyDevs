@@ -40,6 +40,26 @@ const CurriculumPage: NextPage<Props> = ({ course }) => {
                   {curriculum?.map(module => (
                     <CurriculumModule module={module} key={module.id} />
                   ))}
+
+                  <button
+                    onClick={() => {
+                      // Add a module to the end of the array
+                      if (!curriculum) return
+
+                      setCurriculum([
+                        ...curriculum,
+                        {
+                          id: crypto.randomUUID(),
+                          title: "New module",
+                          lessons: [],
+                          sort_order: -1,
+                        },
+                      ])
+                    }}
+                    className="mb-2 text-sm transition hover:text-foreground ml-7 text-secondary hover:transition-none w-max"
+                  >
+                    Add a module +
+                  </button>
                 </Reorder.Group>
               </Accordion.Root>
             )}
