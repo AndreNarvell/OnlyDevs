@@ -15,10 +15,7 @@ export const getTeacherById = async (id: string) => {
   ])
 
   const totalNumberOfStudents = numberOfStudents.data?.reduce<number>(
-    (prev, curr) => {
-      const currentOrZero = curr?.number_of_students ?? 0
-      return prev + currentOrZero
-    },
+    (prev, curr) => prev + curr.number_of_students,
     0
   )
 
@@ -27,4 +24,19 @@ export const getTeacherById = async (id: string) => {
     numberOfCourses: numberOfCourses.count ?? 0,
     totalNumberOfStudents: totalNumberOfStudents ?? 0,
   }
+}
+
+export const checkIfUserIsTeacher = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("teachers")
+    .select("id")
+    .eq("id", userId)
+    .single()
+
+  if (error) {
+    console.log(error)
+    return false
+  }
+
+  return data !== null
 }

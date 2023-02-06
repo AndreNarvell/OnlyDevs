@@ -1,12 +1,12 @@
-import Image from "next/image"
-import Link from "next/link"
-import { FC } from "react"
 import { Text } from "../../../components/Text"
 import { TextLink } from "../../../components/TextLink"
 import { useGlobalState } from "../../../stores/globalState"
 import { useShoppingCart } from "../../../stores/shoppingCart"
 import { Course } from "../../../types/Course"
 import { formatPrice } from "../../../utils/formatPrice"
+import Image from "next/image"
+import Link from "next/link"
+import { FC } from "react"
 
 interface Props {
   course: Course
@@ -31,7 +31,7 @@ export const CartItem: FC<Props> = ({ course }) => {
         >
           <Image
             alt={`Icon for ${course.title}`}
-            src={course.icon}
+            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/${course.id}`}
             width={64}
             height={64}
             className="w-16 rounded-full"

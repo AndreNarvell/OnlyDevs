@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "generate-types": "npx supabase gen types typescript --project-id fjtuvaikvjxuufpzuhxi --schema public > types/supabase.ts",
-    "stripe:webhooks": "stripe listen --forward-to localhost:3000/api/stripe-webhooks",
-    "ngrok": "ngrok http 3000"
+    "stripe:webhooks": "stripe listen --forward-to localhost:3000/api/stripe-webhooks"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.7",
@@ -17,8 +17,12 @@
     "@hookform/resolvers": "^2.9.10",
     "@mux/mux-node": "^7.3.0",
     "@mux/mux-player-react": "^1.6.0",
+    "@mux/mux-uploader-react": "^1.0.0-beta.5",
+    "@mux/upchunk": "^3.0.2",
     "@next/font": "^13.1.1",
     "@radix-ui/colors": "^0.1.8",
+    "@radix-ui/react-accordion": "^1.1.0",
+    "@radix-ui/react-progress": "^1.0.1",
     "@radix-ui/react-scroll-area": "^1.0.2",
     "@supabase/auth-helpers-nextjs": "^0.5.2",
     "@supabase/auth-helpers-react": "^0.3.1",

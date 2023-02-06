@@ -3,7 +3,9 @@ import { Text } from "../components/Text"
 import { DashboardLayout } from "../components/layouts/DashboardLayout"
 import { DashboardCourseGrid } from "../features/Dashboard/components/DashboardCourseGrid"
 import { getUsersOwnedCourses } from "../models/courses"
+import { checkIfUserIsTeacher, getTeacherById } from "../models/teacher"
 import { Course } from "../types/Course"
+import { protectRoute } from "../utils/protectRoute"
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { useSession } from "@supabase/auth-helpers-react"
 import { GetServerSideProps, NextPage } from "next"
@@ -13,9 +15,10 @@ import Balancer from "react-wrap-balancer"
 
 interface Props {
   ownedCourses: Course[]
+  isTeacher: boolean
 }
 
-const DashboardPage: NextPage<Props> = ({ ownedCourses }) => {
+const DashboardPage: NextPage<Props> = ({ ownedCourses, isTeacher }) => {
   const session = useSession()
   const router = useRouter()
 
@@ -29,7 +32,7 @@ const DashboardPage: NextPage<Props> = ({ ownedCourses }) => {
     <>
       <Meta title="My courses" />
 
-      <DashboardLayout>
+      <DashboardLayout isTeacher={isTeacher}>
         <div className="text-center">
           <Balancer>
             <Text
@@ -53,27 +56,23 @@ const DashboardPage: NextPage<Props> = ({ ownedCourses }) => {
 export default DashboardPage
 
 export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
-  const supabase = createServerSupabaseClient(ctx)
+  const auth = await protectRoute(ctx)
+  if (!auth.isAuthed) {
+    return auth.redirect
+  }
+  const { session } = auth
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  if (!session)
-    return {
-      redirect: {
-        destination: "/auth/signin",
-        permanent: false,
-      },
-    }
-
-  const ownedCourses = await getUsersOwnedCourses(session.user.id)
+  const [ownedCourses, isTeacher] = await Promise.all([
+    getUsersOwnedCourses(session.user.id),
+    checkIfUserIsTeacher(session.user.id),
+  ])
 
   return {
     props: {
       initialSession: session,
       user: session.user,
       ownedCourses: ownedCourses ?? [],
+      isTeacher,
     },
   }
 }

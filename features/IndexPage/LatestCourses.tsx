@@ -1,17 +1,17 @@
-import React, { FC } from "react"
-import { Text } from "../../components/Text"
+import { Button, ButtonLink } from "../../components/Button"
 import { CourseCard } from "../../components/CourseCard"
 import { Input } from "../../components/Input"
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid"
-import { Button, ButtonLink } from "../../components/Button"
+import { Text } from "../../components/Text"
 import { TextLink } from "../../components/TextLink"
+import { Category } from "../../types/Category"
 import { Course } from "../../types/Course"
+import { serialiseCategories } from "../CourseCatalog/utils/filter"
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/router"
+import React, { FC } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Category } from "../../types/Category"
-import { serialiseCategories } from "../CourseCatalog/utils/filter"
 
 interface Props {
   courses: Course[]
@@ -84,8 +84,7 @@ export const LatestCourses: FC<Props> = ({ courses, categories }) => {
           {courses.map(course => (
             <CourseCard
               key={course.id}
-              backgroundImage={course.background_image}
-              icon={course.icon}
+              id={course.id}
               title={course.title}
               shortDesc={course.short_desc}
               href={{

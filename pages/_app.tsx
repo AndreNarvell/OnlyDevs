@@ -12,7 +12,8 @@ import { useEffect, useState } from "react"
 export const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  style: "normal",
+  style: ["normal", "italic"],
+  display: "swap",
 })
 
 function MyApp({

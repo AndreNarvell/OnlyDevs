@@ -1,7 +1,7 @@
 import { cva, VariantProps } from "class-variance-authority"
 import { FC, HTMLAttributes, ReactNode } from "react"
 
-export const text = cva("", {
+export const text = cva("break-words", {
   variants: {
     size: {
       xs: "text-xs",

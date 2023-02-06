@@ -41,4 +41,31 @@
 }
 
 @tailwind components;
+
+@layer components {
+  .curriculum-accordion-header[data-state="open"] {
+    svg {
+      transform: rotate(90deg);
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
 @tailwind utilities;

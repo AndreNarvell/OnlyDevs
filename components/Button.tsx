@@ -36,6 +36,10 @@ const button = cva(
         center: "justify-center",
         right: "justify-end",
       },
+      disabled: {
+        true: "opacity-75 cursor-not-allowed",
+        false: "",
+      },
     },
 
     compoundVariants: [
@@ -87,6 +91,13 @@ const button = cva(
         className: "text-error hover:bg-error",
       },
 
+      // Disabled
+      {
+        disabled: true,
+        variant: "ghost",
+        className: "hover:bg-transparent",
+      },
+
       // SVG only and sizes
       {
         svgOnly: true,
@@ -127,6 +138,7 @@ const button = cva(
       fullWidth: false,
       svgOnly: false,
       align: "center",
+      disabled: false,
     },
   }
 )
@@ -168,6 +180,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       svgOnly,
       className,
+      disabled,
       ...rest
     },
     ref
@@ -177,6 +190,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
+        disabled={disabled ?? false}
         className={button({
           intent,
           size,
@@ -184,6 +198,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           fullWidth,
           align,
           svgOnly: svgOnly || (!children && !!icon),
+          disabled,
           className,
         })}
         {...rest}

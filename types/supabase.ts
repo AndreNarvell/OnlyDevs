@@ -48,15 +48,13 @@ export interface Database {
       }
       courses: {
         Row: {
-          background_image: string
           category_id: number
           created_at: string
           creator: string
           description: string
-          icon: string
           id: string
           includes: string[] | null
-          number_of_students: number | null
+          number_of_students: number
           price: number
           requirements: string[] | null
           short_desc: string
@@ -65,32 +63,28 @@ export interface Database {
           title: string
         }
         Insert: {
-          background_image: string
-          category_id: number
+          category_id?: number
           created_at?: string
           creator: string
-          description: string
-          icon: string
+          description?: string
           id?: string
           includes?: string[] | null
-          number_of_students?: number | null
-          price: number
+          number_of_students?: number
+          price?: number
           requirements?: string[] | null
-          short_desc: string
+          short_desc?: string
           slug: string
-          tags: string[]
-          title: string
+          tags?: string[]
+          title?: string
         }
         Update: {
-          background_image?: string
           category_id?: number
           created_at?: string
           creator?: string
           description?: string
-          icon?: string
           id?: string
           includes?: string[] | null
-          number_of_students?: number | null
+          number_of_students?: number
           price?: number
           requirements?: string[] | null
           short_desc?: string
@@ -101,27 +95,27 @@ export interface Database {
       }
       lessons: {
         Row: {
-          content_type: string | null
+          content_type: string
           created_at: string | null
-          description: string | null
+          description: string
           id: string
           module: string
           sort_order: number
           title: string
         }
         Insert: {
-          content_type?: string | null
+          content_type?: string
           created_at?: string | null
-          description?: string | null
+          description?: string
           id?: string
           module: string
           sort_order: number
-          title: string
+          title?: string
         }
         Update: {
-          content_type?: string | null
+          content_type?: string
           created_at?: string | null
-          description?: string | null
+          description?: string
           id?: string
           module?: string
           sort_order?: number
@@ -160,8 +154,8 @@ export interface Database {
           course_id: string
           created_at?: string | null
           id?: string
-          sort_order: number
-          title: string
+          sort_order?: number
+          title?: string
         }
         Update: {
           course_id?: string

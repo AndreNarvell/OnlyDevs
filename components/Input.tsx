@@ -1,12 +1,12 @@
+import { IconComponent } from "../types/IconComponent"
+import { Text } from "./Text"
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid"
 import { cva, VariantProps } from "class-variance-authority"
 import clsx from "clsx"
-import { FC, forwardRef, HTMLAttributes } from "react"
-import { IconComponent } from "../types/IconComponent"
-import { Text } from "./Text"
+import { ChangeEvent, forwardRef, HTMLAttributes } from "react"
 
-const input = cva(
-  "border rounded-base flex items-center justify-center transition whitespace-nowrap bg-background border-accents-2 focus:outline-none focus:border-accents-5 placeholder:opacity-40 placeholder:text-foreground font-medium",
+export const input = cva(
+  "border rounded-base flex items-center justify-center transition whitespace-nowrap bg-background border-accents-2 focus:outline-none focus:border-accents-5 placeholder:opacity-40 placeholder:text-foreground font-medium scroll-mt-input file:hidden file:inset-0 file:cursor-pointer",
   {
     variants: {
       size: {
@@ -35,9 +35,7 @@ const input = cva(
   }
 )
 
-interface Props
-  extends HTMLAttributes<HTMLInputElement>,
-    Omit<VariantProps<typeof input>, "error"> {
+export interface CustomInputProps {
   label: string
   name: string
   placeholder?: string
@@ -45,15 +43,21 @@ interface Props
   id?: string
   disabled?: boolean
   error?: string
-  type?: "text" | "email" | "password" | "number"
+  type?: "text" | "email" | "password" | "number" | "file"
   icon?: IconComponent
-  value?: string
+  value?: string | number
   readOnly?: boolean
   inputClassName?: string
   labelClassName?: string
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+  accept?: string
 }
 
-export const Input = forwardRef<HTMLInputElement, Props>(
+type Props = Omit<HTMLAttributes<HTMLInputElement>, "onChange"> &
+  Omit<VariantProps<typeof input>, "error"> &
+  CustomInputProps
+
+export const Input = forwardRef<HTMLInputElement , Props>(
   (
     {
       type = "text",
@@ -105,7 +109,8 @@ export const Input = forwardRef<HTMLInputElement, Props>(
                   "pl-10": Icon,
                   "pl-3": !Icon,
                 },
-                inputClassName
+                inputClassName,
+                type === "file" && "cursor-pointer leading-9"
               ),
             })}
             {...rest}

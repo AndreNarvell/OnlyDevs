@@ -1,5 +1,5 @@
-import { ReactNode } from "react"
 import { Text } from "../../../components/Text"
+import { ReactNode } from "react"
 
 interface Props {
   title: string

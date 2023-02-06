@@ -1,6 +1,11 @@
+import {
+  EditorContent,
+  EditorModule,
+} from "../features/CourseCreator/stores/editorContent"
+import { CourseDetails } from "../features/CourseCreator/types/CourseDetails"
 import { serverSideSupabase, supabase } from "../lib/supabase"
 import { CategoryWithCourses } from "../types/Category"
-import { Course, CourseStructure } from "../types/Course"
+import { Course, CourseStructure, LessonData } from "../types/Course"
 import { CourseProgress } from "../types/CourseProgress"
 
 /**
@@ -171,6 +176,21 @@ export const getUsersSavedCourses = async (
   return courses
 }
 
+export const getUsersCreatedCourses = async (
+  userId: string
+): Promise<Course[] | undefined> => {
+  const { data: courses } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("creator", userId)
+
+  if (!courses) {
+    return undefined
+  }
+
+  return courses
+}
+
 /**
  * Course player
  */
@@ -185,6 +205,10 @@ export const getModulesAndLessons = async (
        title,
        description,
        short_desc,
+       includes,
+       requirements,
+       price,
+       tags,
        modules (
          id,
          title,
@@ -248,4 +272,59 @@ export const getUsersProgress = async (
   }
 
   return progress.completed_lessons ?? []
+}
+
+export const getLessonDataForLessons = async (
+  lessonIds: string[]
+): Promise<LessonData[] | undefined> => {
+  const { data } = await serverSideSupabase()
+    .from("lessons_data")
+    .select("*")
+    .in("id", lessonIds)
+
+  if (!data) {
+    return undefined
+  }
+
+  return data
+}
+
+export const getCourseCreatorData = async (
+  courseId: string
+): Promise<CourseStructure | undefined> => {
+  // Fetch all lessons in their modules
+  const course = await getModulesAndLessons(courseId)
+  if (!course) return
+
+  const allLessonIds = course.modules
+    .flatMap(module => module.lessons)
+    .map(lesson => lesson.id)
+
+  // Fetch all data for lessons
+  const lessonData = await getLessonDataForLessons(allLessonIds)
+  if (!lessonData) return
+
+  // Merge lesson data with lesson
+  const newModules = course.modules.map(module => {
+    return {
+      ...module,
+      lessons: module.lessons.map(lesson => {
+        const theLessonData = lessonData.find(
+          lessonData => lessonData.id === lesson.id
+        )
+        if (!theLessonData) return lesson
+
+        return {
+          ...lesson,
+          video_url: theLessonData.video_url,
+          article_data: theLessonData.article_data,
+        }
+      }),
+    }
+  })
+
+  return {
+    ...course,
+    modules: newModules,
+  }
 }

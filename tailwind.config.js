@@ -1,14 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
+    "./app/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./features/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     colors: {
-      $black: "#000",
-      $white: "#fff",
+      black: "rgb(var(--black) / <alpha-value>)",
+      white: "rgb(var(--white) / <alpha-value>)",
       transparent: "transparent",
       current: "currentColor",
 
