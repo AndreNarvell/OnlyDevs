@@ -40,7 +40,12 @@ export const PublishSummary: FC<Props> = ({ details, curriculum }) => {
             <ul className="mb-2">
               {curriculum.map(module => (
                 <li className="leading-none" key={module.id}>
-                  <Text as="span" display="inline" size={TEXT_SIZE}>
+                  <Text
+                    as="span"
+                    display="inline"
+                    size={TEXT_SIZE}
+                    className="capitalize"
+                  >
                     {module.title}
                   </Text>
 

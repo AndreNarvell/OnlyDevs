@@ -1,0 +1,248 @@
+{
+  "title": "Learn Socket.IO",
+  "description": "This is the best course to learn  meth cooking xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "short_desc": "Learn Socket.IO real real good 123",
+  "includes": [
+    "30 hours video",
+    "Very many texts",
+    "Top tier teacher teaching",
+    "No drugs",
+    "Pushes and fixes",
+    "GitClub repo",
+    "Cloud storage",
+    "123"
+  ],
+  "requirements": [
+    "Windows 95 or above",
+    "Broadband or wifi",
+    "A computer",
+    "Brain",
+    "123"
+  ],
+  "price": 0,
+  "tags": [
+    "JavaScript",
+    "WebSocket",
+    "123"
+  ]
+}
+
+[
+  {
+    "id": "94f5c7cd-d2aa-4dd2-b368-547b46cfaa9c",
+    "title": "Introduction",
+    "sort_order": 1,
+    "lessons": [
+      {
+        "id": "cab7153c-a9be-43a6-be62-58cf3f9aee1b",
+        "title": "Course overview",
+        "sort_order": 1,
+        "content_type": "article",
+        "video_url": null,
+        "article_data": "<h3>Socket.IO is a JavaScript library for real-time web applications. </h3><p>It enables real-time, bidirectional communication between web clients and servers. With Socket.IO, you can create web applications that can handle data updates in real-time, without the need for constant polling. </p><p>The library abstracts away the complexities of real-time communication, making it easy for developers to add real-time functionality to their web applications. It supports a wide range of web browsers and devices, and can be used with a variety of programming languages and frameworks. </p><p></p><hr><p>This course will cover the basics of Socket.IO, including setting up a server and client, handling events, and working with namespaces and rooms. By the end of the course, you will have a solid understanding of how to use Socket.IO to add real-time functionality to your web applications.</p>"
+      },
+      {
+        "id": "00b5d372-3a54-4af7-820b-cc2d40cdf8a0",
+        "title": "All my code (Github link)",
+        "sort_order": 2,
+        "content_type": "article",
+        "video_url": null,
+        "article_data": " <p>https://github.com/robertbunch/socketioTheDetails</p><p></p><p><strong>NOTE</strong>:&nbsp;I changed my username from ridiculous-inc to robertbunch so I&nbsp;am easier to find. In the videos I&nbsp;will refer to that URL, and it should redirect you, but my username is now robertbunch.</p>"
+      }
+    ]
+  },
+  {
+    "id": "c3bb9844-6a10-460e-8f07-90559bdd12ec",
+    "title": "Server setup",
+    "sort_order": 2,
+    "lessons": [
+      {
+        "id": "e1c6239f-b671-4938-af94-7b3afb45cfd0",
+        "title": "Initializing a Node.js project",
+        "sort_order": 1,
+        "content_type": "video",
+        "video_url": "vOP1zztb202V59jdVNU66mMA7RvnWjh5WD2HHdeXl2Z4",
+        "article_data": null
+      },
+      {
+        "id": "682afc62-097e-43d5-b5ff-0746b53338c0",
+        "title": "Test",
+        "sort_order": 2,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      }
+    ]
+  },
+  {
+    "id": "9f7feaad-19e5-4481-9dfd-766ae0c551c3",
+    "title": "WebSockets - Before Socket.IO",
+    "sort_order": 3,
+    "lessons": [
+      {
+        "id": "d929ba82-46c1-4675-926a-acab9a72d009",
+        "title": "Pre-Socket.IO",
+        "sort_order": 1,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      },
+      {
+        "id": "7e2c5b6a-5aba-4e96-8c02-6b3e4dbccf62",
+        "title": "Housekeeping - How I do node/express",
+        "sort_order": 2,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      },
+      {
+        "id": "849ae730-8452-4157-ac4e-65967b848bae",
+        "title": "TCP/UDP and networking 101",
+        "sort_order": 3,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      },
+      {
+        "id": "40ad7e4c-03eb-49a3-b0fa-de0e8ca28524",
+        "title": "Networking 201 - What is a socket and why should I care?",
+        "sort_order": 4,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      },
+      {
+        "id": "0483a501-f91c-491d-848a-e5f738f64b81",
+        "title": "HTTP vs WebSockets",
+        "sort_order": 5,
+        "content_type": "article",
+        "video_url": null,
+        "article_data": "<p>HTTP (Hypertext Transfer Protocol) is a protocol for transferring data over the internet. It is the foundation of the web and is used to transmit data between web browsers and servers. <br>HTTP is a request-response protocol, which means that a client (such as a web browser) sends a request to a server, and the server responds with the requested data.<br></p><p>WebSockets, on the other hand, is a protocol for real-time, bidirectional communication between web clients and servers. Unlike HTTP, which is a request-response protocol, WebSockets allow for a continuous, two-way connection between the client and server, allowing for real-time data transfer. This means that the server can push updates to the client, rather than the client having to request the updates.<br></p><p>In summary, HTTP is a protocol for request-response communication and is the foundation of the web. WebSockets is a protocol for real-time, bidirectional communication, which allows for constant data transfer in both directions and is typically used for real-time applications such as chats, gaming, or real-time data streaming.</p>"
+      }
+    ]
+  },
+  {
+    "id": "f05d8173-2e47-4e32-9d8e-e140cd48e253",
+    "title": "Socket.IO 101",
+    "sort_order": 4,
+    "lessons": [
+      {
+        "id": "8e62d458-3e2e-4fe3-8c70-4346edd19e18",
+        "title": "Why Socket.IO? This is why.",
+        "sort_order": 1,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      },
+      {
+        "id": "42af56fa-a02d-45cd-9816-664dac336d80",
+        "title": "The basics & Socket.IO vs. ws",
+        "sort_order": 2,
+        "content_type": "video",
+        "video_url": "",
+        "article_data": null
+      },
+      {
+        "id": "1bbeb3ec-9cad-456d-a926-73ea5f1406fa",
+        "title": "Small Chat app - in Socket.IO",
+        "sort_order": 3,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      },
+      {
+        "id": "3f475b39-d594-4cd9-838f-ae44d7f933eb",
+        "title": "Docs - The server",
+        "sort_order": 4,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      }
+    ]
+  },
+  {
+    "id": "2465a708-6780-4dc9-b7da-b3c8f0b4341c",
+    "title": "Socket.IO 201 - Let's make it Slack!",
+    "sort_order": 5,
+    "lessons": [
+      {
+        "id": "939c4dd5-0178-4c2f-bee5-384652944b1a",
+        "title": "Namespaces",
+        "sort_order": 1,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      },
+      {
+        "id": "e815bd23-4332-4bbb-98a7-5cd7f65516a1",
+        "title": "Namespace/Group Cheatsheet",
+        "sort_order": 2,
+        "content_type": "article",
+        "video_url": null,
+        "article_data": "<p>A Namespace in socket.io is a way to separate different parts of your application and communicate with them independently. Each Namespace has its own set of connected clients and can emit and receive events separately from the others.</p><p>Here is a quick cheatsheet of some common tasks you can do with Namespaces in socket.io:<br></p><ul><li><p>Creating a Namespace: var nsp = io.of('/my-namespace');</p></li><li><p>Listening for connections on a Namespace: nsp.on('connection', function(socket){ ... });</p></li><li><p>Emitting an event to all clients connected to a Namespace: nsp.emit('my-event', { some: 'data' });</p></li><li><p>Emitting an event to a specific client connected to a Namespace: socket.emit('my-event', { some: 'data' });</p></li><li><p>Broadcasting an event to all clients connected to a Namespace, except the sender: socket.broadcast.emit('my-event', { some: 'data' });</p></li></ul>"
+      }
+    ]
+  },
+  {
+    "id": "bd2d5603-527b-48fa-998c-f6c90d6e14c0",
+    "title": "Multiplayer Canvas Game - Agar.io clone",
+    "sort_order": 6,
+    "lessons": [
+      {
+        "id": "f29e42f7-71bf-46f8-b403-7d1ada097c65",
+        "title": "Project Strategy",
+        "sort_order": 1,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      },
+      {
+        "id": "46ca5ac8-592a-4f2c-9ead-f1bc5f13394b",
+        "title": "Socket.IO App Organization",
+        "sort_order": 2,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      },
+      {
+        "id": "696fcb35-5eec-4db6-9974-3170aa6674a2",
+        "title": "Getting the DOM setup",
+        "sort_order": 3,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      }
+    ]
+  },
+  {
+    "id": "da6ad071-e6f3-47c9-92ba-8715f18fe107",
+    "title": "Advanced Project - Adding React, cluster & redis - a performance monitor",
+    "sort_order": 7,
+    "lessons": [
+      {
+        "id": "25fb07e0-a82f-43d8-90c1-6742318512d4",
+        "title": "Project Setup and Dependencies",
+        "sort_order": 1,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      },
+      {
+        "id": "c9b178b6-b19d-408c-bf59-d7f45acf54d9",
+        "title": "Installing Redis on Windows",
+        "sort_order": 2,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      },
+      {
+        "id": "e62e13c7-f716-4b60-96cb-d94115dba7d5",
+        "title": "Architecture",
+        "sort_order": 3,
+        "content_type": "video",
+        "video_url": "S1M61Kw2OLg02O9JQAJo2edSsV9uFNYU7YyHm3bxRN1A",
+        "article_data": null
+      }
+    ]
+  }
+]

@@ -44,7 +44,7 @@ export const CourseCard: FC<Props> = ({
               height={40}
               src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/${id}`}
               alt={`Icon for ${title}`}
-              className="flex-grow-0 flex-shrink-0 rounded-full"
+              className="flex-grow-0 flex-shrink-0 object-cover object-center w-10 h-10 rounded-full"
             />
             <Text
               intent="primary"
@@ -64,7 +64,6 @@ export const CourseCard: FC<Props> = ({
             {shortDesc}
 
             <span className="text-success/50">
-              {" "}
               Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non,
               perspiciatis nihil! Modi nisi quis maxime voluptatum libero hic
               aspernatur labore.

@@ -1,4 +1,5 @@
 import { Button } from "../../../components/Button"
+import { FieldError } from "../../../components/Input"
 import { Meta } from "../../../components/Meta"
 import { Select } from "../../../components/Select"
 import { Text } from "../../../components/Text"
@@ -11,7 +12,8 @@ import { CourseStructure } from "../../../types/Course"
 import { protectRoute } from "../../../utils/protectRoute"
 import { GetServerSideProps, NextPage } from "next"
 import { useRouter } from "next/router"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import toast, { Toaster } from "react-hot-toast"
 
 interface Props {
   course: CourseStructure
@@ -20,6 +22,8 @@ interface Props {
 const SummaryPage: NextPage<Props> = ({ course }) => {
   const { query } = useRouter()
   useLoadCourse(course)
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const [curriculum, details, setDetails] = useEditorContent(state => [
     state.curriculum,
@@ -42,24 +46,28 @@ const SummaryPage: NextPage<Props> = ({ course }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id: query.courseId,
+        courseId: query.courseId,
         details,
-        curriculum: [],
+        curriculum,
       }),
     })
 
-    if (!response.ok) {
-      throw new Error("Error while publishing course")
+    const data = (await response.json()) as
+      | { success: false; error: string }
+      | { success: true; data: string }
+
+    if (!data.success) {
+      return setErrorMessage(data.error)
     }
 
-    const data = await response.json()
-
-    console.log(data)
+    toast("Published!", { position: "bottom-center", icon: "🎈" })
   }
 
   return (
     <>
       <Meta title="Course creator" />
+
+      <Toaster />
 
       <CourseCreatorLayout>
         <div className="grid grid-cols-2 gap-x-8">
@@ -104,16 +112,20 @@ const SummaryPage: NextPage<Props> = ({ course }) => {
               ]}
             />
 
-            <Button onClick={publishCourse} size="large" intent="success">
+            <Button
+              onClick={publishCourse}
+              size="large"
+              intent="success"
+              className="mb-3"
+            >
               Publish
             </Button>
+
+            {errorMessage && <FieldError error={errorMessage} />}
           </section>
 
           <section className="p-8 border border-accents-2 bg-background rounded-marketing">
             <PublishSummary curriculum={curriculum} details={details} />
-            {/* <pre className="text-xs break-words whitespace-pre-wrap">
-              {JSON.stringify(details, null, 2)}
-            </pre> */}
           </section>
         </div>
       </CourseCreatorLayout>
