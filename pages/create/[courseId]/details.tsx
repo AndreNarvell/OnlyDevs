@@ -21,14 +21,17 @@ import { GetServerSideProps, NextPage } from "next"
 import Image from "next/image"
 import { FormEvent, useState } from "react"
 import { useForm, FormProvider } from "react-hook-form"
+import toast, { Toaster } from "react-hot-toast"
 
 interface Props {
   course: CourseStructure
 }
 
-const iconsTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/pre-`
+const previewIconsTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/pre-`
+const previewBgImagesTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-backgrounds/pre-`
 
-const bgImagesTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-backgrounds/pre-`
+const iconsTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/`
+const bgImagesTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-backgrounds/`
 
 type DetailsForm = EditorContent["details"] & {
   icon: File | undefined
@@ -49,9 +52,18 @@ const CreatePage: NextPage<Props> = ({ course }) => {
     `${bgImagesTemplate}${course.id}?t=${Date.now()}`
   )
 
+  const [previewIconUrl, setPreviewIconUrl] = useState(
+    `${previewIconsTemplate}${course.id}?t=${Date.now()}`
+  )
+  const [previewBackgroundImageUrl, setPreviewBackgroundImageUrl] = useState(
+    `${previewBgImagesTemplate}${course.id}?t=${Date.now()}`
+  )
+
   const refreshPreviews = () => {
-    setIconUrl(`${iconsTemplate}${course.id}?t=${Date.now()}`)
-    setBackgroundImageUrl(`${bgImagesTemplate}${course.id}?t=${Date.now()}`)
+    setPreviewIconUrl(`${previewIconsTemplate}${course.id}?t=${Date.now()}`)
+    setPreviewBackgroundImageUrl(
+      `${previewBgImagesTemplate}${course.id}?t=${Date.now()}`
+    )
   }
 
   const methods = useForm<DetailsForm>({
@@ -97,11 +109,15 @@ const CreatePage: NextPage<Props> = ({ course }) => {
 
   const onSubmit = (formValues: DetailsForm) => {
     setDetails(formValues)
+
+    toast("Saved!", { position: "bottom-center", icon: "💾" })
   }
 
   return (
     <>
       <Meta title="Course creator" />
+
+      <Toaster />
 
       <CourseCreatorLayout>
         <FormProvider {...methods}>
@@ -212,13 +228,37 @@ const CreatePage: NextPage<Props> = ({ course }) => {
                   error={errors.icon?.message}
                 />
 
-                <Image
-                  width={100}
-                  height={100}
-                  alt="Preview of course icon"
-                  src={iconUrl}
-                  unoptimized
-                />
+                <div className="flex gap-x-2">
+                  <div className="flex flex-col ">
+                    <Image
+                      width={100}
+                      height={100}
+                      alt=""
+                      src={iconUrl}
+                      unoptimized
+                      className="w-10 h-10 rounded-full aspect-square"
+                      suppressHydrationWarning
+                    />
+                    <Text as="p" size="sm">
+                      Current icon
+                    </Text>
+                  </div>
+
+                  <div className="flex flex-col ">
+                    <Image
+                      width={100}
+                      height={100}
+                      alt=""
+                      src={previewIconUrl}
+                      unoptimized
+                      className="w-10 h-10 rounded-full aspect-square"
+                      suppressHydrationWarning
+                    />
+                    <Text as="label" size="sm">
+                      Preview of new icon
+                    </Text>
+                  </div>
+                </div>
               </div>
               <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
                 This is the icon displayed on the course card and in the course
@@ -245,18 +285,41 @@ const CreatePage: NextPage<Props> = ({ course }) => {
                   error={errors.background_image?.message}
                 />
 
-                <Image
-                  width={100}
-                  unoptimized
-                  height={100}
-                  alt="Preview of background image"
-                  src={backgroundImageUrl}
-                />
+                <div className="flex gap-x-2">
+                  <div className="flex flex-col ">
+                    <Image
+                      width={100}
+                      unoptimized
+                      height={100}
+                      alt=""
+                      src={backgroundImageUrl}
+                      className="aspect-[5/3]"
+                      suppressHydrationWarning
+                    />
+                    <Text as="label" size="sm">
+                      Preview of new background
+                    </Text>
+                  </div>
+
+                  <div className="flex flex-col ">
+                    <Image
+                      width={100}
+                      unoptimized
+                      height={100}
+                      alt=""
+                      src={previewBackgroundImageUrl}
+                      className="aspect-[5/3]"
+                      suppressHydrationWarning
+                    />
+                    <Text as="label" size="sm">
+                      Preview of new background
+                    </Text>
+                  </div>
+                </div>
               </div>
               <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
-                This is the icon displayed on the course card and in the course
-                catalog. Select a square image with a minimum size of 128x128
-                pixels.
+                Last but not least, the background image! Select a image with a
+                16:9 ratio with a minimum size of 1280x720.
               </Text>
             </div>
 

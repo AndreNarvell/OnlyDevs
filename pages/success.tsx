@@ -1,23 +1,22 @@
-import { GetServerSideProps, NextPage } from "next"
-import Image from "next/image"
-import Link from "next/link"
-import Stripe from "stripe"
 import { ButtonLink } from "../components/Button"
-import { Layout } from "../components/layouts/Layout"
+import { Meta } from "../components/Meta"
 import { Text } from "../components/Text"
-import { TextLink } from "../components/TextLink"
+import { Layout } from "../components/layouts/Layout"
 import { stripe } from "../lib/stripe"
-import type { Course } from "../types/Course"
+import { supabase } from "../lib/supabase"
+import { useShoppingCart } from "../stores/shoppingCart"
+import type { Course as ICourse } from "../types/Course"
+import { convertLineItemsToCartItems } from "../utils/convertLineItemsToCartItems"
 import { formatPrice } from "../utils/formatPrice"
 import { motion } from "framer-motion"
+import { GetServerSideProps, NextPage } from "next"
+import Image from "next/image"
 import { useCallback, useEffect, useRef } from "react"
 import ReactCanvasConfetti from "react-canvas-confetti"
-import { useShoppingCart } from "../stores/shoppingCart"
-import { Meta } from "../components/Meta"
-import Balancer from "react-wrap-balancer";
+import Balancer from "react-wrap-balancer"
 
 interface Props {
-  lineItems: Stripe.LineItem[]
+  courses: ICourse[]
 }
 
 const container = {
@@ -36,8 +35,10 @@ const item = {
   show: { opacity: 1, x: 0, transition: { duration: 0.5 } },
 }
 
-const SuccessPage: NextPage<Props> = ({ lineItems }) => {
+const SuccessPage: NextPage<Props> = ({ courses }) => {
   const refAnimationInstance = useRef(null)
+
+  console.log(courses)
 
   // @ts-ignore
   const getInstance = useCallback(instance => {
@@ -87,14 +88,14 @@ const SuccessPage: NextPage<Props> = ({ lineItems }) => {
   }, [makeShot])
 
   useEffect(() => {
-    if (lineItems.length > 0) {
+    if (courses.length > 0) {
       clearCart()
     }
 
     setTimeout(() => {
       fire()
     }, 100)
-  }, [lineItems, fire, clearCart])
+  }, [courses, fire, clearCart])
 
   return (
     <>
@@ -123,12 +124,12 @@ const SuccessPage: NextPage<Props> = ({ lineItems }) => {
               animate="show"
               className="flex flex-col gap-4"
             >
-              {lineItems.map(lineItem => (
-                <Course  
-                  title={lineItem.description}
-                  icon="https://unsplash.it/123/123"
-                  price={lineItem.amount_total}
-                  key={lineItem.id}
+              {courses.map(course => (
+                <Course
+                  title={course.title}
+                  icon={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/${course.id}`}
+                  price={course.price}
+                  key={course.id}
                 />
               ))}
             </motion.ul>
@@ -149,10 +150,12 @@ const SuccessPage: NextPage<Props> = ({ lineItems }) => {
               You did it!
             </Text>
             <Balancer>
-            <Text as="p" align="center" intent="secondary">
-              Congratulations! You just purchased a course. Head over to &quot;My courses&quot; to start your new journey to become the best you you can be!
+              <Text as="p" align="center" intent="secondary">
+                Congratulations! You just purchased a course. Head over to
+                &quot;My courses&quot; to start your new journey to become the
+                best you you can be!
               </Text>
-              </Balancer>
+            </Balancer>
 
             <ButtonLink
               href="/dashboard"
@@ -183,22 +186,21 @@ const Course = ({
       variants={item}
       className="flex items-center p-4 border bg-accents-1 border-accents-2 rounded-marketing"
     >
-      <div className="">
-        
+      <div className="flex justify-between w-full gap-x-4">
+        <div className="w-10 h-10 rounded-full shrink-0">
           <Image
             alt={`Icon for ${title}`}
             src={icon}
             width={48}
             height={48}
-            className="w-12 rounded-full"
+            className="w-10 h-10 rounded-full shrink-0"
           />
-       
-      </div>
+        </div>
 
-      <div className="flex justify-between w-full gap-x-4">
-        <Text as="p"
+        <Text
+          as="p"
           size="sm"
-          className="pl-2 line-clamp-2"
+          className="whitespace-pre-line line-clamp-2 shrink grow-0"
           weight="semibold"
         >
           {title}
@@ -231,12 +233,19 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
     const lineItems = await stripe.checkout.sessions.listLineItems(
       checkoutSessionId,
-      { limit: 100 }
+      { limit: 100, expand: ["data.price", "data.price.product"] }
     )
+
+    const cartItems = convertLineItemsToCartItems(lineItems.data)
+
+    const { data: courses } = await supabase
+      .from("courses")
+      .select("*")
+      .in("id", cartItems)
 
     return {
       props: {
-        lineItems: lineItems.data,
+        courses,
       },
     }
   } catch (error) {
@@ -244,7 +253,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
     return {
       props: {
-        lineItems: [],
+        courses: [],
       },
     }
   }

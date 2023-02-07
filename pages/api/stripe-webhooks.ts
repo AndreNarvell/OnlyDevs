@@ -1,5 +1,6 @@
 import { stripe } from "../../lib/stripe"
 import { serverSideSupabase } from "../../lib/supabase"
+import { convertLineItemsToCartItems } from "../../utils/convertLineItemsToCartItems"
 import { buffer } from "micro"
 import { NextApiHandler } from "next"
 import Stripe from "stripe"
@@ -88,23 +89,9 @@ const handler: NextApiHandler = async (req, res) => {
         )
 
         // Get the course id from metadata in every line item
-        const newCourses = checkoutSession.line_items.data
-          .map(item => {
-            if (
-              item.price === null ||
-              item.price.product === undefined ||
-              typeof item.price.product === "string" ||
-              item.price.product.deleted === true ||
-              item.price.product.metadata.course_id === undefined
-            ) {
-              console.log("Found an invalid line item", item)
-              return undefined
-            }
-
-            console.log("Found a valid line item", item)
-            return item.price.product.metadata.course_id
-          })
-          .filter((item): item is string => item !== undefined)
+        const newCourses = convertLineItemsToCartItems(
+          checkoutSession.line_items.data
+        )
 
         console.log("The new courses are", newCourses)
 

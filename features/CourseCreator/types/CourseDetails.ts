@@ -4,7 +4,7 @@ export const courseDetailsSchema = z.object({
   title: z.string().min(10).max(100),
   description: z.string().min(100).max(1000),
   short_desc: z.string().min(10).max(100),
-  includes: z.array(z.string().min(5).max(100)).min(1),
+  includes: z.array(z.string().min(2).max(100)).min(1),
   requirements: z.array(z.string().min(2).max(100)).min(1),
   tags: z.array(z.string().min(2).max(100)).min(1),
   background_image: z.unknown().optional(),

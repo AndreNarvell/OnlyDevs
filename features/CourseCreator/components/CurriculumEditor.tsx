@@ -447,9 +447,9 @@ export const CurriculumEditor = () => {
       <pre className="text-xs whitespace-pre-wrap">
         Lesson content: {lesson.article_data ?? "null"}
       </pre>*/}
-      <pre className="text-xs whitespace-pre-wrap">
+      {/* <pre className="text-xs whitespace-pre-wrap">
         Video url: {lesson.video_url ?? "null"}
-      </pre>
+      </pre> */}
     </section>
   )
 }

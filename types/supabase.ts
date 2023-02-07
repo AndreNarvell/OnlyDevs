@@ -97,7 +97,6 @@ export interface Database {
         Row: {
           content_type: string
           created_at: string | null
-          description: string
           id: string
           module: string
           sort_order: number
@@ -106,7 +105,6 @@ export interface Database {
         Insert: {
           content_type?: string
           created_at?: string | null
-          description?: string
           id?: string
           module: string
           sort_order: number
@@ -115,7 +113,6 @@ export interface Database {
         Update: {
           content_type?: string
           created_at?: string | null
-          description?: string
           id?: string
           module?: string
           sort_order?: number
@@ -226,11 +223,16 @@ export interface Database {
     }
     Functions: {
       increment: {
-        Args: { course_id: string }
+        Args: {
+          course_id: string
+        }
         Returns: undefined
       }
     }
     Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
       [_ in never]: never
     }
   }
