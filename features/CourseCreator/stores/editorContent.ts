@@ -1,4 +1,5 @@
 import { Course, Module, Lesson } from "../../../types/Course"
+import { calcLength } from "framer-motion"
 import { create } from "zustand"
 
 export type EditorModule = Pick<Module, "id" | "title" | "sort_order"> & {
@@ -25,11 +26,16 @@ export type EditorDetails = Pick<
 >
 
 export type EditorContent = {
+  isDirty: boolean
+
   details: EditorDetails
   curriculum: EditorModule[] | undefined
 
-  setDetails: (details: EditorContent["details"]) => void
-  setCurriculum: (curriculum: EditorContent["curriculum"]) => void
+  initDetails: (details: EditorDetails) => void
+  initCurriculum: (curriculum: EditorModule[]) => void
+
+  setDetails: (details: EditorDetails) => void
+  setCurriculum: (curriculum: EditorModule[]) => void
 
   updateModule: (moduleId: string, fields: Partial<EditorModule>) => void
   updateLesson: (lessonId: string, fields: Partial<EditorLesson>) => void
@@ -39,14 +45,40 @@ export type EditorContent = {
 }
 
 export const useEditorContent = create<EditorContent>(set => ({
+  isDirty: false,
+
   details: {} as EditorContent["details"],
   curriculum: undefined,
 
-  setDetails: (fields: Partial<EditorContent["details"]>) =>
-    set(state => ({ ...state, details: { ...state.details, ...fields } })),
+  initDetails: (details: EditorContent["details"]) => {
+    set(state => ({
+      ...state,
+      details,
+    }))
+  },
 
-  setCurriculum: (curriculum: EditorContent["curriculum"]) =>
-    set(state => ({ ...state, curriculum })),
+  initCurriculum: (curriculum: EditorContent["curriculum"]) => {
+    set(state => ({
+      ...state,
+      curriculum,
+    }))
+  },
+
+  setDetails: (fields: Partial<EditorContent["details"]>) => {
+    set(state => ({
+      ...state,
+      isDirty: true,
+      details: { ...state.details, ...fields },
+    }))
+  },
+
+  setCurriculum: (curriculum: EditorContent["curriculum"]) => {
+    set(state => ({
+      ...state,
+      isDirty: true,
+      curriculum,
+    }))
+  },
 
   updateModule: (moduleId: string, fields: Partial<EditorModule>) => {
     set(state => {
@@ -59,6 +91,7 @@ export const useEditorContent = create<EditorContent>(set => ({
 
       return {
         ...state,
+        isDirty: true,
         curriculum: state.curriculum.map((module, index) => {
           if (index === moduleIndex) {
             return { ...state.curriculum![moduleIndex], ...fields }
@@ -85,6 +118,7 @@ export const useEditorContent = create<EditorContent>(set => ({
 
       return {
         ...state,
+        isDirty: true,
         curriculum: state.curriculum.map((module, index) => {
           if (!state.curriculum) throw new Error("This cant happen")
 
@@ -122,6 +156,7 @@ export const useEditorContent = create<EditorContent>(set => ({
 
       return {
         ...state,
+        isDirty: true,
         curriculum: state.curriculum.filter(
           (module, index) => index !== moduleIndex
         ),
@@ -145,6 +180,7 @@ export const useEditorContent = create<EditorContent>(set => ({
 
       return {
         ...state,
+        isDirty: true,
         curriculum: state.curriculum.map((module, index) => {
           if (!state.curriculum) throw new Error("This cant happen")
 

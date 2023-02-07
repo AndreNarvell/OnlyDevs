@@ -2,11 +2,11 @@ import { Meta } from "../components/Meta"
 import { Text } from "../components/Text"
 import { DashboardLayout } from "../components/layouts/DashboardLayout"
 import { DashboardCourseGrid } from "../features/Dashboard/components/DashboardCourseGrid"
+import { getCourseProgress } from "../features/Dashboard/utils/getCourseProgress"
 import { getUsersOwnedCourses } from "../models/courses"
-import { checkIfUserIsTeacher, getTeacherById } from "../models/teacher"
+import { checkIfUserIsTeacher } from "../models/teacher"
 import { Course } from "../types/Course"
 import { protectRoute } from "../utils/protectRoute"
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { useSession } from "@supabase/auth-helpers-react"
 import { GetServerSideProps, NextPage } from "next"
 import { useRouter } from "next/router"
@@ -16,9 +16,14 @@ import Balancer from "react-wrap-balancer"
 interface Props {
   ownedCourses: Course[]
   isTeacher: boolean
+  courseProgress: Record<string, number>
 }
 
-const DashboardPage: NextPage<Props> = ({ ownedCourses, isTeacher }) => {
+const DashboardPage: NextPage<Props> = ({
+  ownedCourses,
+  isTeacher,
+  courseProgress,
+}) => {
   const session = useSession()
   const router = useRouter()
 
@@ -47,7 +52,10 @@ const DashboardPage: NextPage<Props> = ({ ownedCourses, isTeacher }) => {
           </Balancer>
         </div>
 
-        <DashboardCourseGrid courses={ownedCourses} />
+        <DashboardCourseGrid
+          courses={ownedCourses}
+          courseProgress={courseProgress}
+        />
       </DashboardLayout>
     </>
   )
@@ -62,9 +70,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
   }
   const { session } = auth
 
-  const [ownedCourses, isTeacher] = await Promise.all([
+  const [ownedCourses, isTeacher, courseProgress] = await Promise.all([
     getUsersOwnedCourses(session.user.id),
     checkIfUserIsTeacher(session.user.id),
+    getCourseProgress(session.user.id),
   ])
 
   return {
@@ -73,6 +82,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
       user: session.user,
       ownedCourses: ownedCourses ?? [],
       isTeacher,
+      courseProgress,
     },
   }
 }

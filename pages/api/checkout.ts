@@ -2,6 +2,7 @@ import { siteUrl } from "../../constants/siteUrl"
 import { stripe } from "../../lib/stripe"
 import { getProfileById } from "../../models/profile"
 import { Database } from "../../types/supabase"
+import { getImageUrl } from "../../utils/getImageUrl"
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { NextApiHandler } from "next"
 import Stripe from "stripe"
@@ -63,9 +64,7 @@ const handler: NextApiHandler = async (req, res) => {
         currency: "usd",
         product_data: {
           name: course.title,
-          images: [
-            `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/${course.id}`,
-          ],
+          images: [getImageUrl("course-icons", course.id)],
           metadata: {
             course_id: course.id,
           },

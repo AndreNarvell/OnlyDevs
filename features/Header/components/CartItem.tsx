@@ -4,6 +4,7 @@ import { useGlobalState } from "../../../stores/globalState"
 import { useShoppingCart } from "../../../stores/shoppingCart"
 import { Course } from "../../../types/Course"
 import { formatPrice } from "../../../utils/formatPrice"
+import { getImageUrl } from "../../../utils/getImageUrl"
 import Image from "next/image"
 import Link from "next/link"
 import { FC } from "react"
@@ -31,7 +32,7 @@ export const CartItem: FC<Props> = ({ course }) => {
         >
           <Image
             alt={`Icon for ${course.title}`}
-            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/${course.id}`}
+            src={getImageUrl("course-icons", course.id)}
             width={64}
             height={64}
             className="w-16 rounded-full"

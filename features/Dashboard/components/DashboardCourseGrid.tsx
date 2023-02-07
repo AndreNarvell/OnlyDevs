@@ -4,10 +4,12 @@ import { FC } from "react"
 
 interface DashboardCourseGridProps {
   courses: Course[]
+  courseProgress?: Record<string, number>
 }
 
 export const DashboardCourseGrid: FC<DashboardCourseGridProps> = ({
   courses,
+  courseProgress,
 }) => {
   return (
     <section className="grid grid-cols-1 gap-8 pb-16 mx-auto w-max place-items-center sm:grid-cols-2 lg:grid-cols-3">
@@ -21,6 +23,7 @@ export const DashboardCourseGrid: FC<DashboardCourseGridProps> = ({
             query: { courseId: course.id },
           }}
           key={course.id}
+          progress={courseProgress?.[course.id]}
         />
       ))}
     </section>

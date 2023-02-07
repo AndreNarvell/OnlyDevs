@@ -5,6 +5,7 @@ import { Select } from "../../../components/Select"
 import { Text } from "../../../components/Text"
 import { CourseCreatorLayout } from "../../../components/layouts/CourseCreatorLayout"
 import { PublishSummary } from "../../../features/CourseCreator/components/PublishSummary"
+import { useConfirmLeave } from "../../../features/CourseCreator/hooks/useConfirmLeave"
 import { useLoadCourse } from "../../../features/CourseCreator/hooks/useLoadCourse"
 import { useEditorContent } from "../../../features/CourseCreator/stores/editorContent"
 import { getCourseCreatorData } from "../../../models/courses"
@@ -12,7 +13,7 @@ import { CourseStructure } from "../../../types/Course"
 import { protectRoute } from "../../../utils/protectRoute"
 import { GetServerSideProps, NextPage } from "next"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import toast, { Toaster } from "react-hot-toast"
 
 interface Props {
@@ -20,20 +21,17 @@ interface Props {
 }
 
 const SummaryPage: NextPage<Props> = ({ course }) => {
-  const { query } = useRouter()
   useLoadCourse(course)
+  useConfirmLeave()
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const { query } = useRouter()
 
   const [curriculum, details, setDetails] = useEditorContent(state => [
     state.curriculum,
     state.details,
     state.setDetails,
   ])
-
-  useEffect(() => {
-    console.log(details)
-  }, [details])
 
   const publishCourse = async () => {
     if (typeof query.courseId !== "string") {
@@ -85,18 +83,12 @@ const SummaryPage: NextPage<Props> = ({ course }) => {
               className="w-48 mb-4"
               value={details.price}
               onChange={e => {
-                console.log("Changed to", e.target.value)
-
                 setDetails({
                   ...details,
                   price: parseInt(e.target.value),
                 })
               }}
               options={[
-                {
-                  label: "Free",
-                  value: 0,
-                },
                 {
                   label: "$19.99 (Tier 1)",
                   value: 1999,

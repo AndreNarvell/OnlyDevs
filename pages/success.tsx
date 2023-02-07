@@ -1,6 +1,7 @@
 import { ButtonLink } from "../components/Button"
 import { Meta } from "../components/Meta"
 import { Text } from "../components/Text"
+import { TextLink } from "../components/TextLink"
 import { Layout } from "../components/layouts/Layout"
 import { stripe } from "../lib/stripe"
 import { supabase } from "../lib/supabase"
@@ -8,6 +9,7 @@ import { useShoppingCart } from "../stores/shoppingCart"
 import type { Course as ICourse } from "../types/Course"
 import { convertLineItemsToCartItems } from "../utils/convertLineItemsToCartItems"
 import { formatPrice } from "../utils/formatPrice"
+import { getImageUrl } from "../utils/getImageUrl"
 import { motion } from "framer-motion"
 import { GetServerSideProps, NextPage } from "next"
 import Image from "next/image"
@@ -37,8 +39,6 @@ const item = {
 
 const SuccessPage: NextPage<Props> = ({ courses }) => {
   const refAnimationInstance = useRef(null)
-
-  console.log(courses)
 
   // @ts-ignore
   const getInstance = useCallback(instance => {
@@ -99,7 +99,7 @@ const SuccessPage: NextPage<Props> = ({ courses }) => {
 
   return (
     <>
-      <Meta title="Order confirmation" noIndex />
+      <Meta title="Order success" noIndex />
 
       <Layout background="accents-1">
         <ReactCanvasConfetti
@@ -127,8 +127,9 @@ const SuccessPage: NextPage<Props> = ({ courses }) => {
               {courses.map(course => (
                 <Course
                   title={course.title}
-                  icon={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/${course.id}`}
+                  icon={getImageUrl("course-icons", course.id)}
                   price={course.price}
+                  id={course.id}
                   key={course.id}
                 />
               ))}
@@ -176,10 +177,12 @@ const Course = ({
   title,
   icon,
   price,
+  id,
 }: {
   title: string
   price: number
   icon: string
+  id: string
 }) => {
   return (
     <motion.li
@@ -197,14 +200,19 @@ const Course = ({
           />
         </div>
 
-        <Text
-          as="p"
+        <TextLink
+          href={{
+            pathname: "/my-courses",
+            query: {
+              courseId: id,
+            },
+          }}
           size="sm"
           className="whitespace-pre-line line-clamp-2 shrink grow-0"
           weight="semibold"
         >
           {title}
-        </Text>
+        </TextLink>
 
         <div>
           <Text as="p" size="sm" weight="bold">

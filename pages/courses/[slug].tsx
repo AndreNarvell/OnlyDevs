@@ -16,6 +16,7 @@ import { useShoppingCart } from "../../stores/shoppingCart"
 import { Course } from "../../types/Course"
 import { Teacher } from "../../types/Teacher"
 import { formatPrice } from "../../utils/formatPrice"
+import { getImageUrl } from "../../utils/getImageUrl"
 import { goToCheckout } from "../../utils/goToCheckout"
 import { saveCourse } from "../../utils/saveCourse"
 import { HeartIcon } from "@heroicons/react/24/outline"
@@ -65,6 +66,10 @@ const CourseDetailsPage: NextPage<Props> = ({
   }
 
   const handleBuyNow = async () => {
+    if (!session) {
+      return router.push("/auth/signup")
+    }
+
     await goToCheckout([course.id], router.asPath)
   }
 
@@ -87,7 +92,7 @@ const CourseDetailsPage: NextPage<Props> = ({
               <Image
                 width={128}
                 height={128}
-                src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/${course.id}`}
+                src={getImageUrl("course-icons", course.id)}
                 alt={`Icon for ${course.title}`}
                 className="flex-grow-0 flex-shrink-0 w-16 h-16 rounded-full md:w-32 md:h-32 aspect-square"
               />

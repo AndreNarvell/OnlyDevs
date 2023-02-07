@@ -1,6 +1,6 @@
 import { Text } from "../../../components/Text"
-import { useCourseProgress } from "../../../hooks/useCourseProgress"
 import { CourseStructure } from "../../../types/Course"
+import { useCourseProgress } from "../hooks/useCourseProgress"
 import { NavModule } from "./NavModule"
 import clsx from "clsx"
 import { FC } from "react"

@@ -8,6 +8,7 @@ import { DesktopFilterMenu } from "../../features/CourseCatalog/components/Deskt
 import { MobileFilterMenu } from "../../features/CourseCatalog/components/MobileFilterMenu"
 import { useSearch } from "../../features/CourseCatalog/hooks/useSearch"
 import { parseCategories } from "../../features/CourseCatalog/utils/filter"
+import { searchCourses } from "../../features/CourseCatalog/utils/searchCourses"
 import { getAllCategories } from "../../models/categories"
 import {
   getAllCourses,
@@ -15,7 +16,6 @@ import {
 } from "../../models/courses"
 import { Category, CategoryWithCourses } from "../../types/Category"
 import { Course } from "../../types/Course"
-import { searchCourses } from "../../utils/searchCourses"
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline"
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router"

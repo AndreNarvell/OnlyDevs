@@ -1,5 +1,7 @@
 import { Text } from "../components/Text"
 import { Database } from "../types/supabase"
+import { getImageUrl } from "../utils/getImageUrl"
+import * as Progress from "@radix-ui/react-progress"
 import Image from "next/image"
 import Link from "next/link"
 import React, { FC } from "react"
@@ -13,6 +15,7 @@ interface Props {
   shortDesc: Course["short_desc"]
   href: string | UrlObject
   showImage?: boolean
+  progress?: number
 }
 
 export const CourseCard: FC<Props> = ({
@@ -21,6 +24,7 @@ export const CourseCard: FC<Props> = ({
   shortDesc,
   href,
   showImage = true,
+  progress,
 }) => {
   return (
     <article className="flex flex-col flex-shrink-0 h-full transition border bg-background rounded-marketing overflow-clip border-accents-2 hover:border-accents-5 w-full max-w-[18rem]">
@@ -30,7 +34,7 @@ export const CourseCard: FC<Props> = ({
             <Image
               width={500}
               height={300}
-              src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-backgrounds/${id}`}
+              src={getImageUrl("course-backgrounds", id)}
               alt={`Background for ${title}`}
               className="object-cover object-center w-full h-full"
             />
@@ -42,7 +46,7 @@ export const CourseCard: FC<Props> = ({
             <Image
               width={40}
               height={40}
-              src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/${id}`}
+              src={getImageUrl("course-icons", id)}
               alt={`Icon for ${title}`}
               className="flex-grow-0 flex-shrink-0 object-cover object-center w-10 h-10 rounded-full"
             />
@@ -55,20 +59,34 @@ export const CourseCard: FC<Props> = ({
               {title}
             </Text>
           </div>
+
           <Text
             intent="secondary"
             size="sm"
-            className="mt-2 line-clamp-2"
+            className="mt-2 line-clamp-2 h-[2.625rem]"
             as="p"
           >
             {shortDesc}
-
-            <span className="text-success/50">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non,
-              perspiciatis nihil! Modi nisi quis maxime voluptatum libero hic
-              aspernatur labore.
-            </span>
           </Text>
+
+          {progress !== undefined && (
+            <div className="flex flex-col items-center gap-2 mt-6 -mb-4">
+              <Progress.Root
+                value={progress}
+                max={100}
+                className="w-full h-2 rounded-full bg-accents-2 overflow-clip"
+              >
+                <Progress.Indicator
+                  style={{ transform: `translateX(-${100 - progress}%)` }}
+                  className="h-full bg-success"
+                />
+              </Progress.Root>
+
+              <Text as="p" size="sm" weight="bold" className="-mt-0.5">
+                {progress}&nbsp;%&nbsp;complete
+              </Text>
+            </div>
+          )}
         </div>
       </Link>
     </article>

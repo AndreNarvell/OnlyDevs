@@ -37,7 +37,6 @@ export const CurriculumEditor = () => {
     },
 
     onUpdate: ({ editor }) => {
-      console.log("onUpdate")
       setContent(editor.getHTML())
     },
   })
@@ -63,7 +62,6 @@ export const CurriculumEditor = () => {
       !editor.isDestroyed &&
       lesson.article_data !== content
     ) {
-      console.log("loaded new content into editor from state")
       editor.commands.setContent(lesson.article_data)
       setContent(lesson.article_data)
     }
@@ -78,7 +76,6 @@ export const CurriculumEditor = () => {
       lesson.article_data !== content &&
       (lesson.article_data !== null || content.length > 0)
     ) {
-      console.log("update lesson.article_content")
       updateLesson({ article_data: content })
       // setContent()
     }
@@ -262,7 +259,11 @@ export const CurriculumEditor = () => {
 
           {progress > 0 && (
             <div>
-              <Progress.Root className="w-full h-2 rounded-full bg-accents-2 overflow-clip">
+              <Progress.Root
+                value={progress}
+                max={100}
+                className="w-full h-2 rounded-full bg-accents-2 overflow-clip"
+              >
                 <Progress.Indicator
                   style={{
                     transform: `translateX(-${100 - progress}%)`,

@@ -2,8 +2,10 @@ import { Meta } from "../../../components/Meta"
 import { CourseCreatorLayout } from "../../../components/layouts/CourseCreatorLayout"
 import { CurriculumEditor } from "../../../features/CourseCreator/components/CurriculumEditor"
 import { CurriculumModule } from "../../../features/CourseCreator/components/CurriculumModule"
+import { useConfirmLeave } from "../../../features/CourseCreator/hooks/useConfirmLeave"
 import { useLoadCourse } from "../../../features/CourseCreator/hooks/useLoadCourse"
 import { useEditorContent } from "../../../features/CourseCreator/stores/editorContent"
+import { useBeforeUnload } from "../../../hooks/useBeforeUnload"
 import { getCourseCreatorData } from "../../../models/courses"
 import { CourseStructure } from "../../../types/Course"
 import { protectRoute } from "../../../utils/protectRoute"
@@ -17,6 +19,7 @@ interface Props {
 
 const CurriculumPage: NextPage<Props> = ({ course }) => {
   useLoadCourse(course)
+  useConfirmLeave()
 
   const [curriculum, setCurriculum] = useEditorContent(state => [
     state.curriculum,

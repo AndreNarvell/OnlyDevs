@@ -5,15 +5,18 @@ import { Meta } from "../../../components/Meta"
 import { Text } from "../../../components/Text"
 import { TextArea } from "../../../components/TextArea"
 import { CourseCreatorLayout } from "../../../components/layouts/CourseCreatorLayout"
+import { useConfirmLeave } from "../../../features/CourseCreator/hooks/useConfirmLeave"
 import { useLoadCourse } from "../../../features/CourseCreator/hooks/useLoadCourse"
 import {
   EditorContent,
   useEditorContent,
 } from "../../../features/CourseCreator/stores/editorContent"
 import { courseDetailsSchema } from "../../../features/CourseCreator/types/CourseDetails"
+import { useBeforeUnload } from "../../../hooks/useBeforeUnload"
 import { getCourseCreatorData } from "../../../models/courses"
 import { CourseStructure } from "../../../types/Course"
 import { Database } from "../../../types/supabase"
+import { getImageUrl } from "../../../utils/getImageUrl"
 import { protectRoute } from "../../../utils/protectRoute"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
@@ -27,42 +30,46 @@ interface Props {
   course: CourseStructure
 }
 
-const previewIconsTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/pre-`
-const previewBgImagesTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-backgrounds/pre-`
-
-const iconsTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/`
-const bgImagesTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-backgrounds/`
-
 type DetailsForm = EditorContent["details"] & {
   icon: File | undefined
   background_image: File | undefined
 }
 
 const CreatePage: NextPage<Props> = ({ course }) => {
+  useLoadCourse(course)
+  useConfirmLeave()
+
   const [details, setDetails] = useEditorContent(state => [
     state.details,
     state.setDetails,
   ])
-  useLoadCourse(course)
 
   const [iconUrl, setIconUrl] = useState(
-    `${iconsTemplate}${course.id}?t=${Date.now()}`
+    getImageUrl("course-icons", course.id, { noCache: true })
   )
   const [backgroundImageUrl, setBackgroundImageUrl] = useState(
-    `${bgImagesTemplate}${course.id}?t=${Date.now()}`
+    getImageUrl("course-backgrounds", course.id, { noCache: true })
   )
 
   const [previewIconUrl, setPreviewIconUrl] = useState(
-    `${previewIconsTemplate}${course.id}?t=${Date.now()}`
+    getImageUrl("course-icons", course.id, { preview: true, noCache: true })
   )
   const [previewBackgroundImageUrl, setPreviewBackgroundImageUrl] = useState(
-    `${previewBgImagesTemplate}${course.id}?t=${Date.now()}`
+    getImageUrl("course-backgrounds", course.id, {
+      preview: true,
+      noCache: true,
+    })
   )
 
   const refreshPreviews = () => {
-    setPreviewIconUrl(`${previewIconsTemplate}${course.id}?t=${Date.now()}`)
+    setPreviewIconUrl(
+      getImageUrl("course-icons", course.id, { preview: true, noCache: true })
+    )
     setPreviewBackgroundImageUrl(
-      `${previewBgImagesTemplate}${course.id}?t=${Date.now()}`
+      getImageUrl("course-backgrounds", course.id, {
+        preview: true,
+        noCache: true,
+      })
     )
   }
 
@@ -82,9 +89,6 @@ const CreatePage: NextPage<Props> = ({ course }) => {
     setValue,
     formState: { errors },
   } = methods
-
-  // console.log("watch", methods.watch())
-  // console.log("errors:", errors)
 
   const handleFileChange = async (
     e: FormEvent<HTMLInputElement>,

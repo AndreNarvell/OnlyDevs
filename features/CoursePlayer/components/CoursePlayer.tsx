@@ -1,11 +1,11 @@
 import { ButtonLink } from "../../../components/Button"
 import { Text } from "../../../components/Text"
-import { useCourseProgress } from "../../../hooks/useCourseProgress"
 import { CourseStructure, LessonData } from "../../../types/Course"
-import { Database } from "../../../types/supabase"
+import { useCourseProgress } from "../hooks/useCourseProgress"
 import { getAdjacentLesson } from "../utils/getAdjacentLesson"
+import { postCompletedLesson } from "../utils/postCompletedLesson"
 import MuxPlayer from "@mux/mux-player-react"
-import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react"
+import { useSession } from "@supabase/auth-helpers-react"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import { useRouter } from "next/router"
@@ -24,7 +24,6 @@ export const CoursePlayer: FC<Props> = ({ course, lessonData, tokens }) => {
   const { progress, mutate } = useCourseProgress()
 
   const { query } = useRouter()
-  const supabase = useSupabaseClient<Database>()
   const session = useSession()
 
   // Find the lesson based on the URL
@@ -35,7 +34,7 @@ export const CoursePlayer: FC<Props> = ({ course, lessonData, tokens }) => {
   const nextLessonId = getAdjacentLesson(course, query, 1)
   const previousLessonId = getAdjacentLesson(course, query, -1)
 
-  const isLastLesson = nextLessonId === undefined
+  const isFinalLesson = nextLessonId === undefined
 
   const noContent = lessonData === null && query.lessonId !== undefined
   const isArticle = !noContent && lesson?.content_type === "article"
@@ -48,7 +47,6 @@ export const CoursePlayer: FC<Props> = ({ course, lessonData, tokens }) => {
   })
 
   useEffect(() => {
-    // @ts-ignore
     if (lessonData && editor && !editor.isDestroyed) {
       editor.commands.setContent(lessonData?.article_data)
     }
@@ -62,38 +60,7 @@ export const CoursePlayer: FC<Props> = ({ course, lessonData, tokens }) => {
     const newData = [...prevProgress, newLessonId]
 
     await mutate(
-      async prev => {
-        if (!prev) return
-
-        const { error: updateError } = await supabase
-          .from("course_progress")
-          .update({ completed_lessons: newData })
-          .match({
-            profile: session.user.id,
-            course: course.id,
-          })
-
-        if (updateError) {
-          console.log(updateError)
-          throw updateError
-        }
-
-        const { data, error } = await supabase
-          .from("course_progress")
-          .select("completed_lessons")
-          .match({
-            profile: session.user.id,
-            course: course.id,
-          })
-          .single()
-
-        if (error) {
-          console.log(error)
-          throw error
-        }
-
-        return data.completed_lessons ?? []
-      },
+      async () => postCompletedLesson(session.user.id, course.id, newData),
       { optimisticData: newData }
     )
   }
@@ -182,7 +149,7 @@ export const CoursePlayer: FC<Props> = ({ course, lessonData, tokens }) => {
               intent="success"
               size="small"
             >
-              {isLastLesson ? "Finish course" : "Next"}
+              {isFinalLesson ? "Finish course" : "Next"}
             </ButtonLink>
           </div>
         )}

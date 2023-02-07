@@ -25,21 +25,21 @@ export interface Database {
       }
       course_progress: {
         Row: {
-          completed_lessons: string[] | null
+          completed_lessons: string[]
           course: string
           created_at: string
           id: string
           profile: string
         }
         Insert: {
-          completed_lessons?: string[] | null
+          completed_lessons?: string[]
           course: string
           created_at?: string
           id?: string
           profile: string
         }
         Update: {
-          completed_lessons?: string[] | null
+          completed_lessons?: string[]
           course?: string
           created_at?: string
           id?: string
@@ -73,7 +73,7 @@ export interface Database {
           price?: number
           requirements?: string[] | null
           short_desc?: string
-          slug: string
+          slug?: string
           tags?: string[]
           title?: string
         }

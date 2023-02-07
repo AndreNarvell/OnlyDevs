@@ -1,4 +1,4 @@
-import { getUsersProgress } from "../models/courses"
+import { getUsersProgress } from "../../../models/courses"
 import { useSession } from "@supabase/auth-helpers-react"
 import { useRouter } from "next/router"
 import useSWR from "swr"
@@ -11,7 +11,7 @@ export const useCourseProgress = () => {
     session?.user.id !== undefined && typeof query.courseId === "string"
 
   const { data, error, isLoading, isValidating, mutate } = useSWR(
-    shouldFetch ? "course-progress" : null,
+    shouldFetch ? ["course-progress", query.courseId] : null,
 
     async () => {
       if (session?.user.id === undefined) {
