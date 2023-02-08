@@ -7,7 +7,7 @@ import { useEffect } from "react"
  */
 export const useLoadCourse = (course: CourseStructure) => {
   const [details, initDetails, curriculum, initCurriculum] = useEditorContent(
-    state => [
+    (state) => [
       state.details,
       state.initDetails,
       state.curriculum,
@@ -34,6 +34,7 @@ export const useLoadCourse = (course: CourseStructure) => {
         requirements: course.requirements,
         price: course.price,
         tags: course.tags,
+        category_id: course.category_id,
       })
 
       console.log("Loaded course details into state")

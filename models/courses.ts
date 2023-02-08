@@ -61,7 +61,7 @@ export const getAllCoursesSortedByCategory = async (options?: {
     .select(`*, courses (*)`)
 
   if (data) {
-    const formatted = data.map<CategoryWithCourses>(category => ({
+    const formatted = data.map<CategoryWithCourses>((category) => ({
       ...category,
       courses:
         category.courses === null
@@ -72,7 +72,7 @@ export const getAllCoursesSortedByCategory = async (options?: {
     }))
 
     if (options?.noEmptyCategories) {
-      return formatted.filter(category => category.courses.length > 0)
+      return formatted.filter((category) => category.courses.length > 0)
     }
 
     return formatted
@@ -209,6 +209,7 @@ export const getModulesAndLessons = async (
        requirements,
        price,
        tags,
+       category_id,
        modules (
          id,
          title,
@@ -243,7 +244,7 @@ export const getModulesAndLessons = async (
     (a, b) => a.sort_order - b.sort_order
   )
 
-  const sortedLessons = sortedModules.map(module => ({
+  const sortedLessons = sortedModules.map((module) => ({
     ...module,
     lessons: Array.isArray(module.lessons)
       ? module.lessons.sort((a, b) => a.sort_order - b.sort_order)
@@ -297,20 +298,20 @@ export const getCourseCreatorData = async (
   if (!course) return
 
   const allLessonIds = course.modules
-    .flatMap(module => module.lessons)
-    .map(lesson => lesson.id)
+    .flatMap((module) => module.lessons)
+    .map((lesson) => lesson.id)
 
   // Fetch all data for lessons
   const lessonData = await getLessonDataForLessons(allLessonIds)
   if (!lessonData) return
 
   // Merge lesson data with lesson
-  const newModules = course.modules.map(module => {
+  const newModules = course.modules.map((module) => {
     return {
       ...module,
-      lessons: module.lessons.map(lesson => {
+      lessons: module.lessons.map((lesson) => {
         const theLessonData = lessonData.find(
-          lessonData => lessonData.id === lesson.id
+          (lessonData) => lessonData.id === lesson.id
         )
         if (!theLessonData) return lesson
 

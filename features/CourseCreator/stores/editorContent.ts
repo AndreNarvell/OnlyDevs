@@ -23,6 +23,7 @@ export type EditorDetails = Pick<
   | "requirements"
   | "price"
   | "tags"
+  | "category_id"
 >
 
 export type EditorContent = {
@@ -44,28 +45,28 @@ export type EditorContent = {
   deleteLesson: (lessonId: string) => void
 }
 
-export const useEditorContent = create<EditorContent>(set => ({
+export const useEditorContent = create<EditorContent>((set) => ({
   isDirty: false,
 
   details: {} as EditorContent["details"],
   curriculum: undefined,
 
   initDetails: (details: EditorContent["details"]) => {
-    set(state => ({
+    set((state) => ({
       ...state,
       details,
     }))
   },
 
   initCurriculum: (curriculum: EditorContent["curriculum"]) => {
-    set(state => ({
+    set((state) => ({
       ...state,
       curriculum,
     }))
   },
 
   setDetails: (fields: Partial<EditorContent["details"]>) => {
-    set(state => ({
+    set((state) => ({
       ...state,
       isDirty: true,
       details: { ...state.details, ...fields },
@@ -73,7 +74,7 @@ export const useEditorContent = create<EditorContent>(set => ({
   },
 
   setCurriculum: (curriculum: EditorContent["curriculum"]) => {
-    set(state => ({
+    set((state) => ({
       ...state,
       isDirty: true,
       curriculum,
@@ -81,11 +82,11 @@ export const useEditorContent = create<EditorContent>(set => ({
   },
 
   updateModule: (moduleId: string, fields: Partial<EditorModule>) => {
-    set(state => {
+    set((state) => {
       if (!state.curriculum) return state
 
       const moduleIndex = state.curriculum.findIndex(
-        module => module.id === moduleId
+        (module) => module.id === moduleId
       )
       if (moduleIndex === undefined) return state
 
@@ -103,16 +104,16 @@ export const useEditorContent = create<EditorContent>(set => ({
   },
 
   updateLesson: (lessonId: string, fields: Partial<EditorLesson>) => {
-    set(state => {
+    set((state) => {
       if (!state.curriculum) return state
 
-      const moduleIndex = state.curriculum.findIndex(module =>
-        module.lessons.find(lesson => lesson.id === lessonId)
+      const moduleIndex = state.curriculum.findIndex((module) =>
+        module.lessons.find((lesson) => lesson.id === lessonId)
       )
       if (moduleIndex === undefined) return state
 
       const lessonIndex = state.curriculum[moduleIndex].lessons.findIndex(
-        lesson => lesson.id === lessonId
+        (lesson) => lesson.id === lessonId
       )
       if (lessonIndex === undefined) return state
 
@@ -146,11 +147,11 @@ export const useEditorContent = create<EditorContent>(set => ({
   },
 
   deleteModule: (moduleId: string) => {
-    set(state => {
+    set((state) => {
       if (!state.curriculum) return state
 
       const moduleIndex = state.curriculum.findIndex(
-        module => module.id === moduleId
+        (module) => module.id === moduleId
       )
       if (moduleIndex === undefined) return state
 
@@ -165,16 +166,16 @@ export const useEditorContent = create<EditorContent>(set => ({
   },
 
   deleteLesson: (lessonId: string) => {
-    set(state => {
+    set((state) => {
       if (!state.curriculum) return state
 
-      const moduleIndex = state.curriculum.findIndex(module =>
-        module.lessons.find(lesson => lesson.id === lessonId)
+      const moduleIndex = state.curriculum.findIndex((module) =>
+        module.lessons.find((lesson) => lesson.id === lessonId)
       )
       if (moduleIndex === undefined) return state
 
       const lessonIndex = state.curriculum[moduleIndex].lessons.findIndex(
-        lesson => lesson.id === lessonId
+        (lesson) => lesson.id === lessonId
       )
       if (lessonIndex === undefined) return state
 

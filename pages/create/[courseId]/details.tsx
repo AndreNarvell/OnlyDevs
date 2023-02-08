@@ -2,6 +2,7 @@ import { ArrayInput } from "../../../components/ArrayInput"
 import { Button } from "../../../components/Button"
 import { Input } from "../../../components/Input"
 import { Meta } from "../../../components/Meta"
+import { Select } from "../../../components/Select"
 import { Text } from "../../../components/Text"
 import { TextArea } from "../../../components/TextArea"
 import { CourseCreatorLayout } from "../../../components/layouts/CourseCreatorLayout"
@@ -39,7 +40,7 @@ const CreatePage: NextPage<Props> = ({ course }) => {
   useLoadCourse(course)
   useConfirmLeave()
 
-  const [details, setDetails] = useEditorContent(state => [
+  const [details, setDetails] = useEditorContent((state) => [
     state.details,
     state.setDetails,
   ])
@@ -114,8 +115,12 @@ const CreatePage: NextPage<Props> = ({ course }) => {
   const onSubmit = (formValues: DetailsForm) => {
     setDetails(formValues)
 
+    console.log(formValues)
+
     toast("Saved!", { position: "bottom-center", icon: "💾" })
   }
+
+  console.log(course)
 
   return (
     <>
@@ -221,9 +226,68 @@ const CreatePage: NextPage<Props> = ({ course }) => {
             </div>
 
             <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
+              <Select
+                label="Category"
+                showLabel
+                id="category_id"
+                fullWidth
+                className="w-48 mb-4"
+                error={errors.category_id?.message}
+                {...register("category_id")}
+                options={[
+                  {
+                    label: "JavaScript",
+                    value: 1,
+                  },
+                  {
+                    label: "CSS",
+                    value: 5,
+                  },
+                  {
+                    label: "React",
+                    value: 6,
+                  },
+                  {
+                    label: "Node",
+                    value: 7,
+                  },
+                  {
+                    label: "Git",
+                    value: 8,
+                  },
+                  {
+                    label: "CI/CD",
+                    value: 9,
+                  },
+                  {
+                    label: "Angular",
+                    value: 10,
+                  },
+                  {
+                    label: "HTML5",
+                    value: 11,
+                  },
+                  {
+                    label: "TypeScript",
+                    value: 12,
+                  },
+                  {
+                    label: "Vue",
+                    value: 13,
+                  },
+                ]}
+              />
+              <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
+                You also need to write down the requirements for taking this
+                course. If the student needs a modern computer, or previous
+                knowledge of JavaScript etc.
+              </Text>
+            </div>
+
+            <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
               <div>
                 <Input
-                  onChange={e => handleFileChange(e, "course-icons", "icon")}
+                  onChange={(e) => handleFileChange(e, "course-icons", "icon")}
                   type="file"
                   name="icon"
                   label="Icon"
@@ -274,7 +338,7 @@ const CreatePage: NextPage<Props> = ({ course }) => {
             <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
               <div>
                 <Input
-                  onChange={e =>
+                  onChange={(e) =>
                     handleFileChange(
                       e,
                       "course-backgrounds",
@@ -338,7 +402,7 @@ const CreatePage: NextPage<Props> = ({ course }) => {
 }
 export default CreatePage
 
-export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
+export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   const auth = await protectRoute(ctx, "/dashboard")
   if (!auth.isAuthed) {
     return auth.redirect
