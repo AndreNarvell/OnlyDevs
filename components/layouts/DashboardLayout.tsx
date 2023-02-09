@@ -24,7 +24,7 @@ interface DashboardNavigationProps {
 
 const DashboardNavigation: FC<DashboardNavigationProps> = ({ isTeacher }) => {
   return (
-    <div className="flex p-1 mx-auto mb-12 border gap-x-1 border-accents-2 rounded-marketing w-max">
+    <div className="grid grid-cols-2 gap-1 p-1 mx-auto mb-12 border sm:flex border-accents-2 rounded-marketing w-max">
       <DashboardNavButton href="/dashboard">My courses</DashboardNavButton>
       <DashboardNavButton href="/saved-courses">
         Saved courses

@@ -167,36 +167,30 @@ export interface Database {
       }
       profiles: {
         Row: {
-          cart: string[] | null
           created_at: string | null
           email: string | null
           id: string
           name: string | null
-          owned_courses: string[] | null
-          picture: string | null
-          saved_courses: string[] | null
+          owned_courses: string[]
+          saved_courses: string[]
           stripe_customer: string | null
         }
         Insert: {
-          cart?: string[] | null
           created_at?: string | null
           email?: string | null
           id: string
           name?: string | null
-          owned_courses?: string[] | null
-          picture?: string | null
-          saved_courses?: string[] | null
+          owned_courses?: string[]
+          saved_courses?: string[]
           stripe_customer?: string | null
         }
         Update: {
-          cart?: string[] | null
           created_at?: string | null
           email?: string | null
           id?: string
           name?: string | null
-          owned_courses?: string[] | null
-          picture?: string | null
-          saved_courses?: string[] | null
+          owned_courses?: string[]
+          saved_courses?: string[]
           stripe_customer?: string | null
         }
       }
