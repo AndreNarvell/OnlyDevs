@@ -1,7 +1,7 @@
-import Link from "next/link"
 import { Logo } from "./Logo"
 import { Text } from "./Text"
 import { TextLink } from "./TextLink"
+import Link from "next/link"
 
 const links = [
   {
@@ -35,19 +35,6 @@ export const Footer = () => {
               </TextLink>
             </li>
           ))}
-
-          {process.env.NODE_ENV === "development" && (
-            <li>
-              <TextLink
-                href="/design-system"
-                weight="medium"
-                tracking="wide"
-                className="transition duration-300 hover:text-accents-6 hover:transition-none"
-              >
-                Design system
-              </TextLink>
-            </li>
-          )}
         </ul>
       </nav>
 

@@ -40,19 +40,17 @@ const DashboardPage: NextPage<Props> = ({
       <DashboardLayout isTeacher={isTeacher}>
         <div className="text-center">
           <Balancer>
-            <Text
-              as="h1"
-              size="3xl"
-              weight="bold"
-              align="center"
-              className="mb-8"
-            >
+            <Text as="h1" size="3xl" weight="bold" align="center">
               My courses
             </Text>
           </Balancer>
+          <Text as="p" intent="secondary" align="center" className="mb-8">
+            Click on a course to start learning
+          </Text>
         </div>
 
         <DashboardCourseGrid
+          action="play"
           courses={ownedCourses}
           courseProgress={courseProgress}
         />

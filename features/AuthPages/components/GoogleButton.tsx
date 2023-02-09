@@ -1,6 +1,6 @@
-import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { Button } from "../../../components/Button"
 import { Database } from "../../../types/supabase"
+import { useSupabaseClient } from "@supabase/auth-helpers-react"
 
 export const GoogleButton = ({ label }: { label: string }) => {
   const { auth } = useSupabaseClient<Database>()

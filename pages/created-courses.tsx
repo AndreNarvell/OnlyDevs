@@ -35,23 +35,16 @@ const CreatedCoursesPage: NextPage<Props> = ({ createdCourses, isTeacher }) => {
       <DashboardLayout isTeacher={isTeacher}>
         <div className="text-center">
           <Balancer>
-            <Text
-              as="h1"
-              size="3xl"
-              weight="bold"
-              align="center"
-              className="mb-8"
-            >
+            <Text as="h1" size="3xl" weight="bold" align="center">
               Created courses
             </Text>
           </Balancer>
+          <Text as="p" intent="secondary" align="center" className="mb-8">
+            Click on a course to edit it
+          </Text>
         </div>
 
-        <DashboardCourseGrid courses={createdCourses} />
-
-        {/* <div className="w-24 h-24">
-          <PlusCircleIcon className="fill-accents-4 hover:fill-accents-5" />
-        </div> */}
+        <DashboardCourseGrid action="edit" courses={createdCourses} />
       </DashboardLayout>
     </>
   )

@@ -5,6 +5,7 @@ import { Meta } from "../../../components/Meta"
 import { Select } from "../../../components/Select"
 import { Text } from "../../../components/Text"
 import { TextArea } from "../../../components/TextArea"
+import { UnavailableOnMobile } from "../../../components/UnavailableOnMobile"
 import { CourseCreatorLayout } from "../../../components/layouts/CourseCreatorLayout"
 import { useConfirmLeave } from "../../../features/CourseCreator/hooks/useConfirmLeave"
 import { useLoadCourse } from "../../../features/CourseCreator/hooks/useLoadCourse"
@@ -146,6 +147,8 @@ const CreatePage: NextPage<Props> = ({ course }) => {
       <Meta title="Course creator" />
 
       <Toaster />
+
+      <UnavailableOnMobile />
 
       <CourseCreatorLayout>
         <FormProvider {...methods}>

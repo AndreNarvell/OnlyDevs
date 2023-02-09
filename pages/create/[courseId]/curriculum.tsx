@@ -1,11 +1,11 @@
 import { Meta } from "../../../components/Meta"
+import { UnavailableOnMobile } from "../../../components/UnavailableOnMobile"
 import { CourseCreatorLayout } from "../../../components/layouts/CourseCreatorLayout"
 import { CurriculumEditor } from "../../../features/CourseCreator/components/CurriculumEditor"
 import { CurriculumModule } from "../../../features/CourseCreator/components/CurriculumModule"
 import { useConfirmLeave } from "../../../features/CourseCreator/hooks/useConfirmLeave"
 import { useLoadCourse } from "../../../features/CourseCreator/hooks/useLoadCourse"
 import { useEditorContent } from "../../../features/CourseCreator/stores/editorContent"
-import { useBeforeUnload } from "../../../hooks/useBeforeUnload"
 import { getCourseCreatorData } from "../../../models/courses"
 import { CourseStructure } from "../../../types/Course"
 import { protectRoute } from "../../../utils/protectRoute"
@@ -29,6 +29,8 @@ const CurriculumPage: NextPage<Props> = ({ course }) => {
   return (
     <>
       <Meta title="Course creator" />
+
+      <UnavailableOnMobile />
 
       <CourseCreatorLayout wide>
         <div className="grid grid-cols-3 gap-x-8">

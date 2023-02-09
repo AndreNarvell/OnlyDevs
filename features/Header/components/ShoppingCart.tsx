@@ -11,12 +11,14 @@ import { goToCheckout } from "../../../utils/goToCheckout"
 import { CartItem } from "./CartItem"
 import { FaceFrownIcon, ShoppingCartIcon } from "@heroicons/react/24/outline"
 import { ShoppingCartIcon as ShoppingCartIconSolid } from "@heroicons/react/24/solid"
+import { useSession } from "@supabase/auth-helpers-react"
 import { useRouter } from "next/router"
 import { useEffect, useRef, useState } from "react"
 
 export const ShoppingCart = () => {
   const [show, setShow] = useState(false)
-  const { asPath } = useRouter()
+  const router = useRouter()
+  const session = useSession()
 
   useEffect(() => {
     setShow(true)
@@ -95,7 +97,14 @@ export const ShoppingCart = () => {
               Total: {formatPrice(totalPrice)}
             </Text>
 
-            <Button onClick={() => goToCheckout(cartItems, asPath)} fullWidth>
+            <Button
+              onClick={() =>
+                session
+                  ? goToCheckout(cartItems, router.asPath)
+                  : router.push("/auth/signup")
+              }
+              fullWidth
+            >
               Go to checkout
             </Button>
           </>
