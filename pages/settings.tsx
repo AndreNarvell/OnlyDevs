@@ -1,28 +1,16 @@
 import { Input } from "../components/Input"
 import { Meta } from "../components/Meta"
 import { Text } from "../components/Text"
-import { TextLink } from "../components/TextLink"
 import { DashboardLayout } from "../components/layouts/DashboardLayout"
-import { SidebarLayout } from "../components/layouts/SidebarLayout"
 import { SettingsSection } from "../features/Dashboard/components/SettingsSection"
+import { supabase } from "../lib/supabase"
 import { checkIfUserIsTeacher } from "../models/teacher"
 import { protectRoute } from "../utils/protectRoute"
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { useSession } from "@supabase/auth-helpers-react"
 import { GetServerSideProps, NextPage } from "next"
 import { useRouter } from "next/router"
 import { useEffect } from "react"
-
-const categories = [
-  {
-    title: "Profile",
-    href: "/settings",
-  },
-  {
-    title: "Something else",
-    href: "/something-else",
-  },
-]
+import Balancer from "react-wrap-balancer"
 
 interface Props {
   isTeacher: boolean
@@ -43,42 +31,58 @@ const SavedCoursesPage: NextPage<Props> = ({ isTeacher }) => {
       <Meta title="Profile settings" />
 
       <DashboardLayout isTeacher={isTeacher}>
-        <SidebarLayout
-          title="Profile settings"
-          paragraph="Coming soon !"
-          sidebar={
-            <div className="hidden mb-72 lg:block">
-              <ul>
-                {categories.map(category => (
-                  <li key={category.title}>
-                    <TextLink
-                      href={category.href}
-                      className="block px-4 py-3 transition cursor-pointer hover:bg-accents-4/10 hover:transition-none border-foreground/20"
-                    >
-                      {category.title}
-                    </TextLink>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          }
-        >
-          <section className="px-6">
-            <SettingsSection
-              title="Your Name"
-              description="Please enter your full name, or a display name you are comfortable with."
-            >
-              <Input label="Name" name="Hej" />
-            </SettingsSection>
+        <div className="text-center">
+          <Balancer>
+            <Text as="h1" size="3xl" weight="bold" align="center">
+              Profile settings
+            </Text>
+          </Balancer>
+          <Text as="p" intent="secondary" align="center" className="mb-8">
+            Courses you&apos;ve saved for later
+          </Text>
+        </div>
 
+        <section className="px-6">
+          <SettingsSection
+            title="Your Name"
+            description="Please enter your full name, or a display name you are comfortable with."
+            onSubmit={async values => {
+              if (session && typeof values?.name === "string") {
+                const response = await fetch("/api/update-profile", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(values),
+                })
+
+                if (!response.ok) {
+                  return console.error("Error updating profile")
+                }
+              }
+            }}
+          >
+            {({ register }) => (
+              <>
+                <Input label="Name" {...register("name")} />
+              </>
+            )}
+          </SettingsSection>
+
+          {isTeacher && (
             <SettingsSection
               title="Your Profile Picture"
               description="The picture associated with your profile. Only visible to others if you are signed up as a teacher."
+              onSubmit={async data => {
+                console.log(data)
+              }}
             >
-              <Input label="Name" name="Hej" />
+              {({ register }) => (
+                <Input label="Name" {...register("picture")} />
+              )}
             </SettingsSection>
-          </section>
-        </SidebarLayout>
+          )}
+        </section>
       </DashboardLayout>
     </>
   )

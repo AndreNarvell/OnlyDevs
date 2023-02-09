@@ -1,18 +1,20 @@
 import { Button, ButtonLink } from "../../../components/Button"
 import { CourseCard } from "../../../components/CourseCard"
 import { Course } from "../../../types/Course"
-import { PlusCircleIcon, PlusIcon } from "@heroicons/react/24/solid"
+import { PlusIcon } from "@heroicons/react/24/solid"
 import { useRouter } from "next/router"
 import { FC } from "react"
 
 interface DashboardCourseGridProps {
   courses: Course[]
   courseProgress?: Record<string, number>
+  action: "play" | "go-to-store" | "edit"
 }
 
 export const DashboardCourseGrid: FC<DashboardCourseGridProps> = ({
   courses,
   courseProgress,
+  action,
 }) => {
   const router = useRouter()
 
@@ -32,25 +34,32 @@ export const DashboardCourseGrid: FC<DashboardCourseGridProps> = ({
           id={course.id}
           title={course.title}
           shortDesc={course.short_desc}
-          href={{
-            pathname: "/my-courses",
-            query: { courseId: course.id },
-          }}
+          href={
+            action === "play"
+              ? `/my-courses?courseId=${course.id}`
+              : action === "go-to-store"
+              ? `/courses/${course.id}`
+              : action === "edit"
+              ? `/create/${course.id}/details`
+              : `/courses/${course.id}`
+          }
           key={course.id}
           progress={courseProgress?.[course.id]}
         />
       ))}
 
       {router.pathname === "/created-courses" && (
-        <Button
+        <button
           onClick={() => {
             createCourse()
           }}
-          className="rounded-full"
-          intent="secondary"
-          size="large"
-          icon={PlusIcon}
-        />
+          title="Create a new course"
+          className="group h-[21.375rem] flex items-center justify-center border border-accents-2 rounded-marketing w-full hover:bg-background/50 transition group hover:border-accents-5"
+        >
+          <div className="flex items-center justify-center w-16 h-16 transition border rounded-full border-accents-2 group-hover:text-background group-hover:bg-foreground group-hover:border-foreground">
+            <PlusIcon className="w-6 h-6" />
+          </div>
+        </button>
       )}
     </section>
   )

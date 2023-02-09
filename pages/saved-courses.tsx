@@ -34,19 +34,16 @@ const SavedCoursesPage: NextPage<Props> = ({ savedCourses, isTeacher }) => {
       <DashboardLayout isTeacher={isTeacher}>
         <div className="text-center">
           <Balancer>
-            <Text
-              as="h1"
-              size="3xl"
-              weight="bold"
-              align="center"
-              className="mb-8"
-            >
+            <Text as="h1" size="3xl" weight="bold" align="center">
               Saved courses
             </Text>
           </Balancer>
+          <Text as="p" intent="secondary" align="center" className="mb-8">
+            Courses you&apos;ve saved for later
+          </Text>
         </div>
 
-        <DashboardCourseGrid courses={savedCourses} />
+        <DashboardCourseGrid action="go-to-store" courses={savedCourses} />
       </DashboardLayout>
     </>
   )

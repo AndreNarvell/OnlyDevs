@@ -24,7 +24,7 @@ const CourseCreatorNavigation = () => {
   const { query } = useRouter()
 
   return (
-    <div className="flex p-1 mx-auto mb-12 border gap-x-1 border-accents-2 rounded-marketing w-max">
+    <div className="hidden p-1 mx-auto mb-12 border lg:flex gap-x-1 border-accents-2 rounded-marketing w-max">
       <CourseCreatorNavButton href={`/create/${query.courseId}/details`}>
         Details
       </CourseCreatorNavButton>

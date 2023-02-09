@@ -1,4 +1,9 @@
-import { Fragment } from "react"
+import { Button, ButtonLink } from "../../../components/Button"
+import { Logo } from "../../../components/Logo"
+import { Text } from "../../../components/Text"
+import { TextLink } from "../../../components/TextLink"
+import { ShoppingCart } from "./ShoppingCart"
+import { UserMenu } from "./UserMenu"
 import { Popover, Transition } from "@headlessui/react"
 import {
   ArrowLeftOnRectangleIcon,
@@ -8,16 +13,15 @@ import {
   WrenchScrewdriverIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline"
-import { Button, ButtonLink } from "../../../components/Button"
-import { Logo } from "../../../components/Logo"
-import Link from "next/link"
-import { TextLink } from "../../../components/TextLink"
-import { Text } from "../../../components/Text"
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react"
-import { UserMenu } from "./UserMenu"
-import { ShoppingCart } from "./ShoppingCart"
+import Link from "next/link"
+import { Fragment } from "react"
 
 const links = [
+  {
+    name: "Home",
+    href: "/",
+  },
   {
     name: "Courses",
     href: "/courses",

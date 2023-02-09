@@ -3,6 +3,7 @@ import { FieldError } from "../../../components/Input"
 import { Meta } from "../../../components/Meta"
 import { Select } from "../../../components/Select"
 import { Text } from "../../../components/Text"
+import { UnavailableOnMobile } from "../../../components/UnavailableOnMobile"
 import { CourseCreatorLayout } from "../../../components/layouts/CourseCreatorLayout"
 import { PublishSummary } from "../../../features/CourseCreator/components/PublishSummary"
 import { useConfirmLeave } from "../../../features/CourseCreator/hooks/useConfirmLeave"
@@ -66,6 +67,8 @@ const SummaryPage: NextPage<Props> = ({ course }) => {
       <Meta title="Course creator" />
 
       <Toaster />
+
+      <UnavailableOnMobile />
 
       <CourseCreatorLayout>
         <div className="grid grid-cols-2 gap-x-8">
