@@ -1,8 +1,3 @@
-import {
-  EditorContent,
-  EditorModule,
-} from "../features/CourseCreator/stores/editorContent"
-import { CourseDetails } from "../features/CourseCreator/types/CourseDetails"
 import { serverSideSupabase, supabase } from "../lib/supabase"
 import { CategoryWithCourses } from "../types/Category"
 import { Course, CourseStructure, LessonData } from "../types/Course"
@@ -12,7 +7,7 @@ import { CourseProgress } from "../types/CourseProgress"
  * All courses as array
  */
 export const getAllCourses = async () => {
-  return supabase.from("courses").select("*")
+  return supabase.from("courses").select("*").neq("published", false)
 }
 
 /**
@@ -22,6 +17,7 @@ export const getLatestCourses = async (quantity: number = 1) => {
   return supabase
     .from("courses")
     .select("*")
+    .neq("published", false)
     .order("created_at", { ascending: false })
     .limit(quantity)
 }
@@ -47,6 +43,7 @@ export const getCourseDetailsBySlug = async (slug: string) => {
     .from("courses")
     .select(entireCourseQuery)
     .eq("slug", slug)
+    .neq("published", false)
     .single()
 }
 
@@ -55,10 +52,11 @@ export const getCourseDetailsBySlug = async (slug: string) => {
  */
 export const getAllCoursesSortedByCategory = async (options?: {
   noEmptyCategories?: boolean
-}): Promise<CategoryWithCourses[] | undefined> => {
+}): Promise<CategoryWithCourses[]> => {
   const { data, error } = await supabase
     .from("categories")
     .select(`*, courses (*)`)
+    .neq("courses.published", false)
 
   if (data) {
     const formatted = data.map<CategoryWithCourses>(category => ({
@@ -78,7 +76,7 @@ export const getAllCoursesSortedByCategory = async (options?: {
     return formatted
   }
 
-  return undefined
+  return []
 }
 
 /**
@@ -91,6 +89,7 @@ export const getAllCoursesInCategory = async (
     .from("categories")
     .select(`*, courses (*)`)
     .eq("id", categoryId)
+    .neq("published", false)
     .single()
 
   if (data) {
@@ -158,6 +157,7 @@ export const getUsersSavedCourses = async (
     .from("profiles")
     .select("saved_courses")
     .eq("id", userId)
+    .neq("published", false)
     .single()
 
   if (!profile || !profile.saved_courses) {
@@ -209,6 +209,7 @@ export const getModulesAndLessons = async (
        requirements,
        price,
        tags,
+       category_id,
        modules (
          id,
          title,

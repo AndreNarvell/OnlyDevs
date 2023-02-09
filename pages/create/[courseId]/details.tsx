@@ -2,9 +2,11 @@ import { ArrayInput } from "../../../components/ArrayInput"
 import { Button } from "../../../components/Button"
 import { Input } from "../../../components/Input"
 import { Meta } from "../../../components/Meta"
+import { Select } from "../../../components/Select"
 import { Text } from "../../../components/Text"
 import { TextArea } from "../../../components/TextArea"
 import { CourseCreatorLayout } from "../../../components/layouts/CourseCreatorLayout"
+import { useConfirmLeave } from "../../../features/CourseCreator/hooks/useConfirmLeave"
 import { useLoadCourse } from "../../../features/CourseCreator/hooks/useLoadCourse"
 import {
   EditorContent,
@@ -14,6 +16,7 @@ import { courseDetailsSchema } from "../../../features/CourseCreator/types/Cours
 import { getCourseCreatorData } from "../../../models/courses"
 import { CourseStructure } from "../../../types/Course"
 import { Database } from "../../../types/supabase"
+import { getImageUrl } from "../../../utils/getImageUrl"
 import { protectRoute } from "../../../utils/protectRoute"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
@@ -27,46 +30,60 @@ interface Props {
   course: CourseStructure
 }
 
-const previewIconsTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/pre-`
-const previewBgImagesTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-backgrounds/pre-`
-
-const iconsTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-icons/`
-const bgImagesTemplate = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/course-backgrounds/`
-
 type DetailsForm = EditorContent["details"] & {
   icon: File | undefined
   background_image: File | undefined
 }
 
 const CreatePage: NextPage<Props> = ({ course }) => {
+  useLoadCourse(course)
+  useConfirmLeave()
+
   const [details, setDetails] = useEditorContent(state => [
     state.details,
     state.setDetails,
   ])
-  useLoadCourse(course)
 
-  const [iconUrl, setIconUrl] = useState(
-    `${iconsTemplate}${course.id}?t=${Date.now()}`
-  )
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState(
-    `${bgImagesTemplate}${course.id}?t=${Date.now()}`
-  )
+  const iconUrl = getImageUrl("course-icons", course.id, { noCache: true })
+  const backgroundImageUrl = getImageUrl("course-backgrounds", course.id, {
+    noCache: true,
+  })
 
   const [previewIconUrl, setPreviewIconUrl] = useState(
-    `${previewIconsTemplate}${course.id}?t=${Date.now()}`
+    getImageUrl("course-icons", course.id, { preview: true, noCache: true })
   )
   const [previewBackgroundImageUrl, setPreviewBackgroundImageUrl] = useState(
-    `${previewBgImagesTemplate}${course.id}?t=${Date.now()}`
+    getImageUrl("course-backgrounds", course.id, {
+      preview: true,
+      noCache: true,
+    })
   )
 
   const refreshPreviews = () => {
-    setPreviewIconUrl(`${previewIconsTemplate}${course.id}?t=${Date.now()}`)
+    setPreviewIconUrl(
+      getImageUrl("course-icons", course.id, { preview: true, noCache: true })
+    )
     setPreviewBackgroundImageUrl(
-      `${previewBgImagesTemplate}${course.id}?t=${Date.now()}`
+      getImageUrl("course-backgrounds", course.id, {
+        preview: true,
+        noCache: true,
+      })
     )
   }
 
   const methods = useForm<DetailsForm>({
+    defaultValues: {
+      title: "",
+      description: "",
+      category_id: 1,
+      short_desc: "",
+      price: 0,
+      includes: [],
+      requirements: [],
+      tags: [],
+      icon: undefined,
+      background_image: undefined,
+    },
     values: {
       ...details,
       icon: undefined,
@@ -75,16 +92,23 @@ const CreatePage: NextPage<Props> = ({ course }) => {
     resolver: zodResolver(courseDetailsSchema),
   })
 
-  const supabase = useSupabaseClient<Database>()
+  const titleMin = courseDetailsSchema.shape.title.minLength
+  const titleMax = courseDetailsSchema.shape.title.maxLength
+
+  const descriptionMin = courseDetailsSchema.shape.description.minLength
+  const descriptionMax = courseDetailsSchema.shape.description.maxLength
+
+  const shortDescMin = courseDetailsSchema.shape.short_desc.minLength
+  const shortDescMax = courseDetailsSchema.shape.short_desc.maxLength
 
   const {
     register,
     setValue,
     formState: { errors },
+    watch,
   } = methods
 
-  // console.log("watch", methods.watch())
-  // console.log("errors:", errors)
+  const supabase = useSupabaseClient<Database>()
 
   const handleFileChange = async (
     e: FormEvent<HTMLInputElement>,
@@ -92,8 +116,6 @@ const CreatePage: NextPage<Props> = ({ course }) => {
     fieldName: "icon" | "background_image"
   ) => {
     const file = e.currentTarget.files?.[0]
-
-    console.log("Set file", file)
 
     setValue(fieldName, file)
 
@@ -110,8 +132,14 @@ const CreatePage: NextPage<Props> = ({ course }) => {
   const onSubmit = (formValues: DetailsForm) => {
     setDetails(formValues)
 
+    console.log(formValues)
+
     toast("Saved!", { position: "bottom-center", icon: "💾" })
   }
+
+  const titleLength = watch("title")?.length
+  const descriptionLength = watch("description")?.length
+  const shortDescLength = watch("short_desc")?.length
 
   return (
     <>
@@ -126,30 +154,53 @@ const CreatePage: NextPage<Props> = ({ course }) => {
             className="p-16 border rounded-marketing border-accents-2"
           >
             <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
-              <Input
-                id="title"
-                {...register("title")}
-                className="mb-2"
-                fullWidth
-                showLabel
-                label="Title"
-                error={errors.title?.message}
-              />
+              <div>
+                <Input
+                  id="title"
+                  {...register("title")}
+                  fullWidth
+                  showLabel
+                  label="Title"
+                  error={errors.title?.message}
+                />
+                <Text
+                  as="p"
+                  intent="secondary"
+                  italic
+                  size="sm"
+                  className="mb-4"
+                >
+                  {titleLength} characters of min {titleMin} and max {titleMax}
+                </Text>
+              </div>
+
               <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
                 Your title should be as we say in swedish “kort and koncis”!
               </Text>
             </div>
 
             <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
-              <TextArea
-                id="description"
-                {...register("description")}
-                className="mb-2"
-                fullWidth
-                showLabel
-                label="Description"
-                error={errors.description?.message}
-              />
+              <div>
+                <TextArea
+                  id="description"
+                  {...register("description")}
+                  fullWidth
+                  showLabel
+                  label="Description"
+                  error={errors.description?.message}
+                />
+                <Text
+                  as="p"
+                  intent="secondary"
+                  italic
+                  size="sm"
+                  className="mb-4"
+                >
+                  {descriptionLength} characters of min {descriptionMin} and max{" "}
+                  {descriptionMax}
+                </Text>
+              </div>
+
               <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
                 The description is your main selling point! This is where you
                 lockar till dig students. Really think this through when writing
@@ -158,15 +209,26 @@ const CreatePage: NextPage<Props> = ({ course }) => {
             </div>
 
             <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
-              <TextArea
-                id="short_desc"
-                {...register("short_desc")}
-                className="mb-2"
-                fullWidth
-                showLabel
-                label="Short description"
-                error={errors.short_desc?.message}
-              />
+              <div>
+                <TextArea
+                  id="short_desc"
+                  {...register("short_desc")}
+                  fullWidth
+                  showLabel
+                  label="Short description"
+                  error={errors.short_desc?.message}
+                />
+                <Text
+                  as="p"
+                  intent="secondary"
+                  italic
+                  size="sm"
+                  className="mb-4"
+                >
+                  {shortDescLength} characters of min {shortDescMin} and max{" "}
+                  {shortDescMax}
+                </Text>
+              </div>
               <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
                 Here you write a summarize of your main description. This goes
                 on all the cards.
@@ -208,6 +270,65 @@ const CreatePage: NextPage<Props> = ({ course }) => {
                 name="tags"
                 label="Tags"
                 error={errors.tags?.message}
+              />
+              <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
+                You also need to write down the requirements for taking this
+                course. If the student needs a modern computer, or previous
+                knowledge of JavaScript etc.
+              </Text>
+            </div>
+
+            <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
+              <Select
+                label="Category"
+                showLabel
+                id="category_id"
+                fullWidth
+                className="w-48 mb-4"
+                error={errors.category_id?.message}
+                {...register("category_id")}
+                options={[
+                  {
+                    label: "JavaScript",
+                    value: 1,
+                  },
+                  {
+                    label: "CSS",
+                    value: 5,
+                  },
+                  {
+                    label: "React",
+                    value: 6,
+                  },
+                  {
+                    label: "Node",
+                    value: 7,
+                  },
+                  {
+                    label: "Git",
+                    value: 8,
+                  },
+                  {
+                    label: "CI/CD",
+                    value: 9,
+                  },
+                  {
+                    label: "Angular",
+                    value: 10,
+                  },
+                  {
+                    label: "HTML5",
+                    value: 11,
+                  },
+                  {
+                    label: "TypeScript",
+                    value: 12,
+                  },
+                  {
+                    label: "Vue",
+                    value: 13,
+                  },
+                ]}
               />
               <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
                 You also need to write down the requirements for taking this

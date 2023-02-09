@@ -6,6 +6,7 @@ import { getUsersCreatedCourses } from "../models/courses"
 import { checkIfUserIsTeacher } from "../models/teacher"
 import { Course } from "../types/Course"
 import { protectRoute } from "../utils/protectRoute"
+import { PlusCircleIcon } from "@heroicons/react/24/solid"
 import { useSession } from "@supabase/auth-helpers-react"
 import { GetServerSideProps, NextPage } from "next"
 import { useRouter } from "next/router"
@@ -47,6 +48,10 @@ const CreatedCoursesPage: NextPage<Props> = ({ createdCourses, isTeacher }) => {
         </div>
 
         <DashboardCourseGrid courses={createdCourses} />
+
+        {/* <div className="w-24 h-24">
+          <PlusCircleIcon className="fill-accents-4 hover:fill-accents-5" />
+        </div> */}
       </DashboardLayout>
     </>
   )

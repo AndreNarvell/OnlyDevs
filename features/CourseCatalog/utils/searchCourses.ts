@@ -1,5 +1,5 @@
+import { Course } from "../../../types/Course"
 import fuzzysort from "fuzzysort"
-import { Course } from "../types/Course"
 
 export const searchCourses = (query: string, courses: Course[]) => {
   const formattedCourses = courses.map(course => ({

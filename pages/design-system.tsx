@@ -8,11 +8,8 @@ import {
   ArrowDownTrayIcon,
   ArrowPathRoundedSquareIcon,
   BuildingLibraryIcon,
-  MagnifyingGlassIcon,
-  MagnifyingGlassMinusIcon,
   SpeakerWaveIcon,
   WrenchScrewdriverIcon,
-  XMarkIcon,
 } from "@heroicons/react/24/outline"
 import { FC, ReactNode } from "react"
 

@@ -1,7 +1,8 @@
-import { AcademicCapIcon, BookOpenIcon } from "@heroicons/react/20/solid"
-import Image from "next/image"
 import { Text } from "../../../components/Text"
 import { Teacher } from "../../../types/Teacher"
+import { getImageUrl } from "../../../utils/getImageUrl"
+import { AcademicCapIcon, BookOpenIcon } from "@heroicons/react/20/solid"
+import Image from "next/image"
 
 const formatter = new Intl.NumberFormat("en-US")
 
@@ -22,17 +23,13 @@ export const Instructor = ({ teacher }: { teacher: Teacher }) => {
       </Text>
 
       <div className="flex mb-4 gap-x-4">
-        {teacher.profiles.picture ? (
-          <Image
-            alt="Picture of teacher"
-            src={teacher.profiles.picture}
-            width={96}
-            height={96}
-            className="object-cover object-center w-24 h-24 rounded-full"
-          />
-        ) : (
-          <div className="w-24 h-24 rounded-full bg-error" />
-        )}
+        <Image
+          alt="Picture of teacher"
+          src={getImageUrl("profile-pictures", teacher.id)}
+          width={96}
+          height={96}
+          className="object-cover object-center w-24 h-24 rounded-full"
+        />
 
         <ul className="flex flex-col gap-y-1">
           <li className="flex flex-row items-center gap-x-2">

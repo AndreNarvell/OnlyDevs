@@ -3,11 +3,10 @@ import { curriculumSchema } from "../../features/CourseCreator/types/Curriculum"
 import { publishNewImage } from "../../features/CourseCreator/utils/publishNewImage"
 import { serverSideSupabase } from "../../lib/supabase"
 import { getProfileById } from "../../models/profile"
-import { Lesson, LessonData } from "../../types/Course"
 import { Database } from "../../types/supabase"
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
-import { calcLength } from "framer-motion"
 import { NextApiHandler } from "next"
+import slugify from "slugify"
 import { z } from "zod"
 
 const publishCourseSchema = z.object({
@@ -118,6 +117,7 @@ const handler: NextApiHandler = async (req, res) => {
       includes: details.includes,
       requirements: details.requirements,
       price: details.price,
+      slug: slugify(details.title, { lower: true }),
     })
     .eq("id", courseId)
 
@@ -224,6 +224,15 @@ const handler: NextApiHandler = async (req, res) => {
   if (lessonsDataData) {
     console.log("lessonsDataData", lessonsDataData)
   }
+
+  const { status, statusText } = await serverSideSupabase()
+    .from("courses")
+    .update({
+      published: true,
+    })
+    .eq("id", courseId)
+
+  console.log("Publishing status", status, statusText)
 
   res.status(200).json({
     success: true,

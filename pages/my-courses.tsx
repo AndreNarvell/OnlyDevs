@@ -54,7 +54,7 @@ const MyCoursesPage: NextPage<Props> = ({ course, lessonData, tokens }) => {
           }}
           className="overflow-y-auto !scrollbar-thin !scrollbar-track-transparent !scrollbar-thumb-accents-3 !scrollbar-thumb-rounded-full"
         >
-          <section className="relative">
+          {/* <section className="relative">
             <div
               className="absolute inset-0 w-full pointer-events-none opacity-20"
               style={{ background: gradient(course.title) }}
@@ -79,7 +79,7 @@ const MyCoursesPage: NextPage<Props> = ({ course, lessonData, tokens }) => {
             </div>
           </section>
 
-          <hr className="border-accents-2" />
+          <hr className="border-accents-2" /> */}
 
           <section
             style={{ height: "calc(100vh - 5rem)" }}

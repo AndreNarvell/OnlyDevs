@@ -26,6 +26,7 @@ export type CourseStructure = {
   requirements: Course["requirements"]
   price: Course["price"]
   tags: Course["tags"]
+  category_id: Course["category_id"]
   modules: {
     id: Module["id"]
     title: Module["title"]
