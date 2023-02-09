@@ -1,3 +1,4 @@
+import { Button, ButtonLink } from "../components/Button"
 import { Meta } from "../components/Meta"
 import { Text } from "../components/Text"
 import { TextLink } from "../components/TextLink"
@@ -6,14 +7,11 @@ import { CoursePlayer } from "../features/CoursePlayer/components/CoursePlayer"
 import { serverSideSupabase } from "../lib/supabase"
 import { getModulesAndLessons, getUsersOwnedCourses } from "../models/courses"
 import { LessonData, CourseStructure } from "../types/Course"
-import { Database } from "../types/supabase"
 import { protectRoute } from "../utils/protectRoute"
 import { ChevronLeftIcon } from "@heroicons/react/20/solid"
+import { ChevronDoubleLeftIcon } from "@heroicons/react/24/outline"
 import Mux from "@mux/mux-node"
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
-import { readFile } from "fs/promises"
 import { GetServerSideProps, NextPage } from "next"
-import gradient from "random-gradient"
 
 interface Props {
   course: CourseStructure
@@ -29,7 +27,49 @@ const MyCoursesPage: NextPage<Props> = ({ course, lessonData, tokens }) => {
     <>
       <Meta title={course.title} />
 
-      <div className="bg-accents-1">
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 lg:hidden gap-y-4 bg-accents-1">
+        <Text as="h1" align="center" className="px-8">
+          This shit doesn&apos;t work on mobile, but our apps do!
+        </Text>
+
+        {/* <Button intent="secondary">Download our app</Button> */}
+
+        <div className="flex flex-col items-center gap-y-0">
+          <a href="https://play.google.com/store/apps/details?id=com.king.candycrushsaga&hl=en&gl=US&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className="h-16"
+              alt="Get it on Google Play"
+              src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+            />
+          </a>
+
+          <a
+            href="https://apps.apple.com/us/app/candy-crush-saga/id553834731?itsct=apps_box_badge&itscg=30200"
+            style={{
+              display: "inline-block",
+              overflow: "hidden",
+              borderRadius: 13,
+              width: 250,
+              height: 83,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className="h-12"
+              src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&releaseDate=1352851200"
+              alt="Download on the App Store"
+              style={{ borderRadius: 13, width: 250 }}
+            />
+          </a>
+        </div>
+
+        <ButtonLink href="/dashboard" intent="secondary" variant="ghost">
+          <ChevronLeftIcon className="w-6 h-6" /> Back to dashboard
+        </ButtonLink>
+      </div>
+
+      <div className="hidden bg-accents-1 lg:block">
         <header className="flex items-center justify-between h-20 px-8 backdrop-blur-md bg-accents-1/50">
           <TextLink
             href="/dashboard"
@@ -54,33 +94,6 @@ const MyCoursesPage: NextPage<Props> = ({ course, lessonData, tokens }) => {
           }}
           className="overflow-y-auto !scrollbar-thin !scrollbar-track-transparent !scrollbar-thumb-accents-3 !scrollbar-thumb-rounded-full"
         >
-          {/* <section className="relative">
-            <div
-              className="absolute inset-0 w-full pointer-events-none opacity-20"
-              style={{ background: gradient(course.title) }}
-            />
-
-            <div className="container relative py-36">
-              <div className="max-w-lg">
-                <Text
-                  as="h2"
-                  size="3xl"
-                  weight="bold"
-                  tracking="wide"
-                  className="mb-4"
-                >
-                  {course.title}
-                </Text>
-
-                <Text as="p" tracking="wide" className="opacity-70">
-                  {course.short_desc}
-                </Text>
-              </div>
-            </div>
-          </section>
-
-          <hr className="border-accents-2" /> */}
-
           <section
             style={{ height: "calc(100vh - 5rem)" }}
             className="container flex xl:max-w-screen-xl 2xl:max-w-screen-2xl"
