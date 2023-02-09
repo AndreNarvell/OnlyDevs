@@ -7,7 +7,7 @@ export const getTeacherById = async (id: string) => {
   const [teacher, numberOfCourses, numberOfStudents] = await Promise.all([
     serverSideSupabase()
       .from("teachers")
-      .select(`*, profiles (name, picture)`)
+      .select(`*, profiles (name)`)
       .eq("id", id)
       .single(),
     supabase.from("courses").select("*", { count: "exact" }).eq("creator", id),

@@ -168,20 +168,14 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     getAllCoursesSortedByCategory({ noEmptyCategories: true }),
   ])
 
-  const { data: allCoursesData, error: allCoursesError } = allCourses
-  if (allCoursesError) throw allCoursesError
-
-  const { data: categoriesData, error: categoriesError } = categories
-  if (categoriesError) throw categoriesError
-
-  if (!categorisedCourses) {
+  if (!allCourses.data || !categories.data || !categorisedCourses) {
     throw new Error("Error fetching categorised courses")
   }
 
   return {
     props: {
-      allCourses: allCoursesData,
-      categories: categoriesData,
+      allCourses: allCourses.data,
+      categories: categories.data,
       categorisedCourses,
     },
   }

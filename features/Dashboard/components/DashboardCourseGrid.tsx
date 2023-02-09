@@ -1,4 +1,4 @@
-import { ButtonLink } from "../../../components/Button"
+import { Button, ButtonLink } from "../../../components/Button"
 import { CourseCard } from "../../../components/CourseCard"
 import { Course } from "../../../types/Course"
 import { PlusCircleIcon, PlusIcon } from "@heroicons/react/24/solid"
@@ -10,18 +10,24 @@ interface DashboardCourseGridProps {
   courseProgress?: Record<string, number>
 }
 
-// router.pathname = "/created-courses"
-
 export const DashboardCourseGrid: FC<DashboardCourseGridProps> = ({
   courses,
   courseProgress,
 }) => {
   const router = useRouter()
-  console.log(router)
+
+  const createCourse = async () => {
+    const response = await fetch("/api/create-course")
+    const courseId = (await response.json()) as string
+
+    if (!response.ok) alert("Could not create course")
+
+    router.push(`/create/${courseId}/details`)
+  }
 
   return (
     <section className="grid grid-cols-1 gap-8 pb-16 mx-auto w-max place-items-center sm:grid-cols-2 lg:grid-cols-3">
-      {courses.map((course) => (
+      {courses.map(course => (
         <CourseCard
           id={course.id}
           title={course.title}
@@ -36,8 +42,10 @@ export const DashboardCourseGrid: FC<DashboardCourseGridProps> = ({
       ))}
 
       {router.pathname === "/created-courses" && (
-        <ButtonLink
-          href="/create"
+        <Button
+          onClick={() => {
+            createCourse()
+          }}
           className="rounded-full"
           intent="secondary"
           size="large"

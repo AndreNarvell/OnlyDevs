@@ -49,6 +49,10 @@ export const text = cva("break-words", {
       true: "cursor-pointer transition hover:transition-none",
       false: "",
     },
+    italic: {
+      true: "italic",
+      false: "",
+    },
   },
 
   compoundVariants: [
@@ -78,6 +82,7 @@ export const text = cva("break-words", {
     align: "left",
     display: "block",
     isLink: false,
+    italic: false,
   },
 })
 
@@ -98,6 +103,7 @@ export const Text: FC<TextProps> = ({
   intent,
   align,
   display,
+  italic,
   className,
   ...rest
 }) => {
@@ -113,6 +119,7 @@ export const Text: FC<TextProps> = ({
         intent,
         align,
         display,
+        italic,
         className,
       })}
       {...rest}

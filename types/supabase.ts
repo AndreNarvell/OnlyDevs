@@ -56,6 +56,7 @@ export interface Database {
           includes: string[] | null
           number_of_students: number
           price: number
+          published: boolean
           requirements: string[] | null
           short_desc: string
           slug: string
@@ -71,6 +72,7 @@ export interface Database {
           includes?: string[] | null
           number_of_students?: number
           price?: number
+          published?: boolean
           requirements?: string[] | null
           short_desc?: string
           slug?: string
@@ -86,6 +88,7 @@ export interface Database {
           includes?: string[] | null
           number_of_students?: number
           price?: number
+          published?: boolean
           requirements?: string[] | null
           short_desc?: string
           slug?: string

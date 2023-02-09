@@ -1,5 +1,5 @@
 export const getImageUrl = (
-  type: "course-backgrounds" | "course-icons",
+  bucket: "course-backgrounds" | "course-icons" | "profile-pictures",
   id: string,
   options: {
     noCache?: boolean
@@ -13,7 +13,7 @@ export const getImageUrl = (
 
   const baseUrl = `${
     process.env.NEXT_PUBLIC_SUPABASE_URL
-  }/storage/v1/object/public/${type}/${preview ? "pre-" : ""}${id}`
+  }/storage/v1/object/public/${bucket}/${preview ? "pre-" : ""}${id}`
 
   const cacheBuster = noCache ? `?${Date.now()}` : ""
 

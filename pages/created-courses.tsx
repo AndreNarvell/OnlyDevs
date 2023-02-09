@@ -49,7 +49,7 @@ const CreatedCoursesPage: NextPage<Props> = ({ createdCourses, isTeacher }) => {
 
         <DashboardCourseGrid courses={createdCourses} />
 
-        {/* <div className="h-24 w-24">
+        {/* <div className="w-24 h-24">
           <PlusCircleIcon className="fill-accents-4 hover:fill-accents-5" />
         </div> */}
       </DashboardLayout>
@@ -59,7 +59,7 @@ const CreatedCoursesPage: NextPage<Props> = ({ createdCourses, isTeacher }) => {
 
 export default CreatedCoursesPage
 
-export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
   const auth = await protectRoute(ctx)
   if (!auth.isAuthed) {
     return auth.redirect

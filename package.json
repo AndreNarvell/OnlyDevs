@@ -42,6 +42,7 @@
     "react-hook-form": "^7.41.5",
     "react-hot-toast": "^2.4.0",
     "react-wrap-balancer": "^0.3.0",
+    "slugify": "^1.6.5",
     "stripe": "^11.6.0",
     "swr": "^2.0.1",
     "tailwind-scrollbar-hide": "^1.1.7",

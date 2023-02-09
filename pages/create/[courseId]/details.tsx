@@ -13,7 +13,6 @@ import {
   useEditorContent,
 } from "../../../features/CourseCreator/stores/editorContent"
 import { courseDetailsSchema } from "../../../features/CourseCreator/types/CourseDetails"
-import { useBeforeUnload } from "../../../hooks/useBeforeUnload"
 import { getCourseCreatorData } from "../../../models/courses"
 import { CourseStructure } from "../../../types/Course"
 import { Database } from "../../../types/supabase"
@@ -40,17 +39,15 @@ const CreatePage: NextPage<Props> = ({ course }) => {
   useLoadCourse(course)
   useConfirmLeave()
 
-  const [details, setDetails] = useEditorContent((state) => [
+  const [details, setDetails] = useEditorContent(state => [
     state.details,
     state.setDetails,
   ])
 
-  const [iconUrl, setIconUrl] = useState(
-    getImageUrl("course-icons", course.id, { noCache: true })
-  )
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState(
-    getImageUrl("course-backgrounds", course.id, { noCache: true })
-  )
+  const iconUrl = getImageUrl("course-icons", course.id, { noCache: true })
+  const backgroundImageUrl = getImageUrl("course-backgrounds", course.id, {
+    noCache: true,
+  })
 
   const [previewIconUrl, setPreviewIconUrl] = useState(
     getImageUrl("course-icons", course.id, { preview: true, noCache: true })
@@ -75,6 +72,18 @@ const CreatePage: NextPage<Props> = ({ course }) => {
   }
 
   const methods = useForm<DetailsForm>({
+    defaultValues: {
+      title: "",
+      description: "",
+      category_id: 1,
+      short_desc: "",
+      price: 0,
+      includes: [],
+      requirements: [],
+      tags: [],
+      icon: undefined,
+      background_image: undefined,
+    },
     values: {
       ...details,
       icon: undefined,
@@ -83,13 +92,23 @@ const CreatePage: NextPage<Props> = ({ course }) => {
     resolver: zodResolver(courseDetailsSchema),
   })
 
-  const supabase = useSupabaseClient<Database>()
+  const titleMin = courseDetailsSchema.shape.title.minLength
+  const titleMax = courseDetailsSchema.shape.title.maxLength
+
+  const descriptionMin = courseDetailsSchema.shape.description.minLength
+  const descriptionMax = courseDetailsSchema.shape.description.maxLength
+
+  const shortDescMin = courseDetailsSchema.shape.short_desc.minLength
+  const shortDescMax = courseDetailsSchema.shape.short_desc.maxLength
 
   const {
     register,
     setValue,
     formState: { errors },
+    watch,
   } = methods
+
+  const supabase = useSupabaseClient<Database>()
 
   const handleFileChange = async (
     e: FormEvent<HTMLInputElement>,
@@ -97,8 +116,6 @@ const CreatePage: NextPage<Props> = ({ course }) => {
     fieldName: "icon" | "background_image"
   ) => {
     const file = e.currentTarget.files?.[0]
-
-    console.log("Set file", file)
 
     setValue(fieldName, file)
 
@@ -120,7 +137,9 @@ const CreatePage: NextPage<Props> = ({ course }) => {
     toast("Saved!", { position: "bottom-center", icon: "💾" })
   }
 
-  console.log(course)
+  const titleLength = watch("title")?.length
+  const descriptionLength = watch("description")?.length
+  const shortDescLength = watch("short_desc")?.length
 
   return (
     <>
@@ -135,30 +154,53 @@ const CreatePage: NextPage<Props> = ({ course }) => {
             className="p-16 border rounded-marketing border-accents-2"
           >
             <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
-              <Input
-                id="title"
-                {...register("title")}
-                className="mb-2"
-                fullWidth
-                showLabel
-                label="Title"
-                error={errors.title?.message}
-              />
+              <div>
+                <Input
+                  id="title"
+                  {...register("title")}
+                  fullWidth
+                  showLabel
+                  label="Title"
+                  error={errors.title?.message}
+                />
+                <Text
+                  as="p"
+                  intent="secondary"
+                  italic
+                  size="sm"
+                  className="mb-4"
+                >
+                  {titleLength} characters of min {titleMin} and max {titleMax}
+                </Text>
+              </div>
+
               <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
                 Your title should be as we say in swedish “kort and koncis”!
               </Text>
             </div>
 
             <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
-              <TextArea
-                id="description"
-                {...register("description")}
-                className="mb-2"
-                fullWidth
-                showLabel
-                label="Description"
-                error={errors.description?.message}
-              />
+              <div>
+                <TextArea
+                  id="description"
+                  {...register("description")}
+                  fullWidth
+                  showLabel
+                  label="Description"
+                  error={errors.description?.message}
+                />
+                <Text
+                  as="p"
+                  intent="secondary"
+                  italic
+                  size="sm"
+                  className="mb-4"
+                >
+                  {descriptionLength} characters of min {descriptionMin} and max{" "}
+                  {descriptionMax}
+                </Text>
+              </div>
+
               <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
                 The description is your main selling point! This is where you
                 lockar till dig students. Really think this through when writing
@@ -167,15 +209,26 @@ const CreatePage: NextPage<Props> = ({ course }) => {
             </div>
 
             <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
-              <TextArea
-                id="short_desc"
-                {...register("short_desc")}
-                className="mb-2"
-                fullWidth
-                showLabel
-                label="Short description"
-                error={errors.short_desc?.message}
-              />
+              <div>
+                <TextArea
+                  id="short_desc"
+                  {...register("short_desc")}
+                  fullWidth
+                  showLabel
+                  label="Short description"
+                  error={errors.short_desc?.message}
+                />
+                <Text
+                  as="p"
+                  intent="secondary"
+                  italic
+                  size="sm"
+                  className="mb-4"
+                >
+                  {shortDescLength} characters of min {shortDescMin} and max{" "}
+                  {shortDescMax}
+                </Text>
+              </div>
               <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
                 Here you write a summarize of your main description. This goes
                 on all the cards.
@@ -287,7 +340,7 @@ const CreatePage: NextPage<Props> = ({ course }) => {
             <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
               <div>
                 <Input
-                  onChange={(e) => handleFileChange(e, "course-icons", "icon")}
+                  onChange={e => handleFileChange(e, "course-icons", "icon")}
                   type="file"
                   name="icon"
                   label="Icon"
@@ -338,7 +391,7 @@ const CreatePage: NextPage<Props> = ({ course }) => {
             <div className="grid grid-cols-2 py-8 border-b gap-x-16 border-accents-2">
               <div>
                 <Input
-                  onChange={(e) =>
+                  onChange={e =>
                     handleFileChange(
                       e,
                       "course-backgrounds",
@@ -402,7 +455,7 @@ const CreatePage: NextPage<Props> = ({ course }) => {
 }
 export default CreatePage
 
-export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
   const auth = await protectRoute(ctx, "/dashboard")
   if (!auth.isAuthed) {
     return auth.redirect
