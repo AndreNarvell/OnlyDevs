@@ -15,6 +15,8 @@
 ## Screenshot
 ![Screenshot of the course player](./.github/screenshot.png)
 
+## Features
+
 - 🎓 Fully functional marketplace for online courses
 - 📽 Courses in video and text format
 - 🎨 Great user experience
