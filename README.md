@@ -8,11 +8,11 @@ This project aims to create a platform that allows users to browse, purchase, an
 
 ## Technologies
 
-- Next.js - SSR and serverless functions
-- Supabase - Backend, database and storage
-- Mux - Video hosting and streaming
-- Stripe - Payments with Stripe Checkout
-- TypeScript
+- **Next.js** - SSR and serverless functions
+- **Supabase** - Backend, database and storage
+- **Mux** - Video hosting and streaming
+- **Stripe** - Payments with Stripe Checkout
+- **TypeScript**
 
 ## Demo
 
