@@ -1,6 +1,19 @@
 ![Repo Banner](./.github/repo-banner.png)
 
-# OnlyDevs
+<p align="center">
+   
+
+  <h3 align="center">OnlyDevs</h3>
+
+  <p align="center">
+    A digital marketplace for courses.
+  </p>
+  <br />
+  <br />
+</p>
+
+## Screenshot
+![Screenshot of the course player](./.github/screenshot.png)
 
 - 🎓 Fully functional marketplace for online courses
 - 📽 Courses in video and text format
