@@ -15,15 +15,11 @@ const handler: NextApiHandler<Profile | null> = async (req, res) => {
     return res.status(401).json(null)
   }
 
-  const { data: user, error } = await serverSideSupabase()
+  const { data: user } = await serverSideSupabase()
     .from("profiles")
     .select("*")
     .eq("id", session.user.id)
     .single()
-
-  if (error) {
-    return res.status(500).json(null)
-  }
 
   if (!user) {
     return res.status(404).json(null)

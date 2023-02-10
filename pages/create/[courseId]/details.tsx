@@ -334,9 +334,8 @@ const CreatePage: NextPage<Props> = ({ course }) => {
                 ]}
               />
               <Text as="p" size="sm" className="mt-5 italic" intent="secondary">
-                You also need to write down the requirements for taking this
-                course. If the student needs a modern computer, or previous
-                knowledge of JavaScript etc.
+                What is the main category for this course? For example if it is
+                about JavaScript, you choose JavaScript! Ez pz!
               </Text>
             </div>
 

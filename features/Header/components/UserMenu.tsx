@@ -27,7 +27,8 @@ export const UserMenu = () => {
 
   console.log(session, first)
 
-  const username = profile?.name ?? user.user_metadata.name
+  const username =
+    profile?.name ?? user.user_metadata.full_name ?? user.user_metadata.name
 
   return (
     <BasicMenu

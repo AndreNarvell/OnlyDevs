@@ -43,7 +43,7 @@ export const getCourseDetailsBySlug = async (slug: string) => {
     .from("courses")
     .select(entireCourseQuery)
     .eq("slug", slug)
-    .neq("published", false)
+    .eq("published", true)
     .single()
 }
 
@@ -157,7 +157,6 @@ export const getUsersSavedCourses = async (
     .from("profiles")
     .select("saved_courses")
     .eq("id", userId)
-    .neq("published", false)
     .single()
 
   if (!profile || !profile.saved_courses) {
@@ -168,6 +167,7 @@ export const getUsersSavedCourses = async (
     .from("courses")
     .select("*")
     .in("id", profile.saved_courses)
+    .neq("published", false)
 
   if (!courses) {
     return undefined
