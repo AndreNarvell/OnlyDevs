@@ -44,7 +44,7 @@ https://onlydevs.vercel.app/
 
 #### ⚠ Do not use real card details!
 
-When testing interactively, use a card number, such as 4242 4242 4242 4242. Enter the card number in the Dashboard or in any payment form.ils!
+When testing interactively, use a card number, such as 4242 4242 4242 4242. Enter the card number in the Dashboard or in any payment form!
 
 Use a valid future date, such as 12/34.
 Use any three-digit CVC (four digits for American Express cards).
