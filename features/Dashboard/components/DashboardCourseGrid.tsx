@@ -54,7 +54,7 @@ export const DashboardCourseGrid: FC<DashboardCourseGridProps> = ({
             createCourse()
           }}
           title="Create a new course"
-          className="group h-[21.375rem] flex items-center justify-center border border-accents-2 rounded-marketing w-full hover:bg-background/50 transition group hover:border-accents-5"
+          className="group h-[21.375rem] max-w-[18rem] min-w-[18rem] flex items-center justify-center border border-accents-2 rounded-marketing hover:bg-background/50 transition group hover:border-accents-5"
         >
           <div className="flex items-center justify-center w-16 h-16 transition border rounded-full border-accents-2 group-hover:text-background group-hover:bg-foreground group-hover:border-foreground">
             <PlusIcon className="w-6 h-6" />
