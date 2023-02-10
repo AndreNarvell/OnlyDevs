@@ -3,8 +3,11 @@
 # OnlyDevs
 
 🎓 Fully functional marketplace for online courses
+
 📽 Courses in video and text format
+
 🎨 Great user experience
+
 ❤ Save courses as favorites
 
 
