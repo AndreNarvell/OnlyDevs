@@ -38,7 +38,7 @@ export const DashboardCourseGrid: FC<DashboardCourseGridProps> = ({
             action === "play"
               ? `/my-courses?courseId=${course.id}`
               : action === "go-to-store"
-              ? `/courses/${course.id}`
+              ? `/courses/${course.slug}`
               : action === "edit"
               ? `/create/${course.id}/details`
               : `/courses/${course.id}`

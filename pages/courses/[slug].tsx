@@ -24,8 +24,9 @@ import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid"
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { useSession } from "@supabase/auth-helpers-react"
 import clsx from "clsx"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, calcLength, motion } from "framer-motion"
 import { GetServerSideProps, NextPage } from "next"
+import { redirect } from "next/dist/server/api-utils"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import { useState } from "react"
@@ -62,6 +63,7 @@ const CourseDetailsPage: NextPage<Props> = ({
     }
 
     const savedCourses = await saveCourse(course.id)
+
     setIsSaved(savedCourses.includes(course.id))
   }
 
@@ -261,7 +263,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
         getCourseDetailsBySlug(slug),
       ])
 
-    if (error || !course) throw error
+    if (!course) {
+      return {
+        notFound: true,
+      }
+    }
 
     const teacher = await getTeacherById(course.creator)
     if (!teacher) throw new Error("Teacher not found")
@@ -282,16 +288,20 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
           ? savedCourses.some(savedCourse => savedCourse.id === course.id)
           : false,
         isOwned: ownedCourses
-          ? ownedCourses?.some(ownedCourses => ownedCourses.id === course.id)
+          ? ownedCourses.some(ownedCourses => ownedCourses.id === course.id)
           : false,
       },
     }
   }
 
   // If a user is not logged in, just get the course details
-  const { data: course, error } = await getCourseDetailsBySlug(slug)
+  const { data: course } = await getCourseDetailsBySlug(slug)
 
-  if (error || !course) throw error
+  if (!course) {
+    return {
+      notFound: true,
+    }
+  }
 
   const teacher = await getTeacherById(course.creator)
   if (!teacher) throw new Error("Teacher not found")
