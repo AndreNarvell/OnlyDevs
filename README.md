@@ -12,3 +12,9 @@ This project aims to create a platform that allows users to browse, purchase, an
 https://onlydevs.vercel.app/
 
 When purchasing write "4242 4242 4242 4242" as card number and then 12/31 and 123 as CVC
+
+## Authors
+
+
+- André Narvell ([GitHub](https://github.com/AndreNarvell))
+- Assar Classon ([GitHub](https://github.com/assarbertil))
